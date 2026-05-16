@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Underviser login</title>
+
+    <link rel="stylesheet" href="Style.css">
+</head>
+
+<body>
+
+<div class="measurement-container">
+
+    <div class="measurement-card">
+
+        <div class="header-row">
+
+            <div class="icon-circle">
+                🔒
+            </div>
+
+            <div>
+
+                <h1>
+                    Underviser login
+                </h1>
+
+                <p>
+                    Log ind for at administrere fartmåler-systemet.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- Error message -->
+        <div
+            id="errorBox"
+            class="error-box"
+            style="display: none;">
+        </div>
+
+
+        <!-- Username -->
+        <label for="usernameInput">
+            Brugernavn
+        </label>
+
+        <input
+            type="text"
+            id="usernameInput"
+            placeholder="Indtast brugernavn">
+
+
+        <!-- Password -->
+        <label for="passwordInput">
+            Adgangskode
+        </label>
+
+        <input
+            type="password"
+            id="passwordInput"
+            placeholder="Indtast adgangskode">
+
+
+        <!-- Login button -->
+        <button
+            type="button"
+            class="start-measure-btn"
+            onclick="loginTeacher()">
+
+            Log ind →
+
+        </button>
+
+
+        <!-- Back button -->
+        <button
+            type="button"
+            class="filter-reset"
+            onclick="window.location.href='index.html'">
+
+            ← Tilbage til forsiden
+
+        </button>
+
+
+        <!-- Login info -->
+        <div class="info-text">
+
+            Kun undervisere med gyldig adgang kan logge ind.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script src="api.js"></script>
+
+<script src="underviser.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - Underviser</title>
+
+    <link rel="stylesheet" href="underviser.css">
+</head>
+
+<body onload="protectTeacherPage(); loadTeacherLeaderboard();">
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            <span class="sidebar-icon">📊</span>
+            <h2>Fartmåler</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="overblik.html" class="menu-item">
+                <span>🏠</span> Overblik
+            </a>
+
+            <a href="maaling.html" class="menu-item">
+                <span>📏</span> Målinger
+            </a>
+
+            <a href="gruppe.html" class="menu-item">
+                <span>👥</span> Grupper
+            </a>
+
+            <a href="leaderboard.html" class="menu-item">
+                <span>🏆</span> Leaderboard
+            </a>
+
+            <a href="sessions.html" class="menu-item">
+                <span>📊</span> Sessions
+            </a>
+
+            <a href="indstillinger.html" class="menu-item">
+                <span>⚙️</span> Indstillinger
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="content">
+
+        <!-- HEADER -->
+        <header class="topbar">
+
+            <div>
+
+                <h1>Leaderboard</h1>
+
+                <p>
+                    Sammenlign grupper og skoler på præcision, CO₂ og score.
+                </p>
+
+            </div>
+
+            <div class="topbar-actions">
+
+                <div class="user-box">
+
+                    <button
+                        type="button"
+                        class="logout-btn global-logout"
+                        onclick="logout()">
+
+                        Log ud →
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- Error message -->
+        <div
+            id="errorBox"
+            class="error-box"
+            style="display: none;">
+        </div>
+
+
+        <!-- LEADERBOARD TYPE TABS -->
+        <div class="leader-tabs">
+
+            <button
+                type="button"
+                id="schoolLeaderboardTab"
+                class="leader-tab active"
+                onclick="changeLeaderboardType('schools')">
+
+                Skoler
+
+            </button>
+
+            <button
+                type="button"
+                id="classLeaderboardTab"
+                class="leader-tab"
+                onclick="changeLeaderboardType('classes')">
+
+                Grupper
+
+            </button>
+
+        </div>
+
+
+        <!-- ROAD TYPE TABS -->
+        <div class="leader-tabs">
+
+            <button
+                type="button"
+                id="byzoneTab"
+                class="leader-tab active"
+                onclick="changeLeaderboardRoadType('Byzone')">
+
+                Byzone 50
+
+            </button>
+
+            <button
+                type="button"
+                id="landevejTab"
+                class="leader-tab"
+                onclick="changeLeaderboardRoadType('Landevej')">
+
+                Landevej 80
+
+            </button>
+
+            <button
+                type="button"
+                id="motorvejTab"
+                class="leader-tab"
+                onclick="changeLeaderboardRoadType('Motorvej')">
+
+                Motorvej 130
+
+            </button>
+
+        </div>
+
+
+        <!-- GRID -->
+        <section class="leaderboard-grid">
+
+            <!-- TABLE -->
+            <div class="card leader-table">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Placering</th>
+                            <th>Navn</th>
+                            <th>Gns. CO₂</th>
+                            <th>Antal målinger</th>
+                            <th>Score</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="leaderboardBody">
+
+                        <tr>
+
+                            <td colspan="5">
+                                Indlæser leaderboard...
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+                <p class="table-note">
+                    Laveste score vinder. Score bygger på afvigelse fra fartgrænsen og CO₂.
+                </p>
+
+            </div>
+
+
+            <!-- RIGHT PANEL -->
+            <div class="card leader-side">
+
+                <h3>Din skole</h3>
+
+                <div class="school-box">
+
+                    <div class="school-icon">
+                        🏫
+                    </div>
+
+                    <div>
+
+                        <strong id="ownSchoolName">
+                            Køge Skole
+                        </strong>
+
+                        <p>
+                            Din placering
+                        </p>
+
+                        <h2 id="ownSchoolRank">
+                            ---
+                        </h2>
+
+                        <p class="green" id="ownSchoolScore">
+                            Score opdateres når leaderboard hentes
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <h4>Top 3</h4>
+
+                <ol class="top-three" id="topThreeList">
+
+                    <li>
+                        Indlæser top 3...
+                    </li>
+
+                </ol>
+
+
+                <div class="score-expl">
+
+                    <h4>Sådan beregnes score</h4>
+
+                    <ul>
+
+                        <li>
+                            Præcis hastighed tæt på fartgrænsen
+                        </li>
+
+                        <li>
+                            Lav CO₂-udledning
+                        </li>
+
+                        <li>
+                            Bedste afsluttede session tæller
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- Active menu -->
+<script>
+
+const links =
+    document.querySelectorAll(".menu-item");
+
+const currentPage =
+    window.location.pathname.split("/").pop();
+
+for (let index = 0; index < links.length; index++) {
+
+    const link =
+        links[index];
+
+    if (link.getAttribute("href") === currentPage) {
+
+        link.classList.add("active");
+    }
+}
+
+</script>
+
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script src="api.js"></script>
+
+<script src="underviser.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elev - Historik</title>
+
+    <link rel="stylesheet" href="Style.css">
+</head>
+
+<body onload="loadHistory()">
+
+<main class="summary-page">
+
+    <header class="summary-header">
+
+        <h1>
+            Min historik
+        </h1>
+
+        <p>
+            Se tidligere sessions, målinger og udvikling over tid.
+        </p>
+
+    </header>
+
+
+    <!-- Error message -->
+    <div
+        id="errorBox"
+        class="error-box"
+        style="display: none;">
+    </div>
+
+
+    <div class="summary-layout">
+
+        <!-- FILTERS -->
+        <aside class="summary-filters card">
+
+            <h2>
+                Filtre
+            </h2>
+
+            <!-- Road type -->
+            <div class="filter-block">
+
+                <label class="filter-label">
+                    Vejtype
+                </label>
+
+                <div class="filter-select">
+
+                    <span>
+                        ⚠️
+                    </span>
+
+                    <select id="historyRoadTypeFilter">
+
+                        <option value="">
+                            Alle vejtyper
+                        </option>
+
+                        <option value="Byzone">
+                            Byzone (50 km/t)
+                        </option>
+
+                        <option value="Landevej">
+                            Landevej (80 km/t)
+                        </option>
+
+                        <option value="Motorvej">
+                            Motorvej (130 km/t)
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- Car type -->
+            <div class="filter-block">
+
+                <label class="filter-label">
+                    Biltype
+                </label>
+
+                <div class="filter-select">
+
+                    <span>
+                        🚗
+                    </span>
+
+                    <select id="historyCarTypeFilter">
+
+                        <option value="">
+                            Alle biltyper
+                        </option>
+
+                        <option value="Benzin Lille">
+                            Benzin - lille
+                        </option>
+
+                        <option value="Benzin Stor">
+                            Benzin - stor
+                        </option>
+
+                        <option value="Diesel">
+                            Diesel
+                        </option>
+
+                        <option value="Hybrid">
+                            Hybrid
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- Date -->
+            <div class="filter-block">
+
+                <label class="filter-label">
+                    Dato
+                </label>
+
+                <input
+                    type="date"
+                    id="historyDateFilter"
+                    class="filter-date">
+
+            </div>
+
+
+            <!-- Filter buttons -->
+            <button
+                type="button"
+                class="filter-apply"
+                onclick="loadHistory()">
+
+                Anvend filtre
+
+            </button>
+
+            <button
+                type="button"
+                class="filter-reset"
+                onclick="resetHistoryFilters()">
+
+                Ryd filtre
+
+            </button>
+
+        </aside>
+
+
+        <!-- SESSION TABLE -->
+        <section class="summary-sessions card">
+
+            <div class="sessions-header">
+
+                <h2 id="historyTitle">
+                    Dine sessioner
+                </h2>
+
+            </div>
+
+            <table class="sessions-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Dato
+                        </th>
+
+                        <th>
+                            Tidspunkt
+                        </th>
+
+                        <th>
+                            Vejtype
+                        </th>
+
+                        <th>
+                            Biltype
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Detaljer
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody id="historyBody">
+
+                    <tr>
+
+                        <td colspan="6">
+                            Indlæser historik...
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+            <div
+                class="table-footer"
+                id="historyFooter">
+
+                Viser --- sessioner
+
+            </div>
+
+        </section>
+
+
+        <!-- DEVELOPMENT CARD -->
+        <aside class="summary-chart card">
+
+            <h2>
+                Udvikling over tid
+            </h2>
+
+            <div class="chart-placeholder">
+
+                <span>
+                    Statistik og graf kan tilføjes senere
+                </span>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+
+    <!-- BEST SESSION -->
+    <section class="summary-best card">
+
+        <div
+            class="best-score"
+            id="bestScoreText">
+
+            ---
+
+        </div>
+
+        <div class="best-info">
+
+            <p>
+
+                <strong id="bestSessionTitle">
+                    Bedste session
+                </strong>
+
+            </p>
+
+            <p id="bestSessionRoad">
+                ---
+            </p>
+
+            <p id="bestSessionCar">
+                ---
+            </p>
+
+        </div>
+
+        <button
+            type="button"
+            class="details-btn large">
+
+            Se detaljer →
+
+        </button>
+
+    </section>
+
+
+    <!-- Navigation -->
+    <section class="summary-navigation">
+
+        <button
+            type="button"
+            class="back-button"
+            onclick="window.location.href='index.html'">
+
+            ← Tilbage til forsiden
+
+        </button>
+
+    </section>
+
+</main>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script src="api.js"></script>
+
+<script src="elev.js"></script>
+
+</body>
+
+</html>

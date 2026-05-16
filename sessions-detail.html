@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Session detaljer</title>
+    <link rel="stylesheet" href="underviser.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            <span>📊</span>
+            <h2>Fartmåler</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="overblik.html" class="menu-item">
+                <span>🏠</span> Overblik
+            </a>
+
+            <a href="maaling.html" class="menu-item">
+                <span>📏</span> Målinger
+            </a>
+
+            <a href="gruppe.html" class="menu-item">
+                <span>👥</span> Grupper
+            </a>
+
+            <a href="leaderboard.html" class="menu-item">
+                <span>🏆</span> Leaderboard
+            </a>
+
+            <a href="sessions.html" class="menu-item">
+                <span>📊</span> Sessions
+            </a>
+
+            <a href="indstillinger.html" class="menu-item">
+                <span>⚙️</span> Indstillinger
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- CONTENT -->
+    <main class="content">
+
+        <!-- HEADER -->
+        <div class="session-header">
+
+            <button class="back-btn" onclick="window.location.href='sessions.html'">
+                ← Alle sessions
+            </button>
+
+            <h2>Session #1 — Gruppe 1</h2>
+
+            <button class="danger-btn">
+                Slet hele session
+            </button>
+
+        </div>
+
+        <!-- INFO BOXES -->
+        <div class="kpi-row">
+
+            <div class="kpi-card">
+                <p>Gruppe</p>
+                <h3>Gruppe 1</h3>
+            </div>
+
+            <div class="kpi-card">
+                <p>Biltype</p>
+                <h3>Benzin lille</h3>
+            </div>
+
+            <div class="kpi-card">
+                <p>Vejtype</p>
+                <h3>Byzone 50</h3>
+            </div>
+
+            <div class="kpi-card">
+                <p>Status</p>
+                <h3>Afsluttet</h3>
+            </div>
+
+            <div class="kpi-card">
+                <p>Score</p>
+                <h3>5.6</h3>
+            </div>
+
+        </div>
+
+        <!-- MÅLINGER -->
+        <section class="card">
+
+            <div class="group-header">
+                <h3>Målinger</h3>
+                <button class="danger-btn">Slet valgte</button>
+            </div>
+
+            <table class="measurement-table">
+
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>#</th>
+                        <th>Hastighed</th>
+                        <th>Tid</th>
+                        <th>CO₂</th>
+                        <th>Status</th>
+                        <th>Tidspunkt</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>1</td>
+                        <td>47 km/t</td>
+                        <td>1.06s</td>
+                        <td>5.6g</td>
+                        <td class="green">Under</td>
+                        <td>14:30</td>
+                        <td><button class="delete-btn-sm">🗑</button></td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="checkbox"></td>
+                        <td>2</td>
+                        <td>55 km/t</td>
+                        <td>0.91s</td>
+                        <td>6.6g</td>
+                        <td class="red">Over</td>
+                        <td>14:31</td>
+                        <td><button class="delete-btn-sm">🗑</button></td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

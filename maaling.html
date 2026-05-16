@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Målinger - Underviser</title>
+
+    <link rel="stylesheet" href="underviser.css">
+</head>
+
+<body onload="protectTeacherPage(); loadTeacherMeasurements();">
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            <span class="sidebar-icon">📊</span>
+            <h2>Fartmåler</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="overblik.html" class="menu-item">
+                <span>🏠</span> Overblik
+            </a>
+
+            <a href="maaling.html" class="menu-item">
+                <span>📏</span> Målinger
+            </a>
+
+            <a href="gruppe.html" class="menu-item">
+                <span>👥</span> Grupper
+            </a>
+
+            <a href="leaderboard.html" class="menu-item">
+                <span>🏆</span> Leaderboard
+            </a>
+
+            <a href="sessions.html" class="menu-item">
+                <span>📊</span> Sessions
+            </a>
+
+            <a href="indstillinger.html" class="menu-item">
+                <span>⚙️</span> Indstillinger
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="content">
+
+        <header class="topbar">
+
+            <div class="welcome-text">
+                <h1>Målinger</h1>
+                <p>Se sessions, gruppernes resultater og klassens udvikling.</p>
+            </div>
+
+            <div class="topbar-actions">
+
+                <div class="user-box">
+
+                    <div class="user-info">
+                        <strong>Underviser</strong>
+                        <span>Admin</span>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="logout-btn global-logout"
+                        onclick="logout()">
+
+                        Log ud →
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- Error message -->
+        <div
+            id="errorBox"
+            class="error-box"
+            style="display: none;">
+        </div>
+
+
+        <section class="kpi-row">
+
+            <div class="kpi-card">
+                <div class="kpi-icon">👥</div>
+                <p>Antal grupper</p>
+                <h2 id="groupCountText">---</h2>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">📊</div>
+                <p>Antal aktive sessions</p>
+                <h2 id="sessionCountText">---</h2>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">🚗</div>
+                <p>Gns. hastighed</p>
+                <h2 id="measurementAverageSpeedText">--- km/t</h2>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">🌿</div>
+                <p>Gns. CO₂-udledning</p>
+                <h2 id="measurementAverageCo2Text">--- g</h2>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-icon">🏆</div>
+                <p>Gns. score</p>
+                <h2 id="measurementAverageScoreText">---</h2>
+            </div>
+
+        </section>
+
+
+        <!-- Sessions - US3 and US14 -->
+        <section class="card comparison-card">
+
+            <div class="group-header">
+
+                <h3>Alle sessions</h3>
+
+                <button
+                    type="button"
+                    class="danger-btn"
+                    onclick="deleteAllHistory()">
+
+                    Slet al historik
+
+                </button>
+
+            </div>
+
+            <table class="comparison-table">
+
+                <thead>
+                    <tr>
+                        <th>Gruppe</th>
+                        <th>Biltype</th>
+                        <th>Vejtype</th>
+                        <th>Fartgrænse</th>
+                        <th>Status</th>
+                        <th>Oprettet</th>
+                        <th>Afslut</th>
+                        <th>Slet</th>
+                    </tr>
+                </thead>
+
+                <tbody id="sessionsTableBody">
+
+                    <tr>
+                        <td colspan="8">Indlæser sessions...</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+
+        <section class="mailer-grid">
+
+            <!-- Latest measurements - US6 and US12 -->
+            <div class="card group-overview">
+
+                <div class="group-header">
+                    <h3>Seneste målinger</h3>
+                </div>
+
+                <table class="group-overview-table">
+
+                    <thead>
+                        <tr>
+                            <th>Gruppe</th>
+                            <th>Hastighed</th>
+                            <th>CO₂</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="latestMeasurementsBody">
+
+                        <tr>
+                            <td colspan="5">Indlæser målinger...</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Simple placeholder because graph is not a core user story -->
+            <div class="card group-graph">
+
+                <div class="graph-header">
+                    <h3>Udvikling over tid</h3>
+                </div>
+
+                <div class="graph-placeholder">
+                    Graf er ikke en kernefunktion, men kan bruges som visuel ekstra senere.
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const links =
+    document.querySelectorAll(".menu-item");
+
+const currentPage =
+    window.location.pathname.split("/").pop();
+
+for (let index = 0; index < links.length; index++) {
+
+    const link =
+        links[index];
+
+    if (link.getAttribute("href") === currentPage) {
+
+        link.classList.add("active");
+    }
+}
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="api.js"></script>
+<script src="underviser.js"></script>
+
+</body>
+
+</html>

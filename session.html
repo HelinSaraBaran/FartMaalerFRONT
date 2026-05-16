@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elev måling</title>
+
+    <link rel="stylesheet" href="Style.css">
+</head>
+
+<body onload="loadStudentSessionPage()">
+
+<main class="page">
+
+<section class="dashboard">
+
+
+<header class="topbar">
+
+    <div class="select-group">
+
+        <label>
+            Gruppe
+        </label>
+
+        <button
+            type="button"
+            class="select-button">
+
+            👥 Gruppe <span id="groupDisplay">---</span>
+
+        </button>
+
+        <p class="active-session">
+            🔒 Aktiv session
+        </p>
+
+    </div>
+
+
+    <div class="select-group">
+
+        <label>
+            Biltype
+        </label>
+
+        <button
+            type="button"
+            class="select-button">
+
+            🚗 <span id="carTypeDisplay">---</span>
+
+        </button>
+
+    </div>
+
+
+    <div class="select-group">
+
+        <label>
+            Vejtype
+        </label>
+
+        <button
+            type="button"
+            class="select-button wide">
+
+            ⚠️ <span id="roadTypeDisplay">---</span>
+
+        </button>
+
+    </div>
+
+
+    <div class="session-actions">
+
+        <button
+            type="button"
+            class="end-session-button">
+
+            📊 Afslut session
+
+        </button>
+
+        <p>
+            Session aktiv
+        </p>
+
+    </div>
+
+</header>
+
+
+<!-- Error message -->
+<div
+    id="errorBox"
+    class="error-box"
+    style="display: none;">
+</div>
+
+
+<div class="notice">
+    🔒 Gruppen er låst mens session er aktiv
+</div>
+
+
+<section class="content-grid">
+
+
+<section class="left-column">
+
+
+<article class="card latest-card">
+
+    <h2>
+        Din seneste måling
+    </h2>
+
+    <div class="speed-area">
+
+        <div class="gauge-wrapper">
+
+            <svg class="gauge" viewBox="0 0 260 150">
+
+                <path
+                    class="gauge-track"
+                    d="M35 125 A95 95 0 0 1 225 125" />
+
+            </svg>
+
+            <div class="speed-text">
+
+                <strong id="speed-value">
+                    --
+                </strong>
+
+                <span>
+                    km/t
+                </span>
+
+            </div>
+
+        </div>
+
+        <p class="muted">
+            Simuleret hastighed
+        </p>
+
+    </div>
+
+    <div class="status-box feedback-message">
+        Feedback vises her
+    </div>
+
+</article>
+
+
+<article class="card session-card">
+
+    <h2>
+        Din session
+    </h2>
+
+    <div class="stats-grid">
+
+        <div class="stat-box">
+            📊 Antal målinger
+            <br>
+            <strong id="measurement-count">
+                --
+            </strong>
+        </div>
+
+        <div class="stat-box">
+            ⚡ Gns. hastighed
+            <br>
+            <strong id="average-speed">
+                --
+            </strong>
+        </div>
+
+        <div class="stat-box">
+            🌿 CO₂ sparet
+            <br>
+            <strong id="saved-co2">
+                --
+            </strong>
+        </div>
+
+        <div class="stat-box">
+            📈 Seneste måling
+            <br>
+            <strong id="latest-speed">
+                --
+            </strong>
+        </div>
+
+    </div>
+
+</article>
+
+</section>
+
+
+<section class="middle-column">
+
+
+<article class="card">
+
+    <h2>
+        Sådan beregnes hastigheden
+    </h2>
+
+    <div class="calculation-grid">
+
+        <div>
+            Distance
+            <br>
+            <strong id="distance">
+                --
+            </strong>
+        </div>
+
+        <div>
+            Tid
+            <br>
+            <strong id="tid">
+                --
+            </strong>
+        </div>
+
+        <div>
+            Fartgrænse
+            <br>
+            <strong id="limit-badge">
+                --
+            </strong>
+        </div>
+
+    </div>
+
+    <div
+        class="formula-box"
+        id="formulaText">
+
+        Hastighed = distance / tid × faktor
+
+    </div>
+
+</article>
+
+
+<article class="card">
+
+    <h2>
+        Sammenlign med grænse
+    </h2>
+
+    <div class="comparison-row">
+
+        <div
+            class="speed-limit"
+            id="speed-limit-display">
+
+            --
+
+        </div>
+
+        <div>
+            Din hastighed
+            <br>
+            <strong id="din-hastighed">
+                --
+            </strong>
+        </div>
+
+        <div>
+            Afvigelse
+            <br>
+            <strong id="afvigelse">
+                --
+            </strong>
+        </div>
+
+    </div>
+
+</article>
+
+
+<article class="card">
+
+    <h2>
+        CO₂-feedback
+    </h2>
+
+    <p id="co2Text">
+        CO₂-resultat vises efter måling.
+    </p>
+
+</article>
+
+</section>
+
+
+<aside class="right-column">
+
+
+<article class="card feedback-card">
+
+    <h2>
+        Feedback
+    </h2>
+
+    <div class="feedback-grid">
+
+        <button
+            type="button"
+            class="feedback-button">
+
+            😠 For hurtigt
+
+        </button>
+
+        <button
+            type="button"
+            class="feedback-button">
+
+            😐 Under
+
+        </button>
+
+        <button
+            type="button"
+            class="feedback-button">
+
+            😊 Perfekt
+
+        </button>
+
+    </div>
+
+    <div class="feedback-message">
+        Feedback vises her
+    </div>
+
+</article>
+
+
+<article class="card settings-card">
+
+    <h2>
+        Indstillinger
+    </h2>
+
+
+    <div class="setting-row">
+
+        <span>
+            🔔
+        </span>
+
+        <p>
+            Lyd (bip)
+        </p>
+
+        <label class="switch">
+
+            <input
+                type="checkbox"
+                id="beepLocalToggle"
+                checked>
+
+            <span></span>
+
+        </label>
+
+    </div>
+
+
+    <div class="setting-row">
+
+        <span>
+            🗣️
+        </span>
+
+        <p>
+            TTS (tale)
+        </p>
+
+        <label class="switch">
+
+            <input
+                type="checkbox"
+                id="ttsLocalToggle"
+                checked>
+
+            <span></span>
+
+        </label>
+
+    </div>
+
+
+    <div class="setting-row">
+
+        <span>
+            👁️
+        </span>
+
+        <p>
+            Visuel feedback
+        </p>
+
+        <label class="switch">
+
+            <input
+                type="checkbox"
+                id="visualFeedbackLocalToggle"
+                checked>
+
+            <span></span>
+
+        </label>
+
+    </div>
+
+
+    <div class="setting-row">
+
+        <span>
+            💡
+        </span>
+
+        <p>
+            Fun facts
+        </p>
+
+        <label class="switch">
+
+            <input
+                type="checkbox"
+                id="funfact-toggle"
+                checked>
+
+            <span></span>
+
+        </label>
+
+    </div>
+
+
+    <div class="setting-row">
+
+        <span>
+            🌍
+        </span>
+
+        <p>
+            TTS-sprog
+        </p>
+
+        <select id="ttsLanguageSelect">
+
+            <option value="da-DK">
+                Dansk
+            </option>
+
+            <option value="en-US">
+                Engelsk
+            </option>
+
+        </select>
+
+    </div>
+
+</article>
+
+
+<button
+    type="button"
+    class="next-button">
+
+    ▶ Næste måling
+
+</button>
+
+</aside>
+
+</section>
+</section>
+</main>
+
+
+<!-- Fun fact popup -->
+<div id="funfact-popup" class="funfact-toast">
+
+    <div class="funfact-toast-content">
+
+        <strong>
+            Fun fact 🌍
+        </strong>
+
+        <p id="funfactText">
+            Vidste du, at præcis hastighed kan give lavere brændstofforbrug og mindre CO₂?
+        </p>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script src="api.js"></script>
+
+<script src="elev.js"></script>
+
+</body>
+
+</html>

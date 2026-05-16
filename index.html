@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Fartmåler</title>
+
+    <link rel="stylesheet" href="Style.css">
+</head>
+
+<body onload="loadFrontPageLeaderboard();">
+
+    <!-- Navigation -->
+    <header class="navbar">
+
+    <div class="logo">
+        Fartmåler
+    </div>
+
+    <div class="nav-actions">
+
+        <button
+            type="button"
+            class="start-btn"
+            onclick="goToMeasurement()">
+            Start din måling →
+        </button>
+
+        <button
+            type="button"
+            class="teacher-login-btn"
+            onclick="goToTeacherLogin()">
+            Underviser login →
+        </button>
+
+    </div>
+
+</header>
+
+    <!-- Error message -->
+    <div
+        id="errorBox"
+        class="error-box"
+        style="display: none;">
+    </div>
+
+
+
+
+    <!-- Features -->
+    <section class="features">
+
+        <div class="card">
+            🌱 Forstå CO₂
+        </div>
+
+        <div class="card">
+            👥 Sammenlign
+        </div>
+
+        <div class="card">
+            🏆 Bliv bedre
+        </div>
+
+        <div class="card">
+            📊 Se udviklingen
+        </div>
+
+    </section>
+
+
+    <!-- Main content -->
+    <section class="main">
+
+        <!-- Leaderboard - US7 -->
+        <div
+            class="leaderboard"
+            id="frontLeaderboardBox">
+
+            <h3>
+                Skole-leaderboard
+            </h3>
+
+            <p>
+                Resultater vises kun, hvis underviseren har slået leaderboard til.
+            </p>
+
+            <ul id="frontLeaderboardList">
+
+                <li>
+                    Indlæser leaderboard...
+                </li>
+
+            </ul>
+
+        </div>
+
+
+        <!-- Image section -->
+        <div class="visual">
+
+            <img
+                src="bil (2).png"
+                alt="Fartmåler bil">
+
+            <div class="info-box">
+
+                🌱 Prøv at ramme fartgrænsen præcist.
+                <br>
+                Præcis hastighed giver bedre score og lavere CO₂.
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="api.js"></script>
+
+    <script src="index.js"></script>
+
+</body>
+
+</html>

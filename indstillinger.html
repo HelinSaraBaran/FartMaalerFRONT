@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indstillinger - Underviser</title>
+
+    <link rel="stylesheet" href="underviser.css">
+</head>
+
+<body onload="protectTeacherPage(); loadSettings();">
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            <span class="sidebar-icon">📊</span>
+            <h2>Fartmåler</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="overblik.html" class="menu-item">
+                <span>🏠</span> Overblik
+            </a>
+
+            <a href="maaling.html" class="menu-item">
+                <span>📏</span> Målinger
+            </a>
+
+            <a href="gruppe.html" class="menu-item">
+                <span>👥</span> Grupper
+            </a>
+
+            <a href="leaderboard.html" class="menu-item">
+                <span>🏆</span> Leaderboard
+            </a>
+
+            <a href="sessions.html" class="menu-item">
+                <span>📊</span> Sessions
+            </a>
+
+            <a href="indstillinger.html" class="menu-item">
+                <span>⚙️</span> Indstillinger
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="content">
+
+        <header class="topbar">
+
+            <div class="welcome-text">
+                <h1>Indstillinger</h1>
+
+                <p>
+                    Administrér globale funktioner for elevernes målinger.
+                </p>
+            </div>
+
+            <div class="topbar-actions">
+
+                <button
+                    type="button"
+                    class="global-logout"
+                    onclick="logout()">
+
+                    Log ud →
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- Error message -->
+        <div
+            id="errorBox"
+            class="error-box"
+            style="display: none;">
+        </div>
+
+
+        <section class="card settings-card">
+
+            <h2>Indstillinger</h2>
+
+            <p class="settings-subtext">
+                Funktioner der er slået fra globalt kan ikke aktiveres af elever.
+            </p>
+
+
+            <!-- MASTER TOGGLE -->
+            <div class="setting-row master-toggle">
+
+                <span>⚙️</span>
+
+                <div class="setting-text">
+
+                    <strong>
+                        Aktiver alle funktioner
+                    </strong>
+
+                    <p>
+                        Slår alle globale funktioner til eller fra.
+                    </p>
+
+                </div>
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="masterToggle"
+                        onchange="updateAllSettings()">
+
+                    <span></span>
+
+                </label>
+
+            </div>
+
+
+            <!-- TTS -->
+            <div class="setting-row">
+
+                <span>🗣️</span>
+
+                <div class="setting-text">
+
+                    <strong>
+                        TTS (tale)
+                    </strong>
+
+                    <p>
+                        Oplæser resultater og fun facts.
+                    </p>
+
+                </div>
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="ttsToggle"
+                        onchange="updateSetting('tts', this.checked)">
+
+                    <span></span>
+
+                </label>
+
+            </div>
+
+
+            <!-- BEEP -->
+            <div class="setting-row">
+
+                <span>🔔</span>
+
+                <div class="setting-text">
+
+                    <strong>
+                        Bip-lyd
+                    </strong>
+
+                    <p>
+                        Afspiller lyd ved for høj hastighed.
+                    </p>
+
+                </div>
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="beepToggle"
+                        onchange="updateSetting('beep', this.checked)">
+
+                    <span></span>
+
+                </label>
+
+            </div>
+
+
+            <!-- FUN FACTS -->
+            <div class="setting-row">
+
+                <span>💡</span>
+
+                <div class="setting-text">
+
+                    <strong>
+                        Fun facts
+                    </strong>
+
+                    <p>
+                        Viser bæredygtige facts efter målinger.
+                    </p>
+
+                </div>
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="funFactsToggle"
+                        onchange="updateSetting('funfacts', this.checked)">
+
+                    <span></span>
+
+                </label>
+
+            </div>
+
+
+            <!-- LEADERBOARD -->
+            <div class="setting-row">
+
+                <span>🏆</span>
+
+                <div class="setting-text">
+
+                    <strong>
+                        Leaderboard
+                    </strong>
+
+                    <p>
+                        Gør leaderboard synligt for elever.
+                    </p>
+
+                </div>
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="leaderboardToggle"
+                        onchange="updateSetting('leaderboard', this.checked)">
+
+                    <span></span>
+
+                </label>
+
+            </div>
+
+
+            <!-- VISUAL FEEDBACK -->
+            <div class="setting-row">
+
+                <span>👁️</span>
+
+                <div class="setting-text">
+
+                    <strong>
+                        Visuel feedback
+                    </strong>
+
+                    <p>
+                        Viser emoji og tekst-feedback baseret på resultat.
+                    </p>
+
+                </div>
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="visualFeedbackToggle"
+                        onchange="updateSetting('visualfeedback', this.checked)">
+
+                    <span></span>
+
+                </label>
+
+            </div>
+
+        </section>
+
+
+        <!-- DANGER ZONE -->
+        <section class="card danger-card">
+
+            <h2>Farezone</h2>
+
+            <p class="danger-subtext">
+                Handlinger der ikke kan fortrydes.
+            </p>
+
+            <div class="danger-buttons">
+
+                <button
+                    type="button"
+                    class="danger-btn"
+                    onclick="deleteAllHistory()">
+
+                    🗑 Slet al historik
+
+                </button>
+
+                <button
+                    type="button"
+                    class="danger-btn"
+                    onclick="deleteAllGroups()">
+
+                    🗑 Slet alle grupper
+
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- Active menu -->
+<script>
+
+const links =
+    document.querySelectorAll(".menu-item");
+
+const currentPage =
+    window.location.pathname.split("/").pop();
+
+for (let index = 0; index < links.length; index++) {
+
+    const link =
+        links[index];
+
+    if (link.getAttribute("href") === currentPage) {
+
+        link.classList.add("active");
+    }
+}
+
+</script>
+
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script src="api.js"></script>
+
+<script src="underviser.js"></script>
+
+</body>
+
+</html>

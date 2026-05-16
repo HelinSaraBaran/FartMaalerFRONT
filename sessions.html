@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Sessions</title>
+    <link rel="stylesheet" href="underviser.css">
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            <span>🚗</span>
+            <h2>Fartmåler</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="overblik.html" class="menu-item">
+                <span>🏠</span> Overblik
+            </a>
+
+            <a href="maaling.html" class="menu-item">
+                <span>📏</span> Målinger
+            </a>
+
+            <a href="gruppe.html" class="menu-item">
+                <span>👥</span> Grupper
+            </a>
+
+            <a href="leaderboard.html" class="menu-item">
+                <span>🏆</span> Leaderboard
+            </a>
+
+            <a href="sessions.html" class="menu-item">
+                <span>📊</span> Sessions
+            </a>
+
+            <a href="indstillinger.html" class="menu-item">
+                <span>⚙️</span> Indstillinger
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- CONTENT -->
+    <main class="content">
+
+        <header class="topbar">
+            <h1>Alle sessions</h1>
+        </header>
+
+        <!-- SESSIONS LIST -->
+        <section class="card">
+
+            <div class="group-header">
+                <h3>Aktive og afsluttede sessions</h3>
+                <button class="danger-btn">Slet al historik</button>
+            </div>
+
+            <table class="session-table">
+
+                <thead>
+                    <tr>
+                        <th>Gruppe</th>
+                        <th>Biltype</th>
+                        <th>Vejtype</th>
+                        <th>Fartgrænse</th>
+                        <th>Status</th>
+                        <th>Oprettet</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <!-- klikbar række -->
+                    <tr onclick="window.location.href='sessions-detail.html'" class="click-row">
+                        <td>Gruppe 1</td>
+                        <td>Benzin lille</td>
+                        <td>Byzone 50</td>
+                        <td>50 km/t</td>
+                        <td class="green">Aktiv</td>
+                        <td>10:30</td>
+                        <td><button class="delete-btn-sm">Slet</button></td>
+                    </tr>
+
+                    <tr onclick="window.location.href='sessions-detail.html'" class="click-row">
+                        <td>Gruppe 2</td>
+                        <td>Diesel</td>
+                        <td>Motorvej 130</td>
+                        <td>130 km/t</td>
+                        <td class="gray">Afsluttet</td>
+                        <td>10:45</td>
+                        <td><button class="delete-btn-sm">Slet</button></td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </section>
+
+    </main>
+
+</div>
+
+</body>
+</html>

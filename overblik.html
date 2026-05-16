@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="da">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Underviser - Oversigt</title>
+
+    <link rel="stylesheet" href="underviser.css">
+</head>
+
+<body onload="protectTeacherPage(); loadTeacherOverview();">
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            <span class="sidebar-icon">📊</span>
+            <h2>Fartmåler</h2>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="overblik.html" class="menu-item">
+                <span>🏠</span> Overblik
+            </a>
+
+            <a href="maaling.html" class="menu-item">
+                <span>📏</span> Målinger
+            </a>
+
+            <a href="gruppe.html" class="menu-item">
+                <span>👥</span> Grupper
+            </a>
+
+            <a href="leaderboard.html" class="menu-item">
+                <span>🏆</span> Leaderboard
+            </a>
+
+            <a href="sessions.html" class="menu-item">
+                <span>📊</span> Sessions
+            </a>
+
+            <a href="indstillinger.html" class="menu-item">
+                <span>⚙️</span> Indstillinger
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <main class="content">
+
+        <header class="topbar">
+
+            <div class="welcome-text">
+
+                <h1>
+                    Hej, Underviser!
+                </h1>
+
+                <p>
+                    Live overblik over elevernes fartmålinger.
+                </p>
+
+            </div>
+
+            <div class="topbar-actions">
+
+                <button
+                    type="button"
+                    class="logout-btn global-logout"
+                    onclick="logout()">
+
+                    Log ud →
+
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <!-- Error message -->
+        <div
+            id="errorBox"
+            class="error-box"
+            style="display: none;">
+        </div>
+
+
+        <section class="kpi-row">
+
+            <div class="kpi-card">
+
+                <div class="kpi-icon">
+                    🚗
+                </div>
+
+                <p>
+                    Gns. hastighed
+                </p>
+
+                <h2 id="averageSpeedText">
+                    --- km/t
+                </h2>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-icon">
+                    🌿
+                </div>
+
+                <p>
+                    Gns. CO₂-udledning
+                </p>
+
+                <h2 id="averageCo2Text">
+                    --- g
+                </h2>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-icon">
+                    🏆
+                </div>
+
+                <p>
+                    Gns. score
+                </p>
+
+                <h2 id="averageScoreText">
+                    ---
+                </h2>
+
+            </div>
+
+
+            <div class="kpi-card">
+
+                <div class="kpi-icon">
+                    📊
+                </div>
+
+                <p>
+                    Antal målinger
+                </p>
+
+                <h2 id="measurementCountText">
+                    ---
+                </h2>
+
+            </div>
+
+        </section>
+
+
+        <section class="dashboard-grid">
+
+            <!-- Live overview - US6 -->
+            <div class="card dark-card">
+
+                <div class="card-header">
+
+                    <h3>
+                        Seneste målinger
+                    </h3>
+
+                    <span class="live-badge">
+                        ● Live
+                    </span>
+
+                </div>
+
+                <table class="dark-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Gruppe</th>
+                            <th>Hastighed</th>
+                            <th>CO₂</th>
+                            <th>Status</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="latestMeasurementsBody">
+
+                        <tr>
+                            <td colspan="4">
+                                Indlæser målinger...
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Class score - US6 and US7 -->
+            <div class="card dark-card center">
+
+                <h3>
+                    Klasse score
+                </h3>
+
+                <div class="score-circle">
+
+                    <span id="classScoreText">
+                        ---
+                    </span>
+
+                    <p>
+                        klasse gns.
+                    </p>
+
+                </div>
+
+                <p
+                    class="small-info"
+                    id="groupStatusText">
+
+                    Aktive grupper: --- · Ledige: ---
+
+                </p>
+
+            </div>
+
+            <!-- klasse overblik-->
+<div class="card groups-overview-card">
+
+    <div class="groups-header">
+        <h3>Klasse overblik</h3>
+        <a href="gruppe.html">Se alle grupper</a>
+    </div>
+
+    <table class="groups-table">
+
+        <thead>
+            <tr>
+                <th>Gruppe</th>
+                <th>Antal elever</th>
+                <th>Gns. hastighed</th>
+                <th>Gns. CO₂</th>
+                <th>Gns. score</th>
+                <th>Udvikling</th>
+            </tr>
+        </thead>
+
+        <tbody id="groupsOverviewBody">
+
+            <tr>
+                <td>Gruppe 1</td>
+                <td>...</td>
+                <td>... km/t</td>
+                <td>... g</td>
+                <td class="score green">...</td>
+                <td class="trend green">↓ ...</td>
+            </tr>
+
+            <tr>
+                <td>Gruppe 2</td>
+                <td>..</td>
+                <td>.. km/t</td>
+                <td>.. g</td>
+                <td class="score orange">...</td>
+                <td class="trend green">↓ ...</td>
+            </tr>
+
+            <tr>
+                <td>Gruppe 3</td>
+                <td>...</td>
+                <td>... km/t</td>
+                <td>... g</td>
+                <td class="score red">...</td>
+                <td class="trend green">↓ ...</td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+    <p class="groups-footer">
+     Udvikling sammenlignet med forrige 7 dage.
+    </p>
+
+</div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+const links =
+    document.querySelectorAll(".menu-item");
+
+const currentPage =
+    window.location.pathname.split("/").pop();
+
+for (let index = 0; index < links.length; index++) {
+
+    const link =
+        links[index];
+
+    if (link.getAttribute("href") === currentPage) {
+
+        link.classList.add("active");
+    }
+}
+
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script src="api.js"></script>
+
+<script src="underviser.js"></script>
+
+</body>
+
+</html>
