@@ -56,11 +56,15 @@
         <header class="topbar">
 
             <div class="welcome-text">
-                <h1>Indstillinger</h1>
+
+                <h1>
+                    Indstillinger
+                </h1>
 
                 <p>
                     Administrér globale funktioner for elevernes målinger.
                 </p>
+
             </div>
 
             <div class="topbar-actions">
@@ -89,7 +93,9 @@
 
         <section class="card settings-card">
 
-            <h2>Indstillinger</h2>
+            <h2>
+                Indstillinger
+            </h2>
 
             <p class="settings-subtext">
                 Funktioner der er slået fra globalt kan ikke aktiveres af elever.
@@ -149,7 +155,7 @@
                     <input
                         type="checkbox"
                         id="ttsToggle"
-                        onchange="updateSetting('tts', this.checked)">
+                        onchange="updateSetting('TTS', this.checked)">
 
                     <span></span>
 
@@ -158,7 +164,7 @@
             </div>
 
 
-            <!-- BEEP -->
+            <!-- BIPLYD -->
             <div class="setting-row">
 
                 <span>🔔</span>
@@ -180,7 +186,7 @@
                     <input
                         type="checkbox"
                         id="beepToggle"
-                        onchange="updateSetting('beep', this.checked)">
+                        onchange="updateSetting('BipLyd', this.checked)">
 
                     <span></span>
 
@@ -211,7 +217,38 @@
                     <input
                         type="checkbox"
                         id="funFactsToggle"
-                        onchange="updateSetting('funfacts', this.checked)">
+                        onchange="updateSetting('FunFacts', this.checked)">
+
+                    <span></span>
+
+                </label>
+
+            </div>
+
+
+            <!-- TTS FUN FACT -->
+            <div class="setting-row">
+
+                <span>🎙️</span>
+
+                <div class="setting-text">
+
+                    <strong>
+                        TTS fun fact
+                    </strong>
+
+                    <p>
+                        Oplæser fun facts med tale.
+                    </p>
+
+                </div>
+
+                <label class="switch">
+
+                    <input
+                        type="checkbox"
+                        id="ttsFunFactToggle"
+                        onchange="updateSetting('TTSFunFact', this.checked)">
 
                     <span></span>
 
@@ -235,6 +272,10 @@
                         Gør leaderboard synligt for elever.
                     </p>
 
+                    <p id="leaderboardAdminInfo">
+                        Leaderboard status indlæses...
+                    </p>
+
                 </div>
 
                 <label class="switch">
@@ -242,7 +283,7 @@
                     <input
                         type="checkbox"
                         id="leaderboardToggle"
-                        onchange="updateSetting('leaderboard', this.checked)">
+                        onchange="updateSetting('Leaderboard', this.checked)">
 
                     <span></span>
 
@@ -251,7 +292,7 @@
             </div>
 
 
-            <!-- VISUAL FEEDBACK -->
+            <!-- VISUEL FEEDBACK -->
             <div class="setting-row">
 
                 <span>👁️</span>
@@ -273,7 +314,7 @@
                     <input
                         type="checkbox"
                         id="visualFeedbackToggle"
-                        onchange="updateSetting('visualfeedback', this.checked)">
+                        onchange="updateSetting('VisuelFeedback', this.checked)">
 
                     <span></span>
 
@@ -287,7 +328,9 @@
         <!-- DANGER ZONE -->
         <section class="card danger-card">
 
-            <h2>Farezone</h2>
+            <h2>
+                Farezone
+            </h2>
 
             <p class="danger-subtext">
                 Handlinger der ikke kan fortrydes.
@@ -318,6 +361,46 @@
         </section>
 
     </main>
+
+</div>
+
+
+<!-- FÆLLES BEKRÆFTELSES POPUP -->
+<div id="confirmModal" class="custom-modal">
+
+    <div class="custom-modal-content">
+
+        <h3 id="confirmModalTitle">
+            Bekræft handling
+        </h3>
+
+        <p id="confirmModalText">
+            Er du sikker?
+        </p>
+
+        <div class="custom-modal-actions">
+
+            <button
+                type="button"
+                class="modal-cancel-btn"
+                onclick="closeConfirmModal()">
+
+                Annuller
+
+            </button>
+
+            <button
+                type="button"
+                class="modal-delete-btn"
+                onclick="runConfirmModalAction()">
+
+                Ja, fortsæt
+
+            </button>
+
+        </div>
+
+    </div>
 
 </div>
 
