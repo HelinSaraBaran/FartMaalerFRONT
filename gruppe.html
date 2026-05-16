@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grupper – Underviser</title>
+    <title>Grupper - Underviser</title>
 
     <link rel="stylesheet" href="underviser.css">
 </head>
@@ -40,6 +40,7 @@
             </a>
 
             <a href="sessions.html" class="menu-item">
+                <span>📊</span> Sessions
             </a>
 
             <a href="indstillinger.html" class="menu-item">
@@ -71,7 +72,7 @@
         <div id="errorBox" class="error-box" style="display:none;"></div>
 
 
-        <!-- 🔹 REGISTREREDE GRUPPER -->
+        <!-- REGISTREREDE GRUPPER -->
         <section class="card">
 
             <h3>Registrerede grupper</h3>
@@ -103,7 +104,7 @@
         </section>
 
 
-        <!-- 🔹 OPRET GRUPPE -->
+        <!-- OPRET GRUPPE -->
         <section class="card">
 
             <h3>Opret ny gruppe</h3>
@@ -131,7 +132,7 @@
 </div>
 
 
-<!-- 🔹 DELETE POPUP -->
+<!-- DELETE POPUP -->
 <div id="deleteModal" class="modal">
     <div class="modal-content">
 
@@ -152,7 +153,7 @@
 </div>
 
 
-<!-- 🔹 EDIT POPUP -->
+<!-- EDIT POPUP -->
 <div id="editModal" class="modal">
     <div class="modal-content">
 
@@ -174,26 +175,28 @@
 </div>
 
 
-<!-- 🔹 ACTIVE MENU -->
+<!-- ACTIVE MENU -->
 <script>
 const links = document.querySelectorAll(".menu-item");
 const currentPage = window.location.pathname.split("/").pop();
 
-for (let i = 0; i < links.length; i++) {
-    if (links[i].getAttribute("href") === currentPage) {
-        links[i].classList.add("active");
+for (let index = 0; index < links.length; index++) {
+
+    if (links[index].getAttribute("href") === currentPage) {
+
+        links[index].classList.add("active");
     }
 }
 </script>
 
 
-<!-- 🔹 AXIOS -->
+<!-- AXIOS -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-<!-- 🔹 API -->
+<!-- API -->
 <script src="api.js"></script>
 
-<!-- 🔹 LOGIC -->
+<!-- LOGIC -->
 <script src="underviser.js"></script>
 
 </body>
