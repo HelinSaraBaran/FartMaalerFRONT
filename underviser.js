@@ -238,20 +238,10 @@ async function editGroup(id) {
         return;
     }
 
-    const newSchool =
-        prompt("Skriv skolenavn:");
-
-    let schoolName =
-        "Roskilde Skole";
-
-    if (newSchool !== null && newSchool !== "") {
-        schoolName = newSchool;
-    }
-
     const updatedGroup = {
         id: id,
         name: newName,
-        school: schoolName,
+        school: "Roskilde Skole",
         isLocked: false
     };
 
@@ -339,56 +329,97 @@ async function loadSettings() {
         let enabledCount =
             0;
 
+        let totalCount =
+            0;
+
         for (let index = 0; index < settings.length; index++) {
 
             const setting =
                 settings[index];
 
-            if (setting.value === true) {
-                enabledCount = enabledCount + 1;
+            if (setting.key === undefined || setting.key === null) {
+                continue;
             }
 
-            if (setting.key !== undefined &&
-                setting.key !== null &&
-                setting.key.toLowerCase() === "tts") {
+            const key =
+                setting.key.toLowerCase();
 
-                setChecked("ttsToggle", setting.value);
+            const value =
+                convertSettingValueToBoolean(
+                    setting.value
+                );
+
+            totalCount =
+                totalCount + 1;
+
+            if (value === true) {
+
+                enabledCount =
+                    enabledCount + 1;
             }
 
-            if (setting.key !== undefined &&
-                setting.key !== null &&
-                setting.key.toLowerCase() === "beep") {
+            if (key === "tts") {
 
-                setChecked("beepToggle", setting.value);
+                setChecked(
+                    "ttsToggle",
+                    value
+                );
             }
 
-            if (setting.key !== undefined &&
-                setting.key !== null &&
-                setting.key.toLowerCase() === "funfacts") {
+            if (key === "biplyd") {
 
-                setChecked("funFactsToggle", setting.value);
+                setChecked(
+                    "beepToggle",
+                    value
+                );
             }
 
-            if (setting.key !== undefined &&
-                setting.key !== null &&
-                setting.key.toLowerCase() === "leaderboard") {
+            if (key === "funfacts") {
 
-                setChecked("leaderboardToggle", setting.value);
+                setChecked(
+                    "funFactsToggle",
+                    value
+                );
             }
 
-            if (setting.key !== undefined &&
-                setting.key !== null &&
-                setting.key.toLowerCase() === "visualfeedback") {
+            if (key === "ttsfunfact") {
 
-                setChecked("visualFeedbackToggle", setting.value);
+                setChecked(
+                    "ttsFunFactToggle",
+                    value
+                );
+            }
+
+            if (key === "leaderboard") {
+
+                setChecked(
+                    "leaderboardToggle",
+                    value
+                );
+
+                updateLeaderboardAdminText(
+                    value
+                );
+            }
+
+            if (key === "visuelfeedback") {
+
+                setChecked(
+                    "visualFeedbackToggle",
+                    value
+                );
             }
         }
 
-        if (enabledCount === settings.length && settings.length > 0) {
-            masterToggle.checked = true;
+        if (enabledCount === totalCount && totalCount > 0) {
+
+            masterToggle.checked =
+                true;
         }
         else {
-            masterToggle.checked = false;
+
+            masterToggle.checked =
+                false;
         }
     }
 
@@ -408,22 +439,67 @@ async function updateSetting(key, value) {
 
     clearError();
 
-    const settingData = {
-        key: key,
-        value: value
-    };
-
     try {
 
-        await axios.put(
-            apiUrl + "/Settings/" + key,
-            settingData
+        await saveSettingOnly(
+            key,
+            value
         );
+
+        await loadSettings();
+
+        applyGlobalSettingsToAdminPage();
     }
 
     catch(error) {
 
+        console.log("Fejl ved gem af indstilling:");
         console.log(error);
+
+        if (error.response !== undefined) {
+
+            console.log("Status:");
+            console.log(error.response.status);
+
+            console.log("Response data:");
+            console.log(error.response.data);
+
+            if (error.response.status === 401) {
+
+                showError(
+                    "Du er ikke logget ind. Log ind igen."
+                );
+
+                return;
+            }
+
+            if (error.response.status === 403) {
+
+                showError(
+                    "Du har ikke adgang til at ændre indstillinger."
+                );
+
+                return;
+            }
+
+            if (error.response.status === 404) {
+
+                showError(
+                    "Indstillingen blev ikke fundet: " + key
+                );
+
+                return;
+            }
+
+            if (error.response.status >= 500) {
+
+                showError(
+                    "Backend/server fejl ved gem af indstilling."
+                );
+
+                return;
+            }
+        }
 
         showError(
             "Kunne ikke gemme indstilling"
@@ -433,7 +509,7 @@ async function updateSetting(key, value) {
 
 
 // Opdaterer alle indstillinger - US2
-function updateAllSettings() {
+async function updateAllSettings() {
 
     const masterToggle =
         document.getElementById("masterToggle");
@@ -442,20 +518,149 @@ function updateAllSettings() {
         return;
     }
 
+    clearError();
+
     const isChecked =
         masterToggle.checked;
 
     setChecked("ttsToggle", isChecked);
     setChecked("beepToggle", isChecked);
     setChecked("funFactsToggle", isChecked);
+    setChecked("ttsFunFactToggle", isChecked);
     setChecked("leaderboardToggle", isChecked);
     setChecked("visualFeedbackToggle", isChecked);
 
-    updateSetting("tts", isChecked);
-    updateSetting("beep", isChecked);
-    updateSetting("funfacts", isChecked);
-    updateSetting("leaderboard", isChecked);
-    updateSetting("visualfeedback", isChecked);
+    try {
+
+        await saveSettingOnly(
+            "TTS",
+            isChecked
+        );
+
+        await saveSettingOnly(
+            "BipLyd",
+            isChecked
+        );
+
+        await saveSettingOnly(
+            "FunFacts",
+            isChecked
+        );
+
+        await saveSettingOnly(
+            "TTSFunFact",
+            isChecked
+        );
+
+        await saveSettingOnly(
+            "Leaderboard",
+            isChecked
+        );
+
+        await saveSettingOnly(
+            "VisuelFeedback",
+            isChecked
+        );
+
+        await loadSettings();
+
+        applyGlobalSettingsToAdminPage();
+    }
+
+    catch(error) {
+
+        console.log("Fejl ved gem af alle indstillinger:");
+        console.log(error);
+
+        if (error.response !== undefined) {
+
+            console.log("Status:");
+            console.log(error.response.status);
+
+            console.log("Response data:");
+            console.log(error.response.data);
+        }
+
+        showError(
+            "Kunne ikke gemme alle indstillinger"
+        );
+    }
+}
+
+
+// Gemmer en indstilling - US2
+async function saveSettingOnly(key, value) {
+
+    const token =
+        localStorage.getItem("token");
+
+    if (token === null || token === "") {
+
+        showError(
+            "Du er ikke logget ind. Log ind igen."
+        );
+
+        throw new Error("Token mangler");
+    }
+
+    const settingData = {
+        key: key,
+        value: value
+    };
+
+    await axios.put(
+        apiUrl + "/Settings/" + key,
+        settingData,
+        {
+            headers:
+            {
+                Authorization: "Bearer " + token
+            }
+        }
+    );
+}
+
+
+// Opdaterer admin siden efter ændringer.
+function applyGlobalSettingsToAdminPage() {
+
+    const leaderboardToggle =
+        document.getElementById("leaderboardToggle");
+
+    if (leaderboardToggle !== null) {
+
+        updateLeaderboardAdminText(
+            leaderboardToggle.checked
+        );
+    }
+}
+
+
+// Opdaterer tekst om leaderboard på admin siden.
+function updateLeaderboardAdminText(isEnabled) {
+
+    const leaderboardInfo =
+        document.getElementById("leaderboardAdminInfo");
+
+    if (leaderboardInfo === null) {
+        return;
+    }
+
+    const enabled =
+        convertSettingValueToBoolean(
+            isEnabled
+        );
+
+    if (enabled === true) {
+
+        leaderboardInfo.innerHTML =
+            "Leaderboard er synligt for elever.";
+    }
+    else {
+
+        leaderboardInfo.innerHTML =
+            "Leaderboard er skjult for elever, men underviseren kan stadig se det i admin.";
+    }
 }
 
 
@@ -1791,8 +1996,43 @@ function setChecked(id, value) {
         document.getElementById(id);
 
     if (element !== null) {
-        element.checked = value;
+
+        element.checked =
+            convertSettingValueToBoolean(
+                value
+            );
     }
+}
+
+
+// Konverterer setting-værdi fra backend til rigtig boolean.
+function convertSettingValueToBoolean(value) {
+
+    if (value === true) {
+        return true;
+    }
+
+    if (value === false) {
+        return false;
+    }
+
+    if (value === "true") {
+        return true;
+    }
+
+    if (value === "false") {
+        return false;
+    }
+
+    if (value === "True") {
+        return true;
+    }
+
+    if (value === "False") {
+        return false;
+    }
+
+    return false;
 }
 
 
