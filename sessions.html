@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="da">
+
 <head>
     <meta charset="UTF-8">
-    <title>Sessions</title>
+    <title>Sessions - Underviser</title>
+
     <link rel="stylesheet" href="underviser.css">
 </head>
 
-<body>
+<body onload="protectTeacherPage(); loadSessionsPage();">
 
 <div class="layout">
 
@@ -52,53 +54,200 @@
     <!-- CONTENT -->
     <main class="content">
 
-        <header class="topbar">
-            <h1>Alle sessions</h1>
+        <header class="topbar sessions-header">
+
+            <div class="welcome-text">
+
+                <h1>
+                    Alle sessions
+                </h1>
+
+                <p>
+                    Se alle sessions, filtrer, sorter og slet historik.
+                </p>
+
+            </div>
+
+            <button
+                type="button"
+                class="logout-btn"
+                onclick="logout()">
+
+                Log ud →
+
+            </button>
+
         </header>
 
-        <!-- SESSIONS LIST -->
-        <section class="card">
 
-            <div class="group-header">
-                <h3>Aktive og afsluttede sessions</h3>
-                <button class="danger-btn">Slet al historik</button>
+        <!-- ERROR -->
+        <div
+            id="errorBox"
+            class="error-box"
+            style="display:none;">
+        </div>
+
+
+        <!-- OVERBLIK -->
+        <section class="sessions-stats">
+
+            <div class="sessions-stat-card">
+
+                <span class="sessions-stat-icon">
+                    📊
+                </span>
+
+                <div>
+
+                    <p>
+                        Klassegennemsnit
+                    </p>
+
+                    <h2 id="classAverageSpeedText">
+                        --
+                    </h2>
+
+                </div>
+
             </div>
+
+
+            <div class="sessions-stat-card">
+
+                <span class="sessions-stat-icon">
+                    🧾
+                </span>
+
+                <div>
+
+                    <p>
+                        Antal sessions
+                    </p>
+
+                    <h2 id="sessionsPageCountText">
+                        --
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SESSIONS LIST -->
+        <section class="sessions-card">
+
+            <div class="sessions-card-header">
+
+                <h3>
+                    Aktive og afsluttede sessions
+                </h3>
+
+                <button
+                    type="button"
+                    class="danger-btn"
+                    onclick="deleteAllHistory()">
+
+                    Slet al historik
+
+                </button>
+
+            </div>
+
+
+            <!-- FILTRE OG SORTERING -->
+            <div class="sessions-filter-row">
+
+                <select
+                    id="sessionGroupFilter"
+                    onchange="filterSessionsPage()">
+
+                    <option value="all">
+                        Alle grupper
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="sessionCarTypeFilter"
+                    onchange="filterSessionsPage()">
+
+                    <option value="all">
+                        Alle biltyper
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="sessionStatusFilter"
+                    onchange="filterSessionsPage()">
+
+                    <option value="all">
+                        Alle statusser
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="sessionSortSelect"
+                    onchange="sortSessionsPage()">
+
+                    <option value="dateDesc">
+                        Nyeste først
+                    </option>
+
+                    <option value="dateAsc">
+                        Ældste først
+                    </option>
+
+                    <option value="groupAsc">
+                        Gruppe A-Z
+                    </option>
+
+                    <option value="carTypeAsc">
+                        Biltype A-Z
+                    </option>
+
+                    <option value="speedAsc">
+                        Hastighed lav-høj
+                    </option>
+
+                    <option value="speedDesc">
+                        Hastighed høj-lav
+                    </option>
+
+                </select>
+
+            </div>
+
 
             <table class="session-table">
 
                 <thead>
+
                     <tr>
                         <th>Gruppe</th>
+                        <th>Dato</th>
                         <th>Biltype</th>
                         <th>Vejtype</th>
-                        <th>Fartgrænse</th>
+                        <th>Hastighed</th>
+                        <th>Klassegennemsnit</th>
                         <th>Status</th>
-                        <th>Oprettet</th>
-                        <th></th>
+                        <th>Handlinger</th>
                     </tr>
+
                 </thead>
 
-                <tbody>
+                <tbody id="sessionsPageTableBody">
 
-                    <!-- klikbar række -->
-                    <tr onclick="window.location.href='sessions-detail.html'" class="click-row">
-                        <td>Gruppe 1</td>
-                        <td>Benzin lille</td>
-                        <td>Byzone 50</td>
-                        <td>50 km/t</td>
-                        <td class="green">Aktiv</td>
-                        <td>10:30</td>
-                        <td><button class="delete-btn-sm">Slet</button></td>
-                    </tr>
-
-                    <tr onclick="window.location.href='sessions-detail.html'" class="click-row">
-                        <td>Gruppe 2</td>
-                        <td>Diesel</td>
-                        <td>Motorvej 130</td>
-                        <td>130 km/t</td>
-                        <td class="gray">Afsluttet</td>
-                        <td>10:45</td>
-                        <td><button class="delete-btn-sm">Slet</button></td>
+                    <tr class="session-empty-row">
+                        <td colspan="8">
+                            Indlæser sessions...
+                        </td>
                     </tr>
 
                 </tbody>
@@ -110,6 +259,71 @@
     </main>
 
 </div>
+
+
+<!-- FÆLLES BEKRÆFTELSES POPUP -->
+<div id="confirmModal" class="custom-modal">
+
+    <div class="custom-modal-content">
+
+        <h3 id="confirmModalTitle">
+            Bekræft handling
+        </h3>
+
+        <p id="confirmModalText">
+            Er du sikker?
+        </p>
+
+        <div class="custom-modal-actions">
+
+            <button
+                type="button"
+                class="modal-cancel-btn"
+                onclick="closeConfirmModal()">
+
+                Annuller
+
+            </button>
+
+            <button
+                type="button"
+                class="modal-delete-btn"
+                onclick="runConfirmModalAction()">
+
+                Ja, fortsæt
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ACTIVE MENU -->
+<script>
+const links = document.querySelectorAll(".menu-item");
+const currentPage = window.location.pathname.split("/").pop();
+
+for (let index = 0; index < links.length; index++) {
+
+    if (links[index].getAttribute("href") === currentPage) {
+
+        links[index].classList.add("active");
+    }
+}
+</script>
+
+
+<!-- AXIOS -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- API -->
+<script src="api.js"></script>
+
+<!-- LOGIC -->
+<script src="underviser.js"></script>
 
 </body>
 </html>
