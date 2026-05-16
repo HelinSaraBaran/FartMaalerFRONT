@@ -1,7 +1,7 @@
-// This file handles the front page functionality.
+// Denne fil håndterer forsiden.
 
 
-// Navigates to student page - US8
+// Sender brugeren videre til elev siden - US8
 function goToMeasurement() {
 
     window.location.href =
@@ -9,7 +9,7 @@ function goToMeasurement() {
 }
 
 
-// Navigates to teacher login - US1
+// Sender underviser videre til login siden - US1
 function goToTeacherLogin() {
 
     window.location.href =
@@ -17,7 +17,22 @@ function goToTeacherLogin() {
 }
 
 
-// Loads leaderboard on front page - US7
+// Gør så man kan trykke Enter på forsiden.
+function setupFrontPageEnterKey() {
+
+    document.addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            goToMeasurement();
+        }
+    });
+}
+
+
+// Henter leaderboard på forsiden - US7
 async function loadFrontPageLeaderboard() {
 
     const leaderboardList =
@@ -145,7 +160,7 @@ async function loadFrontPageLeaderboard() {
 }
 
 
-// Gets leaderboard name with fallback
+// Henter leaderboard navn med fallback.
 function getLeaderboardName(item) {
 
     if (item.schoolName !== undefined && item.schoolName !== null) {
@@ -164,7 +179,7 @@ function getLeaderboardName(item) {
 }
 
 
-// Gets leaderboard value with fallback
+// Henter leaderboard værdi med fallback.
 function getLeaderboardValue(value1, value2, value3, value4) {
 
     if (value1 !== undefined && value1 !== null) {
@@ -187,7 +202,7 @@ function getLeaderboardValue(value1, value2, value3, value4) {
 }
 
 
-// Prevents undefined text
+// Forhindrer tom tekst.
 function safeText(text) {
 
     if (text === undefined || text === null || text === "") {
@@ -196,3 +211,7 @@ function safeText(text) {
 
     return text;
 }
+
+
+// Starter Enter funktion på forsiden.
+setupFrontPageEnterKey();

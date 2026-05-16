@@ -1,8 +1,10 @@
-// This file contains shared API settings and helper methods.
+// Denne fil indeholder fælles API indstillinger og hjælpe metoder.
 
 const apiUrl = "https://fartmaalerapi20260511134506-fnarawbzewapckck.switzerlandnorth-01.azurewebsites.net/api";
 
-// Saves teacher token after login.
+let requestIsRunning = false;
+
+// Gemmer underviser token efter login.
 function saveToken(token) {
 
     localStorage.setItem(
@@ -11,7 +13,7 @@ function saveToken(token) {
     );
 }
 
-// Gets teacher token from localStorage.
+// Henter underviser token fra localStorage.
 function getToken() {
 
     return localStorage.getItem(
@@ -19,7 +21,7 @@ function getToken() {
     );
 }
 
-// Checks if teacher is logged in.
+// Tjekker om underviser er logget ind.
 function isTeacherLoggedIn() {
 
     const token =
@@ -33,7 +35,7 @@ function isTeacherLoggedIn() {
     return true;
 }
 
-// Logs teacher out and sends teacher back to login page.
+// Logger underviser ud og sender underviser tilbage til login siden.
 function logout() {
 
     localStorage.removeItem(
@@ -44,7 +46,7 @@ function logout() {
         "index.html";
 }
 
-// Protects teacher pages from being opened without login.
+// Beskytter underviser sider, så de ikke kan åbnes uden login.
 function protectTeacherPage() {
 
     if (isTeacherLoggedIn() === false) {
@@ -54,7 +56,7 @@ function protectTeacherPage() {
     }
 }
 
-// Adds JWT token to protected API requests.
+// Tilføjer JWT token til beskyttede API kald.
 axios.interceptors.request.use(
     function(config) {
 
@@ -81,7 +83,7 @@ axios.interceptors.request.use(
     }
 );
 
-// Handles API errors in one shared place.
+// Håndterer API fejl samlet.
 axios.interceptors.response.use(
     function(response) {
 
@@ -114,12 +116,12 @@ axios.interceptors.response.use(
                 "Du har ikke adgang til denne funktion."
             );
         }
-       else if (error.response.status === 404) {
+        else if (error.response.status === 404) {
 
-    console.log(
-        "Data blev ikke fundet."
-    );
-}
+            console.log(
+                "Data blev ikke fundet."
+            );
+        }
         else if (error.response.status >= 500) {
 
             showError(
@@ -133,7 +135,7 @@ axios.interceptors.response.use(
     }
 );
 
-// Shows error messages to the user.
+// Viser fejl beskeder til brugeren.
 function showError(message) {
 
     const errorBox =
@@ -157,7 +159,7 @@ function showError(message) {
     }
 }
 
-// Clears visible error messages.
+// Fjerner synlige fejl beskeder.
 function clearError() {
 
     const errorBox =
@@ -172,5 +174,61 @@ function clearError() {
 
         errorBox.style.display =
             "none";
+    }
+}
+
+// Gør så man kan trykke Enter i et input felt.
+function setupEnterKey(inputId, functionToRun) {
+
+    const inputElement =
+        document.getElementById(
+            inputId
+        );
+
+    if (inputElement === null) {
+        return;
+    }
+
+    inputElement.addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            functionToRun();
+        }
+    });
+}
+
+// Gør så man kan trykke Enter i flere input felter.
+function setupEnterKeyForMultipleInputs(inputIds, functionToRun) {
+
+    for (let index = 0; index < inputIds.length; index++) {
+
+        setupEnterKey(
+            inputIds[index],
+            functionToRun
+        );
+    }
+}
+
+// Forhindrer at samme handling kører flere gange på samme tid.
+async function runSafeAsync(functionToRun) {
+
+    if (requestIsRunning === true) {
+        return;
+    }
+
+    requestIsRunning =
+        true;
+
+    try {
+
+        await functionToRun();
+    }
+    finally {
+
+        requestIsRunning =
+            false;
     }
 }

@@ -1,10 +1,12 @@
-// This file handles teacher functionality.
+// Denne fil håndterer underviser funktioner.
 
 let selectedLeaderboardType = "schools";
 let selectedLeaderboardRoadType = "Byzone";
 
+let teacherActionIsRunning = false;
 
-// Teacher login - US1
+
+// Underviser login - US1
 async function loginTeacher() {
 
     clearError();
@@ -69,20 +71,20 @@ async function loginTeacher() {
         console.log(error);
 
         showError(
-            "Forkert login eller API-fejl"
+            "Forkert login eller API fejl"
         );
     }
 }
 
 
-// Logout - US1
+// Logger underviser ud - US1
 function logoutTeacher() {
 
     logout();
 }
 
 
-// Load groups - US4 and US5
+// Henter grupper - US4 og US5
 async function loadGroups() {
 
     const groupTableBody =
@@ -94,6 +96,9 @@ async function loadGroups() {
 
     clearError();
 
+    groupTableBody.innerHTML =
+        "<tr><td colspan='6'>Indlæser grupper...</td></tr>";
+
     try {
 
         const response =
@@ -101,8 +106,22 @@ async function loadGroups() {
                 apiUrl + "/Groups"
             );
 
-        const groups =
+        let groups =
             response.data;
+
+        if (groups === undefined || groups === null) {
+
+            groupTableBody.innerHTML =
+                "<tr><td colspan='6'>Ingen grupper fundet</td></tr>";
+
+            return;
+        }
+
+        if (groups.$values !== undefined && groups.$values !== null) {
+
+            groups =
+                groups.$values;
+        }
 
         groupTableBody.innerHTML =
             "";
@@ -110,7 +129,7 @@ async function loadGroups() {
         if (groups.length === 0) {
 
             groupTableBody.innerHTML =
-                "<tr><td colspan='4'>Ingen grupper endnu</td></tr>";
+                "<tr><td colspan='6'>Ingen grupper endnu</td></tr>";
 
             return;
         }
@@ -125,6 +144,8 @@ async function loadGroups() {
                     "<td>" + getValue(group.id) + "</td>" +
                     "<td>" + getValue(group.name) + "</td>" +
                     "<td>" + getValue(group.school) + "</td>" +
+                    "<td>Aktiv</td>" +
+                    "<td>---</td>" +
                     "<td class='actions' style='text-align:right;'>" +
                         "<button type='button' class='edit-btn' onclick='editGroup(" + group.id + ")'>Rediger</button>" +
                         "<button type='button' class='delete-btn-sm' onclick='deleteGroup(" + group.id + ")'>Slet</button>" +
@@ -138,12 +159,16 @@ async function loadGroups() {
         console.log(error);
 
         groupTableBody.innerHTML =
-            "<tr><td colspan='4'>Kunne ikke hente grupper</td></tr>";
+            "<tr><td colspan='6'>Kunne ikke hente grupper</td></tr>";
+
+        showError(
+            "Kunne ikke hente grupper fra API"
+        );
     }
 }
 
 
-// Create group - US4
+// Opretter gruppe - US4
 async function createGroup() {
 
     clearError();
@@ -151,22 +176,12 @@ async function createGroup() {
     const groupNameInput =
         document.getElementById("groupNameInput");
 
-    const schoolNameInput =
-        document.getElementById("schoolNameInput");
-
     if (groupNameInput === null) {
         return;
     }
 
     const groupName =
-        groupNameInput.value;
-
-    let schoolName =
-        "Køge Skole";
-
-    if (schoolNameInput !== null && schoolNameInput.value !== "") {
-        schoolName = schoolNameInput.value;
-    }
+        groupNameInput.value.trim();
 
     if (groupName === "") {
 
@@ -179,7 +194,8 @@ async function createGroup() {
 
     const newGroup = {
         name: groupName,
-        school: schoolName
+        school: "Roskilde Skole",
+        isLocked: false
     };
 
     try {
@@ -192,11 +208,7 @@ async function createGroup() {
         groupNameInput.value =
             "";
 
-        if (schoolNameInput !== null) {
-            schoolNameInput.value = "";
-        }
-
-        loadGroups();
+        await loadGroups();
     }
 
     catch(error) {
@@ -204,13 +216,13 @@ async function createGroup() {
         console.log(error);
 
         showError(
-            "Kunne ikke oprette gruppe. Tjek om navnet allerede findes."
+            "Kunne ikke oprette gruppe. Tjek Console eller Network."
         );
     }
 }
 
 
-// Edit group - US5
+// Redigerer gruppe - US5
 async function editGroup(id) {
 
     clearError();
@@ -226,7 +238,7 @@ async function editGroup(id) {
         prompt("Skriv skolenavn:");
 
     let schoolName =
-        "Køge Skole";
+        "Roskilde Skole";
 
     if (newSchool !== null && newSchool !== "") {
         schoolName = newSchool;
@@ -235,7 +247,8 @@ async function editGroup(id) {
     const updatedGroup = {
         id: id,
         name: newName,
-        school: schoolName
+        school: schoolName,
+        isLocked: false
     };
 
     try {
@@ -245,7 +258,7 @@ async function editGroup(id) {
             updatedGroup
         );
 
-        loadGroups();
+        await loadGroups();
     }
 
     catch(error) {
@@ -259,7 +272,7 @@ async function editGroup(id) {
 }
 
 
-// Delete group - US5
+// Sletter gruppe - US5
 async function deleteGroup(id) {
 
     clearError();
@@ -277,7 +290,7 @@ async function deleteGroup(id) {
             apiUrl + "/Groups/" + id
         );
 
-        loadGroups();
+        await loadGroups();
     }
 
     catch(error) {
@@ -291,7 +304,7 @@ async function deleteGroup(id) {
 }
 
 
-// Load settings - US2
+// Henter indstillinger - US2
 async function loadSettings() {
 
     const masterToggle =
@@ -310,8 +323,14 @@ async function loadSettings() {
                 apiUrl + "/Settings"
             );
 
-        const settings =
+        let settings =
             response.data;
+
+        if (settings.$values !== undefined && settings.$values !== null) {
+
+            settings =
+                settings.$values;
+        }
 
         let enabledCount =
             0;
@@ -325,23 +344,38 @@ async function loadSettings() {
                 enabledCount = enabledCount + 1;
             }
 
-            if (setting.key === "tts") {
+            if (setting.key !== undefined &&
+                setting.key !== null &&
+                setting.key.toLowerCase() === "tts") {
+
                 setChecked("ttsToggle", setting.value);
             }
 
-            if (setting.key === "beep") {
+            if (setting.key !== undefined &&
+                setting.key !== null &&
+                setting.key.toLowerCase() === "beep") {
+
                 setChecked("beepToggle", setting.value);
             }
 
-            if (setting.key === "funfacts") {
+            if (setting.key !== undefined &&
+                setting.key !== null &&
+                setting.key.toLowerCase() === "funfacts") {
+
                 setChecked("funFactsToggle", setting.value);
             }
 
-            if (setting.key === "leaderboard") {
+            if (setting.key !== undefined &&
+                setting.key !== null &&
+                setting.key.toLowerCase() === "leaderboard") {
+
                 setChecked("leaderboardToggle", setting.value);
             }
 
-            if (setting.key === "visualfeedback") {
+            if (setting.key !== undefined &&
+                setting.key !== null &&
+                setting.key.toLowerCase() === "visualfeedback") {
+
                 setChecked("visualFeedbackToggle", setting.value);
             }
         }
@@ -365,7 +399,7 @@ async function loadSettings() {
 }
 
 
-// Update one setting - US2
+// Opdaterer en indstilling - US2
 async function updateSetting(key, value) {
 
     clearError();
@@ -394,7 +428,7 @@ async function updateSetting(key, value) {
 }
 
 
-// Update all settings - US2
+// Opdaterer alle indstillinger - US2
 function updateAllSettings() {
 
     const masterToggle =
@@ -421,7 +455,7 @@ function updateAllSettings() {
 }
 
 
-// Load teacher overview - US6
+// Henter underviser overblik - US6
 async function loadTeacherOverview() {
 
     await loadOverview();
@@ -432,7 +466,7 @@ async function loadTeacherOverview() {
 }
 
 
-// Load overview / live measurements - US6
+// Henter overblik og live målinger - US6
 async function loadOverview() {
 
     const latestMeasurementsBody =
@@ -451,8 +485,14 @@ async function loadOverview() {
                 apiUrl + "/Measurements"
             );
 
-        const measurements =
+        let measurements =
             response.data;
+
+        if (measurements.$values !== undefined && measurements.$values !== null) {
+
+            measurements =
+                measurements.$values;
+        }
 
         let totalSpeed =
             0;
@@ -531,7 +571,7 @@ async function loadOverview() {
 }
 
 
-// Set overview numbers - US6
+// Sætter tal på overblik siden - US6
 function setOverviewNumbers(averageSpeed, averageCo2, averageScore, count) {
 
     setText(
@@ -561,7 +601,7 @@ function setOverviewNumbers(averageSpeed, averageCo2, averageScore, count) {
 }
 
 
-// Load teacher measurement page - US3, US6, US12, US13 and US14
+// Henter underviser måle side - US3, US6, US12, US13 og US14
 async function loadTeacherMeasurements() {
 
     await loadGroupsCount();
@@ -570,7 +610,7 @@ async function loadTeacherMeasurements() {
 }
 
 
-// Load group count - US3
+// Henter antal grupper - US3
 async function loadGroupsCount() {
 
     const groupCountText =
@@ -587,9 +627,18 @@ async function loadGroupsCount() {
                 apiUrl + "/Groups"
             );
 
+        let groups =
+            response.data;
+
+        if (groups.$values !== undefined && groups.$values !== null) {
+
+            groups =
+                groups.$values;
+        }
+
         setText(
             "groupCountText",
-            response.data.length
+            groups.length
         );
     }
 
@@ -605,7 +654,7 @@ async function loadGroupsCount() {
 }
 
 
-// Load sessions for maaling.html - US3 and US14
+// Henter sessions til maaling siden - US3 og US14
 async function loadSessions() {
 
     const sessionsTableBody =
@@ -624,8 +673,14 @@ async function loadSessions() {
                 apiUrl + "/Sessions"
             );
 
-        const sessions =
+        let sessions =
             response.data;
+
+        if (sessions.$values !== undefined && sessions.$values !== null) {
+
+            sessions =
+                sessions.$values;
+        }
 
         sessionsTableBody.innerHTML =
             "";
@@ -691,7 +746,7 @@ async function loadSessions() {
 }
 
 
-// End session - US14
+// Afslutter session - US14
 async function endSession(id) {
 
     clearError();
@@ -719,8 +774,8 @@ async function endSession(id) {
             }
         );
 
-        loadSessions();
-        loadOverview();
+        await loadSessions();
+        await loadOverview();
     }
 
     catch(error) {
@@ -734,7 +789,7 @@ async function endSession(id) {
 }
 
 
-// Delete session - US3
+// Sletter session - US3
 async function deleteSession(id) {
 
     clearError();
@@ -752,8 +807,8 @@ async function deleteSession(id) {
             apiUrl + "/Sessions/" + id
         );
 
-        loadSessions();
-        loadOverview();
+        await loadSessions();
+        await loadOverview();
     }
 
     catch(error) {
@@ -767,7 +822,7 @@ async function deleteSession(id) {
 }
 
 
-// Delete all history - US3
+// Sletter al historik - US3
 async function deleteAllHistory() {
 
     clearError();
@@ -785,8 +840,8 @@ async function deleteAllHistory() {
             apiUrl + "/Sessions/all"
         );
 
-        loadSessions();
-        loadOverview();
+        await loadSessions();
+        await loadOverview();
     }
 
     catch(error) {
@@ -800,7 +855,7 @@ async function deleteAllHistory() {
 }
 
 
-// Delete all groups - US5
+// Sletter alle grupper - US5
 async function deleteAllGroups() {
 
     clearError();
@@ -818,7 +873,7 @@ async function deleteAllGroups() {
             apiUrl + "/Groups"
         );
 
-        loadGroups();
+        await loadGroups();
     }
 
     catch(error) {
@@ -832,14 +887,14 @@ async function deleteAllGroups() {
 }
 
 
-// Load teacher leaderboard - US7
+// Henter underviser leaderboard - US7
 async function loadTeacherLeaderboard() {
 
     await loadLeaderboard();
 }
 
 
-// Change leaderboard type - US7
+// Skifter leaderboard type - US7
 function changeLeaderboardType(type) {
 
     selectedLeaderboardType =
@@ -859,7 +914,7 @@ function changeLeaderboardType(type) {
 }
 
 
-// Change leaderboard road type - US7
+// Skifter leaderboard vejtype - US7
 function changeLeaderboardRoadType(roadType) {
 
     selectedLeaderboardRoadType =
@@ -884,7 +939,7 @@ function changeLeaderboardRoadType(roadType) {
 }
 
 
-// Load leaderboard - US7
+// Henter leaderboard - US7
 async function loadLeaderboard() {
 
     const leaderboardBody =
@@ -914,8 +969,14 @@ async function loadLeaderboard() {
                 endpoint
             );
 
-        const leaderboard =
+        let leaderboard =
             response.data;
+
+        if (leaderboard.$values !== undefined && leaderboard.$values !== null) {
+
+            leaderboard =
+                leaderboard.$values;
+        }
 
         leaderboardBody.innerHTML =
             "";
@@ -993,7 +1054,7 @@ async function loadLeaderboard() {
 }
 
 
-// Update top three - US7
+// Opdaterer top 3 - US7
 function updateTopThree(leaderboard) {
 
     const topThreeList =
@@ -1036,7 +1097,7 @@ function updateTopThree(leaderboard) {
 }
 
 
-// Update own school panel - US7
+// Opdaterer egen skole felt - US7
 function updateOwnSchool(leaderboard) {
 
     const ownSchoolRank =
@@ -1057,7 +1118,7 @@ function updateOwnSchool(leaderboard) {
         const name =
             getLeaderboardName(item);
 
-        if (name === "Køge Skole") {
+        if (name === "Roskilde Skole") {
 
             ownSchoolRank.innerHTML =
                 "#" + (index + 1);
@@ -1073,11 +1134,11 @@ function updateOwnSchool(leaderboard) {
         "---";
 
     ownSchoolScore.innerHTML =
-        "Køge Skole har ingen data for denne vejtype endnu";
+        "Roskilde Skole har ingen data for denne vejtype endnu";
 }
 
 
-// Helper: set text by id
+// Sætter tekst ud fra id.
 function setText(id, value) {
 
     const element =
@@ -1089,7 +1150,7 @@ function setText(id, value) {
 }
 
 
-// Helper: set checkbox by id
+// Sætter checkbox ud fra id.
 function setChecked(id, value) {
 
     const element =
@@ -1101,7 +1162,7 @@ function setChecked(id, value) {
 }
 
 
-// Helper: set tab active
+// Sætter aktiv tab ud fra id.
 function setTabActive(id, isActive) {
 
     const element =
@@ -1120,7 +1181,7 @@ function setTabActive(id, isActive) {
 }
 
 
-// Helper: fallback value
+// Returnerer fallback værdi.
 function getValue(value) {
 
     if (value === undefined || value === null || value === "") {
@@ -1131,7 +1192,7 @@ function getValue(value) {
 }
 
 
-// Helper: number fallback
+// Returnerer tal fallback.
 function getNumber(value) {
 
     if (value === undefined || value === null || value === "") {
@@ -1142,7 +1203,7 @@ function getNumber(value) {
 }
 
 
-// Helper: leaderboard name fallback
+// Returnerer leaderboard navn med fallback.
 function getLeaderboardName(item) {
 
     if (item.name !== undefined && item.name !== null) {
@@ -1169,7 +1230,7 @@ function getLeaderboardName(item) {
 }
 
 
-// Helper: leaderboard value fallback
+// Returnerer leaderboard værdi med fallback.
 function getLeaderboardValue(value1, value2, value3, value4) {
 
     if (value1 !== undefined && value1 !== null) {
@@ -1192,7 +1253,7 @@ function getLeaderboardValue(value1, value2, value3, value4) {
 }
 
 
-// Helper: format date
+// Formaterer dato.
 function formatDateTime(dateText) {
 
     if (dateText === undefined || dateText === null) {
@@ -1207,8 +1268,76 @@ function formatDateTime(dateText) {
 }
 
 
-// Page load
+// Forhindrer at samme handling kører flere gange på samme tid.
+async function runTeacherActionSafe(functionToRun) {
+
+    if (teacherActionIsRunning === true) {
+        return;
+    }
+
+    teacherActionIsRunning =
+        true;
+
+    try {
+
+        await functionToRun();
+    }
+    finally {
+
+        teacherActionIsRunning =
+            false;
+    }
+}
+
+
+// Gør så Enter kan bruges i et input felt.
+function addTeacherEnterKey(inputId, functionToRun) {
+
+    const inputElement =
+        document.getElementById(inputId);
+
+    if (inputElement === null) {
+        return;
+    }
+
+    inputElement.addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            runTeacherActionSafe(
+                functionToRun
+            );
+        }
+    });
+}
+
+
+// Gør Enter klar på underviser sider.
+function setupTeacherEnterKeys() {
+
+    addTeacherEnterKey(
+        "usernameInput",
+        loginTeacher
+    );
+
+    addTeacherEnterKey(
+        "passwordInput",
+        loginTeacher
+    );
+
+    addTeacherEnterKey(
+        "groupNameInput",
+        createGroup
+    );
+}
+
+
+// Starter funktioner når siden er loaded.
 window.addEventListener("load", function() {
+
+    setupTeacherEnterKeys();
 
     const logoutButtons =
         document.querySelectorAll(".global-logout");
