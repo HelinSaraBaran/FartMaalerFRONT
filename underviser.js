@@ -3,7 +3,11 @@
 let selectedLeaderboardType = "schools";
 let selectedLeaderboardRoadType = "Byzone";
 
+let confirmModalAction = null;
 let teacherActionIsRunning = false;
+
+let allSessionsPageSessions = [];
+let filteredSessionsPageSessions = [];
 
 
 // Underviser login - US1
@@ -273,34 +277,34 @@ async function editGroup(id) {
 
 
 // Sletter gruppe - US5
-async function deleteGroup(id) {
+function deleteGroup(id) {
 
-    clearError();
+    showConfirmModal(
+        "Slet gruppe?",
+        "Er du sikker på, at du vil slette gruppen og dens sessions? Handlingen kan ikke fortrydes.",
+        async function() {
 
-    const confirmed =
-        confirm("Er du sikker på, at du vil slette gruppen og dens sessions?");
+            clearError();
 
-    if (confirmed === false) {
-        return;
-    }
+            try {
 
-    try {
+                await axios.delete(
+                    apiUrl + "/Groups/" + id
+                );
 
-        await axios.delete(
-            apiUrl + "/Groups/" + id
-        );
+                await loadGroups();
+            }
 
-        await loadGroups();
-    }
+            catch(error) {
 
-    catch(error) {
+                console.log(error);
 
-        console.log(error);
-
-        showError(
-            "Kunne ikke slette gruppe"
-        );
-    }
+                showError(
+                    "Kunne ikke slette gruppe"
+                );
+            }
+        }
+    );
 }
 
 
@@ -676,10 +680,28 @@ async function loadSessions() {
         let sessions =
             response.data;
 
+        if (sessions.sessions !== undefined && sessions.sessions !== null) {
+
+            sessions =
+                sessions.sessions;
+        }
+
+        if (sessions.Sessions !== undefined && sessions.Sessions !== null) {
+
+            sessions =
+                sessions.Sessions;
+        }
+
         if (sessions.$values !== undefined && sessions.$values !== null) {
 
             sessions =
                 sessions.$values;
+        }
+
+        if (sessions === undefined || sessions === null) {
+
+            sessions =
+                [];
         }
 
         sessionsTableBody.innerHTML =
@@ -706,7 +728,7 @@ async function loadSessions() {
             let endButton =
                 "";
 
-            if (session.status === "Ended") {
+            if (getValue(session.status).toLowerCase() === "ended") {
 
                 endButton =
                     "<span class='status green'>Afsluttet</span>";
@@ -714,19 +736,19 @@ async function loadSessions() {
             else {
 
                 endButton =
-                    "<button type='button' class='edit-btn' onclick='endSession(" + session.id + ")'>Afslut</button>";
+                    "<button type='button' class='edit-btn' onclick='endSession(" + getSessionId(session) + ")'>Afslut</button>";
             }
 
             sessionsTableBody.innerHTML +=
                 "<tr>" +
-                    "<td>Gruppe " + getValue(session.groupId) + "</td>" +
+                    "<td>" + getSessionGroupName(session) + "</td>" +
                     "<td>" + getValue(session.carType) + "</td>" +
                     "<td>" + getValue(session.roadType) + "</td>" +
-                    "<td>" + getValue(session.speedLimit) + " km/t</td>" +
+                    "<td>" + getSessionSpeed(session) + " km/t</td>" +
                     "<td>" + getValue(session.status) + "</td>" +
-                    "<td>" + formatDateTime(session.createdAt) + "</td>" +
+                    "<td>" + formatSessionDate(session) + "</td>" +
                     "<td>" + endButton + "</td>" +
-                    "<td><button type='button' class='delete-btn-sm' onclick='deleteSession(" + session.id + ")'>Slet</button></td>" +
+                    "<td><button type='button' class='delete-btn-sm' onclick='deleteSession(" + getSessionId(session) + ")'>Slet</button></td>" +
                 "</tr>";
         }
 
@@ -746,144 +768,756 @@ async function loadSessions() {
 }
 
 
-// Afslutter session - US14
-async function endSession(id) {
+// Henter alle sessions til sessions siden - US3
+async function loadSessionsPage() {
 
-    clearError();
+    const sessionsPageTableBody =
+        document.getElementById("sessionsPageTableBody");
 
-    const confirmed =
-        confirm("Er du sikker på, at du vil afslutte denne session?");
-
-    if (confirmed === false) {
+    if (sessionsPageTableBody === null) {
         return;
     }
 
+    clearError();
+
+    setText(
+        "classAverageSpeedText",
+        "-- km/t"
+    );
+
+    setText(
+        "sessionsPageCountText",
+        0
+    );
+
+    sessionsPageTableBody.innerHTML =
+        "<tr class='session-empty-row'><td colspan='8'>Indlæser sessions...</td></tr>";
+
     try {
 
-        const token =
-            localStorage.getItem("token");
+        const response =
+            await axios.get(
+                apiUrl + "/Sessions/admin"
+            );
 
-        await axios.put(
-            apiUrl + "/Sessions/" + id + "/end",
-            {},
-            {
-                headers:
-                {
-                    Authorization: "Bearer " + token
-                }
-            }
+        const responseData =
+            response.data;
+
+        let sessions =
+            responseData.sessions;
+
+        if (sessions === undefined || sessions === null) {
+
+            sessions =
+                responseData.Sessions;
+        }
+
+        if (sessions === undefined || sessions === null) {
+
+            sessions =
+                [];
+        }
+
+        if (sessions.$values !== undefined && sessions.$values !== null) {
+
+            sessions =
+                sessions.$values;
+        }
+
+        allSessionsPageSessions =
+            sessions;
+
+        filteredSessionsPageSessions =
+            sessions;
+
+        fillSessionFilters(
+            sessions
         );
 
-        await loadSessions();
-        await loadOverview();
+        updateSessionsPageNumbersFromResponse(
+            responseData,
+            sessions
+        );
+
+        sortSessionsPage();
     }
 
     catch(error) {
 
         console.log(error);
 
+        allSessionsPageSessions =
+            [];
+
+        filteredSessionsPageSessions =
+            [];
+
+        setText(
+            "classAverageSpeedText",
+            "-- km/t"
+        );
+
+        setText(
+            "sessionsPageCountText",
+            0
+        );
+
+        sessionsPageTableBody.innerHTML =
+            "<tr class='session-empty-row'><td colspan='8'>Kunne ikke hente sessions</td></tr>";
+
         showError(
-            "Kunne ikke afslutte session"
+            "Kunne ikke hente sessions fra API"
         );
     }
+}
+
+
+// Fylder filter dropdowns på sessions siden.
+function fillSessionFilters(sessions) {
+
+    const groupFilter =
+        document.getElementById("sessionGroupFilter");
+
+    const carTypeFilter =
+        document.getElementById("sessionCarTypeFilter");
+
+    const statusFilter =
+        document.getElementById("sessionStatusFilter");
+
+    if (groupFilter !== null) {
+
+        groupFilter.innerHTML =
+            "<option value='all'>Alle grupper</option>";
+    }
+
+    if (carTypeFilter !== null) {
+
+        carTypeFilter.innerHTML =
+            "<option value='all'>Alle biltyper</option>";
+    }
+
+    if (statusFilter !== null) {
+
+        statusFilter.innerHTML =
+            "<option value='all'>Alle statusser</option>";
+    }
+
+    for (let index = 0; index < sessions.length; index++) {
+
+        const session =
+            sessions[index];
+
+        addUniqueOption(
+            groupFilter,
+            getSessionGroupName(session),
+            getSessionGroupName(session)
+        );
+
+        addUniqueOption(
+            carTypeFilter,
+            getValue(session.carType),
+            getValue(session.carType)
+        );
+
+        addUniqueOption(
+            statusFilter,
+            getValue(session.status),
+            getValue(session.status)
+        );
+    }
+}
+
+
+// Tilføjer kun option hvis den ikke findes i forvejen.
+function addUniqueOption(selectElement, value, text) {
+
+    if (selectElement === null) {
+        return;
+    }
+
+    if (value === "---") {
+        return;
+    }
+
+    for (let index = 0; index < selectElement.options.length; index++) {
+
+        if (selectElement.options[index].value === value) {
+            return;
+        }
+    }
+
+    selectElement.innerHTML +=
+        "<option value='" + value + "'>" + text + "</option>";
+}
+
+
+// Filtrerer sessions på sessions siden.
+function filterSessionsPage() {
+
+    const groupFilter =
+        document.getElementById("sessionGroupFilter");
+
+    const carTypeFilter =
+        document.getElementById("sessionCarTypeFilter");
+
+    const statusFilter =
+        document.getElementById("sessionStatusFilter");
+
+    let selectedGroup =
+        "all";
+
+    let selectedCarType =
+        "all";
+
+    let selectedStatus =
+        "all";
+
+    if (groupFilter !== null) {
+        selectedGroup = groupFilter.value;
+    }
+
+    if (carTypeFilter !== null) {
+        selectedCarType = carTypeFilter.value;
+    }
+
+    if (statusFilter !== null) {
+        selectedStatus = statusFilter.value;
+    }
+
+    filteredSessionsPageSessions =
+        [];
+
+    for (let index = 0; index < allSessionsPageSessions.length; index++) {
+
+        const session =
+            allSessionsPageSessions[index];
+
+        const groupName =
+            getSessionGroupName(session);
+
+        const carType =
+            getValue(session.carType);
+
+        const status =
+            getValue(session.status);
+
+        let shouldShow =
+            true;
+
+        if (selectedGroup !== "all" && groupName !== selectedGroup) {
+            shouldShow = false;
+        }
+
+        if (selectedCarType !== "all" && carType !== selectedCarType) {
+            shouldShow = false;
+        }
+
+        if (selectedStatus !== "all" && status !== selectedStatus) {
+            shouldShow = false;
+        }
+
+        if (shouldShow === true) {
+
+            filteredSessionsPageSessions.push(
+                session
+            );
+        }
+    }
+
+    updateSessionsPageNumbers(
+        filteredSessionsPageSessions
+    );
+
+    sortSessionsPage();
+}
+
+
+// Sorterer sessions på sessions siden.
+function sortSessionsPage() {
+
+    const sortSelect =
+        document.getElementById("sessionSortSelect");
+
+    let sortValue =
+        "dateDesc";
+
+    if (sortSelect !== null) {
+        sortValue = sortSelect.value;
+    }
+
+    filteredSessionsPageSessions.sort(function(firstSession, secondSession) {
+
+        if (sortValue === "dateAsc") {
+            return new Date(getSessionDate(firstSession)) - new Date(getSessionDate(secondSession));
+        }
+
+        if (sortValue === "dateDesc") {
+            return new Date(getSessionDate(secondSession)) - new Date(getSessionDate(firstSession));
+        }
+
+        if (sortValue === "groupAsc") {
+            return getSessionGroupName(firstSession).localeCompare(getSessionGroupName(secondSession));
+        }
+
+        if (sortValue === "carTypeAsc") {
+            return getValue(firstSession.carType).localeCompare(getValue(secondSession.carType));
+        }
+
+        if (sortValue === "speedAsc") {
+            return getSessionSpeed(firstSession) - getSessionSpeed(secondSession);
+        }
+
+        if (sortValue === "speedDesc") {
+            return getSessionSpeed(secondSession) - getSessionSpeed(firstSession);
+        }
+
+        return 0;
+    });
+
+    displaySessionsPage(
+        filteredSessionsPageSessions
+    );
+}
+
+
+// Viser sessions i tabellen på sessions siden.
+function displaySessionsPage(sessions) {
+
+    const sessionsPageTableBody =
+        document.getElementById("sessionsPageTableBody");
+
+    if (sessionsPageTableBody === null) {
+        return;
+    }
+
+    sessionsPageTableBody.innerHTML =
+        "";
+
+    if (sessions.length === 0) {
+
+        sessionsPageTableBody.innerHTML =
+            "<tr class='session-empty-row'><td colspan='8'>Ingen sessions endnu</td></tr>";
+
+        return;
+    }
+
+    const classAverage =
+        calculateClassAverageSpeed(
+            sessions
+        );
+
+    for (let index = 0; index < sessions.length; index++) {
+
+        const session =
+            sessions[index];
+
+        let statusClass =
+            "session-status-active";
+
+        if (getValue(session.status).toLowerCase() === "ended" ||
+            getValue(session.status).toLowerCase() === "afsluttet") {
+
+            statusClass =
+                "session-status-ended";
+        }
+
+        sessionsPageTableBody.innerHTML +=
+            "<tr class='click-row'>" +
+                "<td>" + getSessionGroupName(session) + "</td>" +
+                "<td>" + formatSessionDate(session) + "</td>" +
+                "<td>" + getValue(session.carType) + "</td>" +
+                "<td>" + getValue(session.roadType) + "</td>" +
+                "<td>" + getSessionSpeed(session) + " km/t</td>" +
+                "<td>" + classAverage + " km/t</td>" +
+                "<td class='" + statusClass + "'>" + getValue(session.status) + "</td>" +
+                "<td>" +
+                    "<button type='button' class='delete-btn-sm' onclick='deleteSession(" + getSessionId(session) + "); event.stopPropagation();'>Slet</button>" +
+                "</td>" +
+            "</tr>";
+    }
+}
+
+
+// Opdaterer tal på sessions siden fra backend response.
+function updateSessionsPageNumbersFromResponse(responseData, sessions) {
+
+    let totalSessions =
+        responseData.totalSessions;
+
+    if (totalSessions === undefined || totalSessions === null) {
+
+        totalSessions =
+            responseData.TotalSessions;
+    }
+
+    if (totalSessions === undefined || totalSessions === null) {
+
+        totalSessions =
+            sessions.length;
+    }
+
+    let classAverageSpeed =
+        responseData.classAverageSpeed;
+
+    if (classAverageSpeed === undefined || classAverageSpeed === null) {
+
+        classAverageSpeed =
+            responseData.ClassAverageSpeed;
+    }
+
+    if (classAverageSpeed === undefined || classAverageSpeed === null) {
+
+        classAverageSpeed =
+            calculateClassAverageSpeed(sessions);
+    }
+
+    setText(
+        "sessionsPageCountText",
+        getNumber(totalSessions)
+    );
+
+    if (sessions.length === 0) {
+
+        setText(
+            "classAverageSpeedText",
+            "-- km/t"
+        );
+
+        return;
+    }
+
+    setText(
+        "classAverageSpeedText",
+        getNumber(classAverageSpeed) + " km/t"
+    );
+}
+
+
+// Opdaterer tal på sessions siden.
+function updateSessionsPageNumbers(sessions) {
+
+    if (sessions === undefined || sessions === null) {
+
+        setText(
+            "sessionsPageCountText",
+            0
+        );
+
+        setText(
+            "classAverageSpeedText",
+            "-- km/t"
+        );
+
+        return;
+    }
+
+    setText(
+        "sessionsPageCountText",
+        sessions.length
+    );
+
+    if (sessions.length === 0) {
+
+        setText(
+            "classAverageSpeedText",
+            "-- km/t"
+        );
+
+        return;
+    }
+
+    setText(
+        "classAverageSpeedText",
+        calculateClassAverageSpeed(sessions) + " km/t"
+    );
+}
+
+
+// Beregner gennemsnit for hele klassen.
+function calculateClassAverageSpeed(sessions) {
+
+    if (sessions === undefined || sessions === null || sessions.length === 0) {
+        return 0;
+    }
+
+    let totalSpeed =
+        0;
+
+    let validCount =
+        0;
+
+    for (let index = 0; index < sessions.length; index++) {
+
+        const speed =
+            getSessionSpeed(sessions[index]);
+
+        if (isNaN(speed) === false) {
+
+            totalSpeed =
+                totalSpeed + speed;
+
+            validCount =
+                validCount + 1;
+        }
+    }
+
+    if (validCount === 0) {
+        return 0;
+    }
+
+    return Math.round(totalSpeed / validCount);
+}
+
+
+// Henter session id.
+function getSessionId(session) {
+
+    if (session.id !== undefined && session.id !== null) {
+        return session.id;
+    }
+
+    if (session.sessionId !== undefined && session.sessionId !== null) {
+        return session.sessionId;
+    }
+
+    if (session.SessionId !== undefined && session.SessionId !== null) {
+        return session.SessionId;
+    }
+
+    return 0;
+}
+
+
+// Henter gruppenavn fra session.
+function getSessionGroupName(session) {
+
+    if (session.groupName !== undefined && session.groupName !== null) {
+        return session.groupName;
+    }
+
+    if (session.GroupName !== undefined && session.GroupName !== null) {
+        return session.GroupName;
+    }
+
+    if (session.group !== undefined && session.group !== null) {
+
+        if (session.group.name !== undefined && session.group.name !== null) {
+            return session.group.name;
+        }
+    }
+
+    if (session.name !== undefined && session.name !== null) {
+        return session.name;
+    }
+
+    if (session.groupId !== undefined && session.groupId !== null) {
+        return "Gruppe " + session.groupId;
+    }
+
+    if (session.GroupId !== undefined && session.GroupId !== null) {
+        return "Gruppe " + session.GroupId;
+    }
+
+    return "---";
+}
+
+
+// Henter dato fra session.
+function getSessionDate(session) {
+
+    if (session.createdAt !== undefined && session.createdAt !== null) {
+        return session.createdAt;
+    }
+
+    if (session.date !== undefined && session.date !== null) {
+        return session.date;
+    }
+
+    if (session.Date !== undefined && session.Date !== null) {
+        return session.Date;
+    }
+
+    return "";
+}
+
+
+// Formaterer session dato.
+function formatSessionDate(session) {
+
+    return formatDateTime(
+        getSessionDate(session)
+    );
+}
+
+
+// Henter hastighed fra session.
+function getSessionSpeed(session) {
+
+    if (session.speed !== undefined && session.speed !== null) {
+        return Number(session.speed);
+    }
+
+    if (session.averageSpeed !== undefined && session.averageSpeed !== null) {
+        return Number(session.averageSpeed);
+    }
+
+    if (session.AverageSpeed !== undefined && session.AverageSpeed !== null) {
+        return Number(session.AverageSpeed);
+    }
+
+    if (session.speedLimit !== undefined && session.speedLimit !== null) {
+        return Number(session.speedLimit);
+    }
+
+    if (session.SpeedLimit !== undefined && session.SpeedLimit !== null) {
+        return Number(session.SpeedLimit);
+    }
+
+    return 0;
+}
+
+
+// Afslutter session - US14
+function endSession(id) {
+
+    showConfirmModal(
+        "Afslut session?",
+        "Er du sikker på, at du vil afslutte denne session?",
+        async function() {
+
+            clearError();
+
+            try {
+
+                const token =
+                    localStorage.getItem("token");
+
+                await axios.put(
+                    apiUrl + "/Sessions/" + id + "/end",
+                    {},
+                    {
+                        headers:
+                        {
+                            Authorization: "Bearer " + token
+                        }
+                    }
+                );
+
+                await loadSessions();
+                await loadOverview();
+                await loadSessionsPage();
+            }
+
+            catch(error) {
+
+                console.log(error);
+
+                showError(
+                    "Kunne ikke afslutte session"
+                );
+            }
+        }
+    );
 }
 
 
 // Sletter session - US3
-async function deleteSession(id) {
+function deleteSession(id) {
 
-    clearError();
+    showConfirmModal(
+        "Slet session?",
+        "Er du sikker på, at du vil slette denne session? Handlingen kan ikke fortrydes.",
+        async function() {
 
-    const confirmed =
-        confirm("Er du sikker på, at du vil slette denne session?");
+            clearError();
 
-    if (confirmed === false) {
-        return;
-    }
+            try {
 
-    try {
+                await axios.delete(
+                    apiUrl + "/Sessions/" + id
+                );
 
-        await axios.delete(
-            apiUrl + "/Sessions/" + id
-        );
+                await loadSessions();
+                await loadOverview();
+                await loadSessionsPage();
+            }
 
-        await loadSessions();
-        await loadOverview();
-    }
+            catch(error) {
 
-    catch(error) {
+                console.log(error);
 
-        console.log(error);
-
-        showError(
-            "Kunne ikke slette session"
-        );
-    }
+                showError(
+                    "Kunne ikke slette session"
+                );
+            }
+        }
+    );
 }
 
 
 // Sletter al historik - US3
-async function deleteAllHistory() {
+function deleteAllHistory() {
 
-    clearError();
+    showConfirmModal(
+        "Slet al historik?",
+        "Er du sikker på, at du vil slette al historik? Alle sessions og målinger bliver slettet.",
+        async function() {
 
-    const confirmed =
-        confirm("Er du sikker på, at du vil slette al historik?");
+            clearError();
 
-    if (confirmed === false) {
-        return;
-    }
+            try {
 
-    try {
+                await axios.delete(
+                    apiUrl + "/Sessions/all"
+                );
 
-        await axios.delete(
-            apiUrl + "/Sessions/all"
-        );
+                await loadSessions();
+                await loadOverview();
+                await loadSessionsPage();
+            }
 
-        await loadSessions();
-        await loadOverview();
-    }
+            catch(error) {
 
-    catch(error) {
+                console.log(error);
 
-        console.log(error);
-
-        showError(
-            "Kunne ikke slette al historik. Tjek om backend har endpoint til dette."
-        );
-    }
+                showError(
+                    "Kunne ikke slette al historik. Tjek om backend har endpoint til dette."
+                );
+            }
+        }
+    );
 }
 
 
 // Sletter alle grupper - US5
-async function deleteAllGroups() {
+function deleteAllGroups() {
 
-    clearError();
+    showConfirmModal(
+        "Slet alle grupper?",
+        "Er du sikker på, at du vil slette alle grupper?",
+        async function() {
 
-    const confirmed =
-        confirm("Er du sikker på, at du vil slette alle grupper?");
+            clearError();
 
-    if (confirmed === false) {
-        return;
-    }
+            try {
 
-    try {
+                await axios.delete(
+                    apiUrl + "/Groups"
+                );
 
-        await axios.delete(
-            apiUrl + "/Groups"
-        );
+                await loadGroups();
+            }
 
-        await loadGroups();
-    }
+            catch(error) {
 
-    catch(error) {
+                console.log(error);
 
-        console.log(error);
-
-        showError(
-            "Kunne ikke slette alle grupper. Tjek om backend har endpoint til dette."
-        );
-    }
+                showError(
+                    "Kunne ikke slette alle grupper. Tjek om backend har endpoint til dette."
+                );
+            }
+        }
+    );
 }
 
 
@@ -1199,7 +1833,14 @@ function getNumber(value) {
         return 0;
     }
 
-    return Number(value);
+    const number =
+        Number(value);
+
+    if (isNaN(number) === true) {
+        return 0;
+    }
+
+    return number;
 }
 
 
@@ -1256,7 +1897,7 @@ function getLeaderboardValue(value1, value2, value3, value4) {
 // Formaterer dato.
 function formatDateTime(dateText) {
 
-    if (dateText === undefined || dateText === null) {
+    if (dateText === undefined || dateText === null || dateText === "") {
         return "---";
     }
 
@@ -1265,6 +1906,73 @@ function formatDateTime(dateText) {
     }
 
     return dateText.substring(0, 16).replace("T", " ");
+}
+
+
+// Viser den fælles pæne popup.
+function showConfirmModal(title, text, actionToRun) {
+
+    const modal =
+        document.getElementById("confirmModal");
+
+    const titleElement =
+        document.getElementById("confirmModalTitle");
+
+    const textElement =
+        document.getElementById("confirmModalText");
+
+    if (modal === null || titleElement === null || textElement === null) {
+
+        const confirmed =
+            confirm(text);
+
+        if (confirmed === true) {
+            actionToRun();
+        }
+
+        return;
+    }
+
+    titleElement.innerHTML =
+        title;
+
+    textElement.innerHTML =
+        text;
+
+    confirmModalAction =
+        actionToRun;
+
+    modal.style.display =
+        "flex";
+}
+
+
+// Lukker den fælles popup.
+function closeConfirmModal() {
+
+    const modal =
+        document.getElementById("confirmModal");
+
+    if (modal !== null) {
+
+        modal.style.display =
+            "none";
+    }
+
+    confirmModalAction =
+        null;
+}
+
+
+// Kører handlingen når der trykkes ja.
+function runConfirmModalAction() {
+
+    if (confirmModalAction !== null) {
+
+        confirmModalAction();
+    }
+
+    closeConfirmModal();
 }
 
 

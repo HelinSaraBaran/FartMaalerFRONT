@@ -51,6 +51,7 @@
 
     </aside>
 
+
     <!-- MAIN CONTENT -->
     <main class="content">
 
@@ -58,28 +59,48 @@
         <header class="topbar">
 
             <div class="welcome-text">
-                <h1>Administrer grupper</h1>
-                <p>Opret, rediger og slet grupper til undervisningen.</p>
+
+                <h1>
+                    Administrer grupper
+                </h1>
+
+                <p>
+                    Opret, rediger og slet grupper til undervisningen.
+                </p>
+
             </div>
 
-            <button class="logout-btn" onclick="logout()">
+            <button
+                type="button"
+                class="logout-btn"
+                onclick="logout()">
+
                 Log ud →
+
             </button>
 
         </header>
 
+
         <!-- ERROR -->
-        <div id="errorBox" class="error-box" style="display:none;"></div>
+        <div
+            id="errorBox"
+            class="error-box"
+            style="display:none;">
+        </div>
 
 
         <!-- REGISTREREDE GRUPPER -->
         <section class="card">
 
-            <h3>Registrerede grupper</h3>
+            <h3>
+                Registrerede grupper
+            </h3>
 
             <table class="group-table">
 
                 <thead>
+
                     <tr>
                         <th>#</th>
                         <th>Navn</th>
@@ -88,13 +109,15 @@
                         <th>Sessions</th>
                         <th>Handlinger</th>
                     </tr>
+
                 </thead>
 
                 <tbody id="groupTableBody">
 
-                    <!-- DATA FRA JS -->
                     <tr>
-                        <td colspan="6">Indlæser grupper...</td>
+                        <td colspan="6">
+                            Indlæser grupper...
+                        </td>
                     </tr>
 
                 </tbody>
@@ -107,7 +130,9 @@
         <!-- OPRET GRUPPE -->
         <section class="card">
 
-            <h3>Opret ny gruppe</h3>
+            <h3>
+                Opret ny gruppe
+            </h3>
 
             <div class="group-create-row">
 
@@ -122,6 +147,7 @@
                     onclick="createGroup()">
 
                     Opret
+
                 </button>
 
             </div>
@@ -129,49 +155,50 @@
         </section>
 
     </main>
+
 </div>
 
 
-<!-- DELETE POPUP -->
-<div id="deleteModal" class="modal">
-    <div class="modal-content">
+<!-- FÆLLES BEKRÆFTELSES POPUP -->
+<div
+    id="confirmModal"
+    class="custom-modal"
+    style="display: none;">
 
-        <h3>Slet gruppe</h3>
-        <p>Er du sikker på at du vil slette denne gruppe?</p>
+    <div class="custom-modal-content">
 
-        <div class="modal-actions">
-            <button class="danger-btn" onclick="confirmDelete()">
-                Ja, slet
-            </button>
+        <h3 id="confirmModalTitle">
+            Bekræft handling
+        </h3>
 
-            <button onclick="closeModal()">
+        <p id="confirmModalText">
+            Er du sikker?
+        </p>
+
+        <div class="custom-modal-actions">
+
+            <button
+                type="button"
+                class="modal-cancel-btn"
+                onclick="closeConfirmModal()">
+
                 Annuller
+
             </button>
+
+            <button
+                type="button"
+                class="modal-delete-btn"
+                onclick="runConfirmModalAction()">
+
+                Ja, fortsæt
+
+            </button>
+
         </div>
 
     </div>
-</div>
 
-
-<!-- EDIT POPUP -->
-<div id="editModal" class="modal">
-    <div class="modal-content">
-
-        <h3>Rediger gruppe</h3>
-
-        <input type="text" id="editGroupName">
-
-        <div class="modal-actions">
-            <button class="save-btn" onclick="saveEdit()">
-                Gem
-            </button>
-
-            <button onclick="closeModal()">
-                Annuller
-            </button>
-        </div>
-
-    </div>
 </div>
 
 
