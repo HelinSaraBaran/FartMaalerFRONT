@@ -1088,4 +1088,10 @@ button {
     .measurement-card {
         padding: 30px;
     }
+
+    .switch input:disabled + span {
+    background: #e0e0e0;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 }

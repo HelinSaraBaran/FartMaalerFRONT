@@ -293,6 +293,8 @@ function loadStudentSessionPage() {
         limitBadge.innerHTML =
             safeText(speedLimit);
     }
+
+    loadGlobalSettings();
 }
 
 
@@ -921,6 +923,42 @@ function showFunFact() {
 
     }, 5000);
 }
+
+async function loadGlobalSettings() {
+    try {
+        const response = await axios.get(apiUrl + "/Settings");
+        const settings = response.data;
+
+        for (let i = 0; i < settings.length; i++) {
+            const key = settings[i].key.toLowerCase();
+            const value = settings[i].value;
+
+            if (key === "tts" && value === false) {
+                disableToggle("ttsLocalToggle");
+            }
+            if (key === "biplyd" && value === false) {
+                disableToggle("beepLocalToggle");
+            }
+            if (key === "visuelfeedback" && value === false) {
+                disableToggle("visualFeedbackLocalToggle");
+            }
+            if (key === "funfacts" && value === false) {
+                disableToggle("funfact-toggle");
+            }
+        }
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+function disableToggle(id) {
+    const toggle = document.getElementById(id);
+    if (toggle !== null) {
+        toggle.checked = false;
+        toggle.disabled = true;
+    }
+}
+
 
 
 // Page load

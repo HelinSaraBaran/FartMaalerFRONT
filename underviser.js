@@ -595,11 +595,7 @@ async function saveSettingOnly(key, value) {
         localStorage.getItem("token");
 
     if (token === null || token === "") {
-
-        showError(
-            "Du er ikke logget ind. Log ind igen."
-        );
-
+        showError("Du er ikke logget ind. Log ind igen.");
         throw new Error("Token mangler");
     }
 
@@ -619,7 +615,6 @@ async function saveSettingOnly(key, value) {
         }
     );
 }
-
 
 // Opdaterer admin siden efter ændringer.
 function applyGlobalSettingsToAdminPage() {
