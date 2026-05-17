@@ -1016,5 +1016,19 @@ window.addEventListener("load", function() {
         });
     }
 
-    loadHistory();
+loadHistory();
+});
+
+
+window.addEventListener("beforeunload", function() {
+
+    const sessionId = localStorage.getItem("sessionId");
+
+    if (sessionId !== null && sessionId !== "") {
+
+        fetch(apiUrl + "/Sessions/" + sessionId + "/end", {
+            method: "PUT",
+            keepalive: true
+        });
+    }
 });
