@@ -710,10 +710,9 @@ async function loadOverview() {
         let measurements =
             response.data;
 
-        if (measurements.$values !== undefined && measurements.$values !== null) {
+        if (measurements.measurements !== undefined && measurements.measurements !== null) {
+            measurements = measurements.measurements;
 
-            measurements =
-                measurements.$values;
         }
 
         let totalSpeed =
@@ -749,13 +748,13 @@ async function loadOverview() {
                 measurements[index];
 
             const speed =
-                getNumber(measurement.speed);
+             getNumber(measurement.simulatedSpeed);
 
             const co2 =
-                getNumber(measurement.co2);
+             getNumber(measurement.co2);
 
             const score =
-                getNumber(measurement.score);
+              Math.abs(speed - getNumber(measurement.speedLimit)) + co2;
 
             totalSpeed =
                 totalSpeed + speed;
@@ -2354,4 +2353,6 @@ window.addEventListener("load", function() {
             logoutTeacher();
         });
     }
-});
+    
+}
+);
