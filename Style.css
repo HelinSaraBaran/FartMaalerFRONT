@@ -2249,10 +2249,10 @@ body.elev-green-page .measurement-card {
     position: relative !important;
     overflow: hidden !important;
     width: 100% !important;
-    max-width: 1180px !important;
+    max-width: 800px !important;
     background: linear-gradient(135deg, #4f7d56 0%, #3f6f46 40%, #2f5435 100%) !important;
-    border-radius: 34px !important;
-    padding: 70px 82px 60px 82px !important;
+    border-radius: 28px !important;
+    padding: 35px 40px 35px 40px !important;
     box-shadow: 0 22px 48px rgba(37, 66, 42, 0.22) !important;
 }
 
@@ -2445,4 +2445,618 @@ body.elev-green-page .error-box {
 
 .leaf-deco {
     font-size: 24px !important;
+}
+
+
+
+
+
+
+/* =========================================
+   SESSION.HTML - FINAL CLEAN DESIGN
+========================================= */
+
+.layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f4f5f7;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* SIDEBAR */
+
+/* SIDEBAR */
+
+/* ============================= */
+/* GREEN PREMIUM THEME - SIDEBAR */
+/* ============================= */
+
+:root {
+    --sidebar-green: #3f6f46;
+    --sidebar-green-dark: #2f5435;
+    --active-green: #f4faf3;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+
+    background: linear-gradient(
+        180deg,
+        var(--sidebar-green),
+        var(--sidebar-green-dark)
+    );
+
+    box-shadow: 4px 0 18px rgba(47, 84, 53, 0.18);
+}
+
+/* Title */
+.sidebar-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 35px;
+}
+
+.sidebar-title h2 {
+    font-size: 20px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: 0.3px;
+}
+
+.sidebar-icon {
+    font-size: 22px;
+}
+
+/* Menu */
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Menu items */
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 14px;
+    border-radius: 10px;
+
+    text-decoration: none;
+
+    color: #f8fff8;
+    font-size: 15px;
+    font-weight: 600;
+
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid transparent;
+
+    transition: 0.2s ease;
+}
+
+/* Hover */
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.20);
+    transform: translateX(3px);
+}
+
+/* Active item */
+.menu-item.active {
+    background: var(--active-green);
+    color: var(--sidebar-green-dark);
+    font-weight: 800;
+
+    box-shadow: 0 6px 16px rgba(23, 58, 29, 0.18);
+}
+
+/* Icons */
+.menu-item span {
+    font-size: 18px;
+}
+
+.menu-item.active span {
+    filter: none;
+}
+
+/* CONTENT */
+
+.content {
+    flex: 1;
+    padding: 26px;
+}
+
+/* TOP BAR */
+
+.session-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.session-info-box {
+    background: white;
+    padding: 14px 22px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    font-weight: 700;
+}
+
+.session-button {
+    margin-left: auto;
+    background: #5747e8;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 24px;
+    font-weight: 800;
+    font-size: 16px;
+}
+
+/* LOCKED BOX */
+
+.locked-box {
+    background: #e9f1ff;
+    border: 1px solid #bfd1ff;
+    padding: 16px 20px;
+    border-radius: 14px;
+    margin-bottom: 18px;
+    color: #334;
+}
+
+/* GRID */
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1.3fr 0.9fr 0.65fr;
+    gap: 18px;
+    align-items: start;
+}
+
+/* COLUMNS */
+
+.left-column,
+.middle-column,
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* CARDS */
+
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+}
+
+/* HEADINGS */
+
+.card h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #333;
+}
+
+/* SPEED CIRCLE */
+
+.speed-circle {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    border: 10px solid #ececec;
+    margin: 10px auto 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.speed-number {
+    font-size: 50px;
+    font-weight: 900;
+    color: #333;
+}
+
+.speed-unit {
+    font-size: 24px;
+    color: #666;
+}
+
+.speed-text {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.feedback-box {
+    background: #f4f4f4;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+/* STATS */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.stat-box {
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 20px;
+    font-weight: 600;
+}
+
+.stat-box strong {
+    display: block;
+    margin-top: 10px;
+    font-size: 24px;
+}
+
+/* FORMULA */
+
+.formula-grid {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.formula-box {
+    background: #f4f4f4;
+    border-left: 4px solid #5747e8;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+}
+
+/* COMPARE */
+
+.compare-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.speed-limit-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 4px solid red;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+}
+
+/* FEEDBACK BUTTONS */
+
+.feedback-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.feedback-button {
+    flex: 1;
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+}
+
+/* SETTINGS */
+
+.settings-card .setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #eee;
+}
+
+/* SWITCH */
+
+.switch {
+    position: relative;
+    width: 52px;
+    height: 30px;
+}
+
+.switch input {
+    display: none;
+}
+
+.switch span {
+    position: absolute;
+    inset: 0;
+    background: #ccc;
+    border-radius: 999px;
+}
+
+.switch span::before {
+    content: "";
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    left: 4px;
+    top: 4px;
+    border-radius: 50%;
+    background: white;
+}
+
+.switch input:checked + span {
+    background: #5747e8;
+}
+
+.switch input:checked + span::before {
+    transform: translateX(22px);
+}
+
+/* FUN FACT */
+
+.funfact-box {
+    background: white;
+    padding: 18px;
+    border-radius: 14px;
+    margin-top: 18px;
+}
+
+/* NEXT BUTTON */
+
+.next-button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 18px;
+    border: none;
+    border-radius: 14px;
+    background: white;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+
+
+
+
+/* =========================================
+   SESSION FIXES - MATCH IMAGE 1
+========================================= */
+
+/* Main grid */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.85fr 0.55fr;
+    gap: 18px;
+    align-items: start;
+}
+
+/* Left card */
+.latest-card {
+    min-height: 470px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Speed circle */
+.speed-circle {
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    border: 10px solid #ececec;
+    margin-top: 10px;
+    margin-bottom: 24px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Speed text */
+.speed-number {
+    font-size: 54px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.speed-unit {
+    font-size: 22px;
+    color: #666;
+    margin-top: 6px;
+}
+
+/* Simulated text */
+.speed-text {
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+/* Feedback box */
+.feedback-box {
+    width: 100%;
+    background: #f5f5f5;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+/* Formula top row */
+.formula-grid {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.formula-grid div {
+    text-align: center;
+}
+
+.formula-grid small {
+    display: block;
+    margin-bottom: 6px;
+    color: #555;
+}
+
+/* Formula box */
+.formula-box {
+    background: #f5f5f5;
+    border-left: 4px solid #5b48ea;
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    font-size: 18px;
+}
+
+/* Compare section */
+.compare-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.compare-row div {
+    flex: 1;
+}
+
+.compare-row small {
+    display: block;
+    margin-bottom: 6px;
+    color: #666;
+}
+
+.compare-row strong {
+    font-size: 18px;
+}
+
+/* Speed limit */
+.speed-limit-circle {
+    min-width: 62px;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    border: 4px solid red;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 900;
+}
+
+/* CO2 box */
+.co2-text {
+    text-align: center;
+    color: #1f8d2b;
+    font-weight: 700;
+    margin-top: 16px;
+}
+
+/* Session stats */
+.session-card {
+    margin-top: 2px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.stat-box {
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 20px;
+    min-height: 84px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-box strong {
+    font-size: 22px;
+}
+
+/* Right cards */
+.right-column .card {
+    min-height: auto;
+}
+
+/* Settings spacing */
+.settings-card .setting-row {
+    padding: 18px 0;
+}
+
+/* Next button */
+.next-button {
+    width: 100%;
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 14px;
+    background: white;
+    border: none;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+
+
+
+
+/* LATEST CARD FIX */
+
+.latest-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Simuleret hastighed tekst */
+.speed-text {
+    width: 100% !important;
+    text-align: left !important;
+
+    padding-left: 285px !important;
+
+    margin-top: 12px !important;
+    margin-bottom: 18px !important;
+
+    font-size: 18px !important;
+    color: #444 !important;
+}
+
+/* Feedback box */
+.feedback-box {
+    width: 100% !important;
+
+    background: #f5f5f5 !important;
+
+    border-radius: 12px !important;
+
+    padding: 18px !important;
+
+    text-align: center !important;
+
+    color: #444 !important;
+
+    font-size: 18px !important;
 }
