@@ -1428,4 +1428,266 @@ td[colspan] {
         overflow-x: auto;
     }
 }
+/* ============================= */
+/* GREEN PREMIUM THEME - ALL PAGES */
+/* ============================= */
 
+:root {
+    --page-green-bg: #edf5ec;
+    --sidebar-green: #3f6f46;
+    --sidebar-green-dark: #2f5435;
+    --sidebar-green-light: #6f9b75;
+    --active-green: #f4faf3;
+    --primary-green: #2f6132;
+    --primary-green-hover: #244f28;
+    --soft-green: #e7f3e7;
+    --border-green: #cddfcd;
+    --text-main: #1f2a1f;
+    --text-muted: #5f6f61;
+    --card-shadow: 0 6px 18px rgba(37, 71, 42, 0.10);
+}
+
+/* Whole page background */
+body {
+    background: var(--page-green-bg);
+    color: var(--text-main);
+}
+
+/* Main content should show the green background */
+.content {
+    background: transparent;
+}
+
+/* Sidebar / navbar */
+.sidebar {
+    background: linear-gradient(
+        180deg,
+        var(--sidebar-green),
+        var(--sidebar-green-dark)
+    );
+    box-shadow: 4px 0 18px rgba(47, 84, 53, 0.18);
+}
+
+/* Sidebar title */
+.sidebar-title h2 {
+    color: #ffffff;
+    letter-spacing: 0.3px;
+}
+
+.sidebar-icon {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
+}
+
+/* Menu links */
+.menu-item {
+    color: #f8fff8;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid transparent;
+    transition: 0.2s ease;
+}
+
+/* Menu hover */
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.20);
+    transform: translateX(3px);
+}
+
+/* Active menu item */
+.menu-item.active {
+    background: var(--active-green);
+    color: var(--sidebar-green-dark);
+    font-weight: 800;
+    box-shadow: 0 6px 16px rgba(23, 58, 29, 0.18);
+}
+
+/* Keep active icon visible */
+.menu-item.active span {
+    filter: none;
+}
+
+/* Page headings */
+h1,
+h2,
+h3 {
+    color: #172117;
+}
+
+p {
+    color: var(--text-muted);
+}
+
+/* Cards on all pages */
+.card,
+.dark-card,
+.kpi-card,
+.groups-overview-card,
+.settings-card,
+.danger-card,
+.sessions-stat-card,
+.sessions-card {
+    background: #ffffff;
+    border: 1px solid var(--border-green);
+    box-shadow: var(--card-shadow);
+}
+
+/* KPI cards */
+.kpi-card {
+    transition: 0.2s ease;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(37, 71, 42, 0.14);
+}
+
+/* Logout button */
+.global-logout {
+    background: #ffffff;
+    border: 1px solid var(--primary-green);
+    color: var(--primary-green);
+    font-weight: 700;
+}
+
+.global-logout:hover {
+    background: var(--soft-green);
+    border-color: var(--primary-green-hover);
+    color: var(--primary-green-hover);
+}
+
+/* Primary save buttons */
+.save-btn {
+    background: linear-gradient(
+        135deg,
+        var(--primary-green),
+        var(--sidebar-green-dark)
+    );
+    box-shadow: 0 4px 14px rgba(47, 97, 50, 0.25);
+}
+
+.save-btn:hover {
+    background: linear-gradient(
+        135deg,
+        var(--primary-green-hover),
+        #1f3f24
+    );
+    transform: translateY(-1px);
+}
+
+/* Switches on settings page */
+.switch input:checked + span {
+    background: var(--primary-green);
+}
+
+/* Leaderboard tabs */
+.leader-tab.active {
+    background: var(--soft-green);
+    border-color: var(--sidebar-green-light);
+    color: var(--primary-green);
+}
+
+/* Rank circle */
+.rank {
+    background: var(--primary-green);
+}
+
+/* Links */
+.groups-header a,
+.see-all {
+    color: var(--primary-green);
+}
+
+.groups-header a:hover,
+.see-all:hover {
+    color: var(--primary-green-hover);
+}
+
+/* Status green */
+.status.green,
+.live-badge {
+    background: var(--soft-green);
+    color: var(--primary-green);
+}
+
+/* Score circle */
+.score-circle {
+    border-color: #48a653;
+}
+
+/* Tables hover */
+.groups-table tbody tr:hover,
+.session-table tr:hover,
+.click-row:hover {
+    background: #f4faf3;
+}
+
+/* Input fields */
+.search-field,
+.group-create-row input,
+.sessions-filter-row select {
+    border: 1px solid var(--border-green);
+}
+
+.search-field:focus,
+.group-create-row input:focus,
+.sessions-filter-row select:focus {
+    outline: none;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 3px rgba(47, 97, 50, 0.12);
+}
+
+/* Graph placeholder */
+.graph-placeholder {
+    background: #f4faf3;
+    border: 1px dashed #b9d3ba;
+    color: #7c8d7d;
+}
+
+/* Small green icons/feedback */
+.green,
+.score.green,
+.score-green,
+.trend.green,
+.trend-positive,
+.session-status-active {
+    color: var(--primary-green);
+}
+
+/* School icon background */
+.school-icon {
+    background: var(--soft-green);
+}
+
+/* Modal buttons */
+.modal-delete-btn {
+    background: #e53935;
+}
+
+.modal-delete-btn:hover {
+    background: #c62828;
+}
+
+/* Keep danger buttons red because delete actions must still look dangerous */
+.danger-btn {
+    background-color: #e53935;
+}
+
+.danger-btn:hover {
+    background-color: #c62828;
+}
+
+/* Mobile / responsive sidebar */
+@media (max-width: 1200px) {
+
+    .sidebar {
+        background: linear-gradient(
+            135deg,
+            var(--sidebar-green),
+            var(--sidebar-green-dark)
+        );
+    }
+
+    .menu-item:hover {
+        transform: none;
+    }
+}

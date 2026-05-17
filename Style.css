@@ -36,7 +36,7 @@ button {
 }
 
 
-/* Frontpage */
+/* Frontpage - old support */
 
 .navbar {
     display: flex;
@@ -1090,8 +1090,675 @@ button {
     }
 
     .switch input:disabled + span {
-    background: #e0e0e0;
-    opacity: 0.5;
-    cursor: not-allowed;
+        background: #e0e0e0;
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 }
+
+
+/* ===================================== */
+/* LOGIN PAGE - FOREST GREEN WOW THEME   */
+/* Scaled version - less zoomed in        */
+/* ===================================== */
+
+.measurement-container.login-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 34px;
+    background:
+        radial-gradient(circle at top left, rgba(126, 170, 130, 0.30), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(47, 84, 53, 0.22), transparent 28%),
+        linear-gradient(180deg, #edf5ec 0%, #f7fbf7 100%);
+}
+
+/* Main forest green login card */
+.measurement-card.login-card {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 850px;
+    background: linear-gradient(135deg, #4f7d56 0%, #3f6f46 40%, #2f5435 100%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 30px;
+    padding: 42px 54px;
+    box-shadow:
+        0 22px 48px rgba(37, 66, 42, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Soft decorative green shapes */
+.measurement-card.login-card::before {
+    content: "";
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    top: -95px;
+    right: -70px;
+    background: rgba(255, 255, 255, 0.06);
+    filter: blur(2px);
+}
+
+.measurement-card.login-card::after {
+    content: "";
+    position: absolute;
+    width: 190px;
+    height: 190px;
+    border-radius: 50%;
+    bottom: -80px;
+    left: -50px;
+    background: rgba(157, 214, 166, 0.10);
+    filter: blur(2px);
+}
+
+/* Leaf decorations */
+.leaf-deco {
+    position: absolute;
+    font-size: 34px;
+    opacity: 0.22;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.leaf-one {
+    top: 24px;
+    right: 34px;
+    transform: rotate(-10deg);
+}
+
+.leaf-two {
+    bottom: 24px;
+    left: 34px;
+    transform: rotate(18deg);
+}
+
+/* Bring real content above decorative elements */
+.login-header,
+.login-form,
+.info-text,
+#errorBox {
+    position: relative;
+    z-index: 2;
+}
+
+/* Header */
+.header-row.login-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.icon-circle {
+    width: 86px;
+    height: 86px;
+    min-width: 86px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6cbc5e 0%, #2f8a35 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    box-shadow:
+        0 14px 28px rgba(24, 58, 29, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.20);
+}
+
+.login-text h1 {
+    margin: 0 0 8px 0;
+    font-size: 42px;
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.05;
+}
+
+.login-text p {
+    margin: 0;
+    font-size: 21px;
+    line-height: 1.45;
+    color: #dce8dd;
+}
+
+.eco-tagline {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 9px 15px;
+    background: rgba(233, 245, 234, 0.16);
+    color: #eaf7eb;
+    border: 1px solid rgba(215, 238, 218, 0.22);
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 800;
+    backdrop-filter: blur(6px);
+}
+
+/* Form */
+.login-form {
+    margin-top: 10px;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 800;
+    color: #f7fff7;
+}
+
+.login-form input {
+    width: 100%;
+    height: 66px;
+    padding: 0 22px;
+    margin-bottom: 24px;
+    border-radius: 18px;
+    border: 1px solid rgba(216, 233, 218, 0.55);
+    background: rgba(255, 255, 255, 0.96);
+    color: #1f2a1f;
+    font-size: 18px;
+    outline: none;
+    transition: 0.2s ease;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.login-form input::placeholder {
+    color: #90a090;
+}
+
+.login-form input:focus {
+    border-color: #8fda82;
+    box-shadow: 0 0 0 5px rgba(143, 218, 130, 0.20);
+    background: #ffffff;
+}
+
+/* Primary button */
+.start-measure-btn {
+    width: 100%;
+    min-height: 68px;
+    margin-top: 4px;
+    border: none;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #8fda82 0%, #5abf5f 35%, #39a23f 100%);
+    color: #16341a;
+    font-size: 24px;
+    font-weight: 900;
+    box-shadow: 0 16px 30px rgba(22, 70, 28, 0.28);
+    transition: 0.2s ease;
+}
+
+.start-measure-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #9be48f 0%, #63ca68 35%, #3cab42 100%);
+    box-shadow: 0 20px 36px rgba(22, 70, 28, 0.30);
+}
+
+/* Secondary button */
+.filter-reset {
+    width: 100%;
+    min-height: 62px;
+    margin-top: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(233, 245, 234, 0.28);
+    background: rgba(255, 255, 255, 0.10);
+    color: #ffffff;
+    font-size: 19px;
+    font-weight: 800;
+    backdrop-filter: blur(6px);
+    transition: 0.2s ease;
+}
+
+.filter-reset:hover {
+    background: rgba(255, 255, 255, 0.16);
+    transform: translateY(-1px);
+}
+
+/* Info text */
+.info-text {
+    margin-top: 22px;
+    color: #dce8dd;
+    font-size: 16px;
+}
+
+/* Error box on green card */
+.measurement-card.login-card .error-box {
+    background: rgba(255, 239, 239, 0.96);
+    border: 1px solid #efb7b7;
+    color: #b33a3a;
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+
+/* ===================================== */
+/* FRONTPAGE - FOREST GREEN ECO THEME    */
+/* Cleaner hero + prettier lower section */
+/* ===================================== */
+
+.frontpage-body {
+    min-height: 100vh;
+    background:
+        radial-gradient(circle at top left, rgba(126, 170, 130, 0.20), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(47, 84, 53, 0.16), transparent 30%),
+        linear-gradient(180deg, #edf5ec 0%, #f7fbf7 100%);
+    color: #1f2a1f;
+}
+
+/* Navbar */
+.frontpage-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 56px;
+    background: rgba(255, 255, 255, 0.88);
+    border-bottom: 1px solid rgba(190, 215, 190, 0.75);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 8px 24px rgba(47, 84, 53, 0.08);
+    position: relative;
+    z-index: 10;
+}
+
+.frontpage-logo {
+    font-size: 25px;
+    font-weight: 900;
+    color: #2f5435;
+}
+
+.frontpage-nav-actions {
+    display: flex;
+    gap: 14px;
+}
+
+.frontpage-start-btn,
+.frontpage-login-btn {
+    min-width: 220px;
+    min-height: 58px;
+    border: none;
+    border-radius: 18px;
+    font-size: 18px;
+    font-weight: 850;
+    color: white;
+    box-shadow: 0 12px 24px rgba(47, 84, 53, 0.18);
+}
+
+.frontpage-start-btn {
+    background: linear-gradient(135deg, #2f8a35, #4caf50);
+}
+
+.frontpage-start-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #25722a, #3f9b43);
+}
+
+.frontpage-login-btn {
+    background: linear-gradient(135deg, #3f6f46, #2f5435);
+}
+
+.frontpage-login-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #355f3b, #25442b);
+}
+
+/* Hero */
+.eco-hero {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 40px;
+    align-items: center;
+    min-height: 590px;
+    padding: 72px 56px 60px;
+    background:
+        radial-gradient(circle at 85% 20%, rgba(255, 255, 255, 0.12), transparent 24%),
+        radial-gradient(circle at 15% 80%, rgba(157, 214, 166, 0.14), transparent 26%),
+        linear-gradient(135deg, #4f7d56 0%, #3f6f46 42%, #2f5435 100%);
+    box-shadow: 0 22px 50px rgba(37, 66, 42, 0.18);
+}
+
+.eco-hero::before {
+    content: "";
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    top: -170px;
+    right: -120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.eco-hero::after {
+    content: "";
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    bottom: -120px;
+    left: -90px;
+    border-radius: 50%;
+    background: rgba(157, 214, 166, 0.10);
+}
+
+.eco-hero-text {
+    position: relative;
+    z-index: 2;
+    max-width: 700px;
+}
+
+.eco-badge {
+    display: inline-block;
+    margin-bottom: 22px;
+    padding: 11px 18px;
+    background: rgba(233, 245, 234, 0.15);
+    color: #effbef;
+    border: 1px solid rgba(215, 238, 218, 0.22);
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 850;
+    backdrop-filter: blur(6px);
+}
+
+.eco-hero-text h1 {
+    font-size: 66px;
+    line-height: 1.02;
+    font-weight: 950;
+    color: #ffffff;
+    margin-bottom: 24px;
+    letter-spacing: -1.5px;
+}
+
+.eco-hero-text p {
+    max-width: 620px;
+    font-size: 22px;
+    line-height: 1.6;
+    color: #dce8dd;
+}
+
+/* Image area */
+.eco-image-area {
+    position: relative;
+    z-index: 2;
+    min-height: 460px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.eco-image-area img {
+    width: 100%;
+    max-width: 760px;
+    max-height: 420px;
+    object-fit: contain;
+    filter: drop-shadow(0 24px 28px rgba(0, 0, 0, 0.22));
+}
+
+/* Leaves */
+.eco-leaf {
+    position: absolute;
+    z-index: 1;
+    font-size: 46px;
+    opacity: 0.24;
+}
+
+.eco-leaf-one {
+    top: 30px;
+    right: 28px;
+    transform: rotate(-12deg);
+}
+
+.eco-leaf-two {
+    bottom: 18px;
+    left: 24px;
+    transform: rotate(18deg);
+}
+
+/* Feature cards */
+.eco-features {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    padding: 34px 56px 26px;
+}
+
+.eco-feature-card {
+    min-height: 170px;
+    padding: 28px;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(205, 223, 205, 0.95);
+    box-shadow: 0 14px 30px rgba(47, 84, 53, 0.09);
+    transition: 0.2s ease;
+}
+
+.eco-feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 38px rgba(47, 84, 53, 0.14);
+}
+
+.eco-feature-icon {
+    font-size: 32px;
+    margin-bottom: 14px;
+}
+
+.eco-feature-card h3 {
+    font-size: 21px;
+    color: #172117;
+    margin-bottom: 10px;
+}
+
+.eco-feature-card p {
+    color: #607061;
+    line-height: 1.5;
+    font-size: 16px;
+}
+
+/* Bottom section */
+.eco-bottom-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 26px 56px 60px;
+}
+
+/* Pretty lower info section */
+.eco-how-it-works-wide {
+    position: relative;
+    overflow: hidden;
+    border-radius: 34px;
+    padding: 34px;
+    background: linear-gradient(135deg, #4f7d56 0%, #3f6f46 45%, #2f5435 100%);
+    box-shadow: 0 18px 38px rgba(37, 66, 42, 0.18);
+    color: white;
+}
+
+.eco-bottom-leaf {
+    position: absolute;
+    top: 22px;
+    right: 28px;
+    font-size: 56px;
+    opacity: 0.14;
+}
+
+.eco-how-it-works-wide h2 {
+    font-size: 42px;
+    color: white;
+    margin-bottom: 16px;
+}
+
+.eco-how-it-works-wide > p {
+    max-width: 900px;
+    color: #e3eee4;
+    font-size: 18px;
+    line-height: 1.7;
+    margin-bottom: 28px;
+}
+
+.eco-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.eco-step {
+    border-radius: 22px;
+    padding: 22px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(4px);
+    min-height: 180px;
+}
+
+.eco-step span {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #8fda82;
+    color: #173a1b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 20px;
+    margin-bottom: 14px;
+}
+
+.eco-step h4 {
+    color: white;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.eco-step p {
+    color: #f1fbf1;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+/* Leaderboard card */
+.eco-leaderboard-wide {
+    background: white;
+    border: 1px solid rgba(205, 223, 205, 0.95);
+    border-radius: 28px;
+    padding: 30px;
+    box-shadow: 0 16px 36px rgba(47, 84, 53, 0.10);
+}
+
+.eco-section-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.eco-section-header h2 {
+    font-size: 30px;
+    margin-bottom: 8px;
+    color: #172117;
+}
+
+.eco-section-header p {
+    color: #607061;
+    line-height: 1.45;
+}
+
+.eco-section-icon {
+    width: 58px;
+    height: 58px;
+    min-width: 58px;
+    border-radius: 18px;
+    background: #edf8ed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.eco-leaderboard-wide ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.eco-leaderboard-wide li {
+    padding: 14px 0;
+    border-bottom: 1px solid #edf1ed;
+    color: #333;
+    font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+
+    .eco-hero {
+        grid-template-columns: 1fr;
+        padding: 44px 28px 40px;
+    }
+
+    .eco-hero-text h1 {
+        font-size: 46px;
+    }
+
+    .eco-image-area {
+        min-height: 360px;
+    }
+
+    .eco-features {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 24px 28px;
+    }
+
+    .eco-bottom-wrapper {
+        padding: 24px 28px 46px;
+    }
+
+    .eco-steps {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+
+    .frontpage-navbar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 18px;
+        gap: 16px;
+    }
+
+    .frontpage-logo {
+        text-align: center;
+    }
+
+    .frontpage-nav-actions {
+        flex-direction: column;
+    }
+
+    .frontpage-start-btn,
+    .frontpage-login-btn {
+        width: 100%;
+    }
+
+    .eco-hero-text h1 {
+        font-size: 36px;
+    }
+
+    .eco-hero-text p {
+        font-size: 17px;
+    }
+
+    .eco-image-area {
+        min-height: 280px;
+    }
+
+    .eco-features {
+        grid-template-columns: 1fr;
+    }
+
+    .eco-how-it-works-wide h2 {
+        font-size: 32px;
+    }
 }
