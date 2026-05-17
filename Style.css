@@ -1761,4 +1761,688 @@ button {
     .eco-how-it-works-wide h2 {
         font-size: 32px;
     }
+    /* STUDENT START SESSION PAGE */
+
+.measurement-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 45px 20px;
+    background: #f5f7f6;
+}
+
+.measurement-card {
+    width: 100%;
+    max-width: 850px;
+    background: white;
+    border-radius: 28px;
+    padding: 46px;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 34px;
+}
+
+.icon-circle {
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #77c96b, #31a847);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 54px;
+    box-shadow: 0 18px 35px rgba(49, 168, 71, 0.25);
+}
+
+.header-row h1 {
+    margin: 0;
+    color: #1f2933;
+    font-size: 38px;
+    font-weight: 800;
+}
+
+.header-row p {
+    margin-top: 10px;
+    color: #5f6670;
+    font-size: 24px;
+    line-height: 1.45;
+}
+
+.measurement-card label {
+    display: block;
+    margin-top: 24px;
+    margin-bottom: 10px;
+    color: #1f2933;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.measurement-card select {
+    width: 100%;
+    padding: 18px 22px;
+    border: 1px solid #d8d8d8;
+    border-radius: 14px;
+    background-color: white;
+    color: #000;
+    font-size: 20px;
+    outline: none;
+}
+
+.measurement-card select:focus {
+    border-color: #35a944;
+    box-shadow: 0 0 0 4px rgba(53, 169, 68, 0.12);
+}
+
+.measurement-card option:disabled {
+    color: #8b8b8b;
+    background-color: #f1f1f1;
+}
+
+.start-measure-btn {
+    width: 100%;
+    margin-top: 28px;
+    padding: 22px 24px;
+    border: none;
+    border-radius: 24px;
+    background: linear-gradient(90deg, #83d878, #35a944);
+    color: #062b12;
+    font-size: 30px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 20px 35px rgba(49, 150, 65, 0.25);
+    transition: 0.2s ease;
+}
+
+.start-measure-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 24px 42px rgba(49, 150, 65, 0.32);
+}
+
+.info-text {
+    margin-top: 22px;
+    color: #dceee1;
+    font-size: 20px;
+}
+
+.error-box {
+    margin: 26px 0;
+    padding: 20px 24px;
+    border: 1px solid #f29b9b;
+    border-radius: 14px;
+    background: #fff0f0;
+    color: #a12727;
+    font-size: 22px;
+    font-weight: 800;
+}
+/* ===============================
+   ELEV START / LOGIN DESIGN
+   =============================== */
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f3f7f4;
+}
+
+.measurement-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 48px 20px;
+    background: linear-gradient(135deg, #f7faf8, #eef6ef);
+}
+
+.measurement-card {
+    width: 100%;
+    max-width: 850px;
+    background-color: white;
+    border-radius: 28px;
+    padding: 48px;
+    box-shadow: 0 24px 55px rgba(15, 23, 42, 0.10);
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 36px;
+}
+
+.icon-circle {
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #85d878, #35a944);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 54px;
+    box-shadow: 0 18px 38px rgba(53, 169, 68, 0.28);
+}
+
+.header-row h1 {
+    margin: 0;
+    color: #1f2933;
+    font-size: 38px;
+    font-weight: 800;
+}
+
+.header-row p {
+    margin: 10px 0 0 0;
+    color: #5f6670;
+    font-size: 24px;
+    line-height: 1.45;
+}
+
+.measurement-card label {
+    display: block;
+    margin-top: 26px;
+    margin-bottom: 10px;
+    color: #1f2933;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.measurement-card select {
+    width: 100%;
+    padding: 18px 22px;
+    border: 1px solid #d8ddd9;
+    border-radius: 15px;
+    background-color: white;
+    color: #111827;
+    font-size: 20px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.measurement-card select:focus {
+    border-color: #35a944;
+    box-shadow: 0 0 0 4px rgba(53, 169, 68, 0.14);
+}
+
+.measurement-card option:disabled {
+    color: #8b8b8b;
+    background-color: #f2f2f2;
+}
+
+.start-measure-btn {
+    width: 100%;
+    margin-top: 30px;
+    padding: 24px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(90deg, #85d878, #35a944);
+    color: #062b12;
+    font-size: 30px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 22px 40px rgba(53, 169, 68, 0.30);
+    transition: 0.2s ease;
+}
+
+.start-measure-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 26px 46px rgba(53, 169, 68, 0.38);
+}
+
+.info-text {
+    margin-top: 22px;
+    color: #dceee1;
+    font-size: 20px;
+}
+
+.error-box {
+    margin: 26px 0;
+    padding: 20px 24px;
+    border: 1px solid #f29b9b;
+    border-radius: 14px;
+    background-color: #fff0f0;
+    color: #a12727;
+    font-size: 22px;
+    font-weight: 800;
+}
+}
+/* =========================================
+   ELEV.HTML - GREEN STYLE LIKE TEACHER LOGIN
+   ========================================= */
+
+.elev-green-page {
+    margin: 0;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(126, 170, 130, 0.30), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(47, 84, 53, 0.22), transparent 28%),
+        linear-gradient(180deg, #edf5ec 0%, #f7fbf7 100%);
+}
+
+.elev-green-page .measurement-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 26px;
+    box-sizing: border-box;
+    background: transparent;
+}
+
+.elev-green-page .measurement-card {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 1180px;
+    background: linear-gradient(135deg, #4f7d56 0%, #3f6f46 40%, #2f5435 100%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 34px;
+    padding: 70px 82px 60px 82px;
+    box-shadow:
+        0 22px 48px rgba(37, 66, 42, 0.22),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.elev-green-page .measurement-card::before {
+    content: "";
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    top: -110px;
+    right: -80px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.elev-green-page .measurement-card::after {
+    content: "🌿";
+    position: absolute;
+    top: 46px;
+    right: 70px;
+    font-size: 42px;
+    opacity: 0.22;
+}
+
+.elev-green-page .header-row {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    margin-bottom: 42px;
+}
+
+.elev-green-page .icon-circle {
+    width: 130px;
+    height: 130px;
+    min-width: 130px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6cbc5e 0%, #2f8a35 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    box-shadow:
+        0 16px 30px rgba(24, 58, 29, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.20);
+}
+
+.elev-green-page .header-row h1 {
+    margin: 0 0 12px 0;
+    font-size: 60px;
+    font-weight: 950;
+    color: #ffffff;
+    line-height: 1.05;
+    letter-spacing: -1px;
+}
+
+.elev-green-page .header-row p {
+    margin: 0;
+    font-size: 30px;
+    line-height: 1.35;
+    color: #dce8dd;
+}
+
+.elev-green-page .measurement-card label {
+    position: relative;
+    z-index: 2;
+    display: block;
+    margin-top: 32px;
+    margin-bottom: 14px;
+    color: #ffffff;
+    font-size: 28px;
+    font-weight: 900;
+}
+
+.elev-green-page .measurement-card select {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 98px;
+    padding: 0 34px;
+    border: none;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #1f2a1f;
+    font-size: 24px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.elev-green-page .measurement-card select:focus {
+    box-shadow: 0 0 0 5px rgba(143, 218, 130, 0.20);
+    background: #ffffff;
+}
+
+.elev-green-page .measurement-card option:disabled {
+    color: #8b8b8b;
+}
+
+.elev-green-page .start-measure-btn {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 100px;
+    margin-top: 40px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #8fda82 0%, #5abf5f 35%, #39a23f 100%);
+    color: #16341a;
+    font-size: 34px;
+    font-weight: 950;
+    box-shadow: 0 18px 34px rgba(22, 70, 28, 0.30);
+    transition: 0.2s ease;
+}
+
+.elev-green-page .start-measure-btn:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #9be48f 0%, #63ca68 35%, #3cab42 100%);
+    box-shadow: 0 22px 40px rgba(22, 70, 28, 0.34);
+}
+
+.elev-green-page .info-text {
+    position: relative;
+    z-index: 2;
+    margin-top: 28px;
+    color: #dce8dd;
+    font-size: 22px;
+}
+
+.elev-green-page .error-box {
+    position: relative;
+    z-index: 2;
+    margin: 26px 0;
+    padding: 18px 22px;
+    border: 1px solid #efb7b7;
+    border-radius: 16px;
+    background: rgba(255, 239, 239, 0.96);
+    color: #b33a3a;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+@media (max-width: 900px) {
+
+    .elev-green-page .measurement-card {
+        padding: 36px 26px;
+        border-radius: 28px;
+    }
+
+    .elev-green-page .header-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 22px;
+    }
+
+    .elev-green-page .header-row h1 {
+        font-size: 42px;
+    }
+
+    .elev-green-page .header-row p {
+        font-size: 22px;
+    }
+
+    .elev-green-page .measurement-card label {
+        font-size: 22px;
+    }
+
+    .elev-green-page .measurement-card select {
+        height: 76px;
+        font-size: 18px;
+        border-radius: 18px;
+    }
+
+    .elev-green-page .start-measure-btn {
+        min-height: 78px;
+        font-size: 26px;
+        border-radius: 22px;
+    }
+}
+/* FORCE GREEN DESIGN ON ELEV.HTML */
+
+body.elev-green-page {
+    margin: 0 !important;
+    min-height: 100vh !important;
+    background:
+        radial-gradient(circle at top left, rgba(126, 170, 130, 0.30), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(47, 84, 53, 0.22), transparent 28%),
+        linear-gradient(180deg, #edf5ec 0%, #f7fbf7 100%) !important;
+    font-family: "Segoe UI", Arial, Helvetica, sans-serif !important;
+}
+
+body.elev-green-page .measurement-container {
+    min-height: 100vh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 26px !important;
+    background: transparent !important;
+}
+
+body.elev-green-page .measurement-card {
+    position: relative !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    max-width: 1180px !important;
+    background: linear-gradient(135deg, #4f7d56 0%, #3f6f46 40%, #2f5435 100%) !important;
+    border-radius: 34px !important;
+    padding: 70px 82px 60px 82px !important;
+    box-shadow: 0 22px 48px rgba(37, 66, 42, 0.22) !important;
+}
+
+body.elev-green-page .measurement-card::before {
+    content: "" !important;
+    position: absolute !important;
+    width: 300px !important;
+    height: 300px !important;
+    border-radius: 50% !important;
+    top: -110px !important;
+    right: -80px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+
+body.elev-green-page .measurement-card::after {
+    content: "🌿" !important;
+    position: absolute !important;
+    top: 46px !important;
+    right: 70px !important;
+    font-size: 42px !important;
+    opacity: 0.22 !important;
+}
+
+body.elev-green-page .header-row {
+    position: relative !important;
+    z-index: 2 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 36px !important;
+    margin-bottom: 42px !important;
+}
+
+body.elev-green-page .icon-circle {
+    width: 130px !important;
+    height: 130px !important;
+    min-width: 130px !important;
+    border-radius: 50% !important;
+    background: linear-gradient(135deg, #6cbc5e 0%, #2f8a35 100%) !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 56px !important;
+}
+
+body.elev-green-page .header-row h1 {
+    margin: 0 0 12px 0 !important;
+    font-size: 60px !important;
+    font-weight: 950 !important;
+    color: #ffffff !important;
+    line-height: 1.05 !important;
+}
+
+body.elev-green-page .header-row p {
+    margin: 0 !important;
+    font-size: 30px !important;
+    line-height: 1.35 !important;
+    color: #dce8dd !important;
+}
+
+body.elev-green-page .measurement-card label {
+    position: relative !important;
+    z-index: 2 !important;
+    display: block !important;
+    margin-top: 32px !important;
+    margin-bottom: 14px !important;
+    color: #ffffff !important;
+    font-size: 28px !important;
+    font-weight: 900 !important;
+}
+
+body.elev-green-page .measurement-card select {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    height: 98px !important;
+    padding: 0 34px !important;
+    border: none !important;
+    border-radius: 24px !important;
+    background: rgba(255, 255, 255, 0.96) !important;
+    color: #1f2a1f !important;
+    font-size: 24px !important;
+    outline: none !important;
+}
+
+body.elev-green-page .start-measure-btn {
+    position: relative !important;
+    z-index: 2 !important;
+    width: 100% !important;
+    min-height: 100px !important;
+    margin-top: 40px !important;
+    border: none !important;
+    border-radius: 30px !important;
+    background: linear-gradient(135deg, #8fda82 0%, #5abf5f 35%, #39a23f 100%) !important;
+    color: #16341a !important;
+    font-size: 34px !important;
+    font-weight: 950 !important;
+    box-shadow: 0 18px 34px rgba(22, 70, 28, 0.30) !important;
+}
+
+body.elev-green-page .info-text {
+    position: relative !important;
+    z-index: 2 !important;
+    margin-top: 28px !important;
+    color: #dce8dd !important;
+    font-size: 22px !important;
+}
+
+body.elev-green-page .error-box {
+    position: relative !important;
+    z-index: 2 !important;
+    margin: 26px 0 !important;
+    padding: 18px 22px !important;
+    border: 1px solid #efb7b7 !important;
+    border-radius: 16px !important;
+    background: rgba(255, 239, 239, 0.96) !important;
+    color: #b33a3a !important;
+    font-size: 22px !important;
+    font-weight: 800 !important;
+}
+/* =====================================
+   ELEV STARTSIDE - MINDRE GREEN VERSION
+   ===================================== */
+
+.measurement-container.login-page {
+    padding: 18px !important;
+}
+
+.measurement-card.login-card {
+    max-width: 900px !important;
+    padding: 36px 52px 34px 52px !important;
+    border-radius: 28px !important;
+}
+
+.header-row.login-header {
+    gap: 24px !important;
+    margin-bottom: 24px !important;
+}
+
+.measurement-card.login-card .icon-circle {
+    width: 90px !important;
+    height: 90px !important;
+    min-width: 90px !important;
+    font-size: 38px !important;
+}
+
+.login-text h1 {
+    font-size: 42px !important;
+    margin-bottom: 8px !important;
+}
+
+.login-text p {
+    font-size: 20px !important;
+    line-height: 1.35 !important;
+}
+
+.eco-tagline {
+    display: none !important;
+}
+
+.login-form {
+    margin-top: 4px !important;
+}
+
+.login-form label {
+    margin-top: 18px !important;
+    margin-bottom: 8px !important;
+    font-size: 18px !important;
+}
+
+.login-form select {
+    height: 58px !important;
+    padding: 0 20px !important;
+    margin-bottom: 16px !important;
+    border-radius: 16px !important;
+    font-size: 17px !important;
+}
+
+.measurement-card.login-card .start-measure-btn {
+    min-height: 64px !important;
+    margin-top: 12px !important;
+    border-radius: 20px !important;
+    font-size: 24px !important;
+}
+
+.measurement-card.login-card .info-text {
+    margin-top: 16px !important;
+    font-size: 15px !important;
+}
+
+.leaf-deco {
+    font-size: 24px !important;
 }

@@ -5,132 +5,157 @@
     <meta charset="UTF-8">
     <title>Ny Måling</title>
 
-    <link rel="stylesheet" href="Style.css">
+    <link rel="stylesheet" href="Style.css?v=10">
 </head>
 
-<body>
+<body class="elev-green-page">
 
-<div class="measurement-container">
+<div id="app">
 
-    <div class="measurement-card">
+    <div class="measurement-container">
 
-        <div class="header-row">
+        <div class="measurement-card">
 
-            <div class="icon-circle">
-                👤
+            <div class="header-row">
+
+                <div class="icon-circle">
+                    👤
+                </div>
+
+                <div>
+
+                    <h1>
+                        Start en ny session
+                    </h1>
+
+                    <p>
+                        Udfyld oplysningerne og gør systemet klar til at registrere målinger
+                    </p>
+
+                </div>
+
             </div>
 
-            <div>
+            <!-- Error message -->
+            <div
+                v-if="errorMessage"
+                class="error-box">
 
-                <h1>
-                    Start en ny session
-                </h1>
-
-                <p>
-                    Udfyld oplysningerne og gør systemet klar til at registrere målinger
-                </p>
+                {{ errorMessage }}
 
             </div>
 
-        </div>
+            <!-- Gruppe -->
+            <label for="groupSelect">
+                Gruppe
+            </label>
 
+            <select
+                id="groupSelect"
+                v-model="selectedGroupId">
 
-        <div
-            id="errorBox"
-            class="error-box"
-            style="display: none;">
-        </div>
+                <option value="">
+                    Vælg gruppe
+                </option>
 
+                <option
+                    v-for="group in groups"
+                    v-bind:key="group.id"
+                    v-bind:value="group.id"
+                    v-bind:disabled="group.isLocked === true">
 
-        <!-- Group dropdown -->
-        <label for="groupSelect">
-            Gruppe
-        </label>
+                    {{ getGroupDisplayText(group) }}
 
-        <select id="groupSelect">
+                </option>
 
-            <option value="">
-                Vælg gruppe
-            </option>
+            </select>
 
-        </select>
+            <!-- Biltype -->
+            <label for="carTypeSelect">
+                Biltype
+            </label>
 
+            <select
+                id="carTypeSelect"
+                v-model="selectedCarType">
 
-        <label for="carTypeSelect">
-            Biltype
-        </label>
+                <option value="">
+                    Vælg biltype
+                </option>
 
-        <select id="carTypeSelect">
+                <option value="Benzin Lille">
+                    Benzin - lille
+                </option>
 
-            <option value="">
-                Vælg biltype
-            </option>
+                <option value="Benzin Stor">
+                    Benzin - stor
+                </option>
 
-            <option value="Benzin Lille">
-                Benzin - lille
-            </option>
+                <option value="Diesel">
+                    Diesel
+                </option>
 
-            <option value="Benzin Stor">
-                Benzin - stor
-            </option>
+                <option value="Hybrid">
+                    Hybrid
+                </option>
 
-            <option value="Diesel">
-                Diesel
-            </option>
+            </select>
 
-            <option value="Hybrid">
-                Hybrid
-            </option>
+            <!-- Vejtype -->
+            <label for="roadTypeSelect">
+                Vejtype
+            </label>
 
-        </select>
+            <select
+                id="roadTypeSelect"
+                v-model="selectedRoadType">
 
+                <option value="">
+                    Vælg vejtype
+                </option>
 
-        <label for="roadTypeSelect">
-            Vejtype
-        </label>
+                <option value="Byzone">
+                    Byzone - 50 km/t
+                </option>
 
-        <select id="roadTypeSelect">
+                <option value="Landevej">
+                    Landevej - 80 km/t
+                </option>
 
-            <option value="">
-                Vælg vejtype
-            </option>
+                <option value="Motorvej">
+                    Motorvej - 110 km/t
+                </option>
 
-            <option value="Byzone">
-                Byzone - 50 km/t
-            </option>
+            </select>
 
-            <option value="Landevej">
-                Landevej - 80 km/t
-            </option>
+            <!-- Start button -->
+            <button
+                type="button"
+                class="start-measure-btn"
+                v-on:click="startSession">
 
-            <option value="Motorvej">
-                Motorvej - 110 km/t
-            </option>
+                ▶ Start session
 
-        </select>
+            </button>
 
+            <div class="info-text">
+                Du kan ikke starte før gruppe, biltype og vejtype er udfyldt
+            </div>
 
-        <button
-            class="start-measure-btn"
-            onclick="startSession()">
-
-            ▶ Start session
-
-        </button>
-
-
-        <div class="info-text">
-            Du kan ikke starte før gruppe, biltype og vejtype er udfyldt
         </div>
 
     </div>
 
 </div>
 
+<!-- Vue -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
+<!-- Axios -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="api.js"></script>
-<script src="elev.js"></script>
+
+<!-- Student JavaScript -->
+<script src="elev.js?v=10"></script>
 
 </body>
 

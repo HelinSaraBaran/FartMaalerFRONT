@@ -3,517 +3,554 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elev måling</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="Style.css">
+    <title>
+        Elev måling
+    </title>
+
+    <link rel="stylesheet"
+          href="Style.css">
 </head>
 
-<body onload="loadStudentSessionPage()">
+<body>
 
-<main class="page">
+<div id="app"
+     class="layout"
+     v-cloak>
 
-<section class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
 
+        <div class="sidebar-title">
 
-<header class="topbar">
+            <span class="sidebar-icon">
+                📊
+            </span>
 
-    <div class="select-group">
+            <h2>
+                Fartmåler
+            </h2>
 
-        <label>
-            Gruppe
-        </label>
+        </div>
 
-        <button
-            type="button"
-            class="select-button">
+        <nav class="sidebar-menu">
 
-            👥 Gruppe <span id="groupDisplay">---</span>
+            <a href="session.html"
+               class="menu-item active">
 
-        </button>
+                <span>⏰</span>
+                Session
 
-        <p class="active-session">
-            🔒 Aktiv session
-        </p>
+            </a>
 
-    </div>
+            <a href="opsummering.html"
+               class="menu-item">
 
+                <span>📏</span>
+                Målinger
 
-    <div class="select-group">
+            </a>
 
-        <label>
-            Biltype
-        </label>
+            <a href="leaderboardElev.html"
+               class="menu-item">
 
-        <button
-            type="button"
-            class="select-button">
+                <span>🏆</span>
+                Leaderboard
 
-            🚗 <span id="carTypeDisplay">---</span>
+            </a>
 
-        </button>
+        </nav>
 
-    </div>
-
-
-    <div class="select-group">
-
-        <label>
-            Vejtype
-        </label>
-
-        <button
-            type="button"
-            class="select-button wide">
-
-            ⚠️ <span id="roadTypeDisplay">---</span>
-
-        </button>
-
-    </div>
+    </aside>
 
 
-    <div class="session-actions">
+    <!-- Content -->
+    <main class="content session-page">
 
-        <button
-            type="button"
-            class="end-session-button">
+        <!-- Top information -->
+        <section class="session-top">
 
-            📊 Afslut session
+            <div class="session-info-box">
+                👥 {{ groupName }}
+            </div>
 
-        </button>
+            <div class="session-info-box">
+                🚗 {{ carType }}
+            </div>
 
-        <p>
-            Session aktiv
-        </p>
+            <div class="session-info-box">
+                ⚠️ {{ roadType }}
+            </div>
 
-    </div>
+            <button
+                type="button"
+                class="session-button"
+                v-on:click="endSession">
 
-</header>
+                📊 Afslut session
 
+            </button>
 
-<!-- Error message -->
-<div
-    id="errorBox"
-    class="error-box"
-    style="display: none;">
-</div>
-
-
-<div class="notice">
-    🔒 Gruppen er låst mens session er aktiv
-</div>
+        </section>
 
 
-<section class="content-grid">
+        <!-- Error message -->
+        <section
+            v-if="errorMessage"
+            class="error-box">
+
+            {{ errorMessage }}
+
+        </section>
 
 
-<section class="left-column">
+        <!-- Locked message -->
+        <section class="locked-box">
+            🔒 Gruppen er låst mens session er aktiv
+        </section>
 
 
-<article class="card latest-card">
+        <!-- Main dashboard -->
+        <section class="content-grid">
 
-    <h2>
-        Din seneste måling
-    </h2>
+            <!-- Left column -->
+            <section class="left-column">
 
-    <div class="speed-area">
+                <article class="card latest-card">
 
-        <div class="gauge-wrapper">
+                    <h2>
+                        Din seneste måling
+                    </h2>
 
-            <svg class="gauge" viewBox="0 0 260 150">
+                    <div class="speed-circle">
 
-                <path
-                    class="gauge-track"
-                    d="M35 125 A95 95 0 0 1 225 125" />
+                        <div class="speed-number">
+                            {{ latestSpeed }}
+                        </div>
 
-            </svg>
+                        <div class="speed-unit">
+                            km/t
+                        </div>
 
-            <div class="speed-text">
+                    </div>
 
-                <strong id="speed-value">
-                    --
+                    <p class="speed-text">
+                        Simuleret hastighed
+                    </p>
+
+                    <div
+                        class="feedback-box"
+                        v-if="settings.showFeedback">
+
+                        {{ feedback }}
+
+                    </div>
+
+                </article>
+
+
+                <article class="card session-card">
+
+                    <h2>
+                        Din session
+                    </h2>
+
+                    <div class="stats-grid">
+
+                        <div class="stat-box">
+                            📊 Antal målinger
+                            <strong>
+                                {{ measurementCount }}
+                            </strong>
+                        </div>
+
+                        <div class="stat-box">
+                            ⚡ Gns. hastighed
+                            <strong>
+                                {{ averageSpeed }}
+                            </strong>
+                        </div>
+
+                        <div class="stat-box">
+                            🌿 CO₂ sparet
+                            <strong>
+                                {{ savedCo2 }}
+                            </strong>
+                        </div>
+
+                        <div class="stat-box">
+                            📝 Seneste måling
+                            <strong>
+                                {{ latestSpeed }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- Middle column -->
+            <section class="middle-column">
+
+                <article class="card">
+
+                    <h2>
+                        Sådan beregnes hastigheden
+                    </h2>
+
+                    <div class="formula-grid">
+
+                        <div>
+                            <small>
+                                Distance
+                            </small>
+
+                            <strong>
+                                {{ distance }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <small>
+                                Tid
+                            </small>
+
+                            <strong>
+                                {{ time }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <small>
+                                Fartgrænse
+                            </small>
+
+                            <strong>
+                                {{ speedLimit }} km/t
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="formula-box">
+                        Hastighed = distance / tid × faktor
+                    </div>
+
+                </article>
+
+
+                <article class="card">
+
+                    <h2>
+                        Sammenlign med grænse
+                    </h2>
+
+                    <div class="compare-row">
+
+                        <div class="speed-limit-circle">
+                            {{ speedLimit }}
+                        </div>
+
+                        <div>
+                            <small>
+                                Din hastighed
+                            </small>
+
+                            <strong>
+                                {{ latestSpeed }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <small>
+                                Afvigelse
+                            </small>
+
+                            <strong>
+                                {{ difference }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <article class="card">
+
+                    <h2>
+                        CO₂-feedback
+                    </h2>
+
+                    <p class="co2-text">
+                        {{ co2Text }}
+                    </p>
+
+                </article>
+
+            </section>
+
+
+            <!-- Right column -->
+            <aside class="right-column">
+
+                <!-- Feedback -->
+                <article
+                    class="card"
+                    v-if="settings.showFeedback">
+
+                    <h2>
+                        Feedback
+                    </h2>
+
+                    <div class="feedback-buttons">
+
+                        <div class="feedback-button">
+                            😬 For hurtigt
+                        </div>
+
+                        <div class="feedback-button">
+                            😐 Under
+                        </div>
+
+                        <div class="feedback-button">
+                            😊 Perfekt
+                        </div>
+
+                    </div>
+
+                    <div class="feedback-box">
+                        {{ feedback }}
+                    </div>
+
+                </article>
+
+
+                <!-- Settings -->
+                <article class="card settings-card">
+
+                    <h2>
+                        Indstillinger
+                    </h2>
+
+                    <div class="setting-row">
+
+                        <span>
+                            🔔 Lyd
+                        </span>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                v-model="soundEnabled">
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+                    <div class="setting-row">
+
+                        <span>
+                            🗣️ TTS
+                        </span>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                v-model="ttsEnabled">
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+                    <div class="setting-row">
+
+                        <span>
+                            👁️ Visuel feedback
+                        </span>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                v-model="visualEnabled">
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+                    <div class="setting-row">
+
+                        <span>
+                            💡 Fun facts
+                        </span>
+
+                        <label class="switch">
+
+                            <input
+                                type="checkbox"
+                                v-model="settings.showFunFact">
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+                </article>
+
+            </aside>
+
+        </section>
+
+
+        <!-- Fun fact -->
+        <section
+            class="funfact-box"
+            v-if="settings.showFunFact">
+
+            💡 {{ funFact }}
+
+        </section>
+
+
+        <!-- Fun fact popup -->
+        <section
+            v-if="showFunFactPopup"
+            class="funfact-toast">
+
+            <div class="funfact-toast-content">
+
+                <strong>
+                    Fun fact 🌍
                 </strong>
 
-                <span>
-                    km/t
-                </span>
+                <p>
+                    {{ funFact }}
+                </p>
+
+                <button
+                    type="button"
+                    class="summary-button"
+                    v-on:click="closeFunFactPopup">
+
+                    Luk
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- Next measurement -->
+        <button
+            type="button"
+            class="next-button"
+            v-on:click="createMeasurement">
+
+            ▶ Næste måling
+
+        </button>
+
+
+        <!-- Summary popup -->
+        <div
+            v-if="showSummaryPopup"
+            class="summary-overlay">
+
+            <div class="summary-popup">
+
+                <div class="summary-icon">
+                    ✅
+                </div>
+
+                <h2>
+                    Session afsluttet
+                </h2>
+
+                <p class="summary-text">
+                    Her er jeres resultat
+                </p>
+
+                <div class="summary-stats">
+
+                    <div class="summary-stat">
+
+                        <span>
+                            📊 Målinger
+                        </span>
+
+                        <strong>
+                            {{ measurementCount }}
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-stat">
+
+                        <span>
+                            ⚡ Gns. hastighed
+                        </span>
+
+                        <strong>
+                            {{ averageSpeed }}
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-stat">
+
+                        <span>
+                            🌿 CO₂ sparet
+                        </span>
+
+                        <strong>
+                            {{ savedCo2 }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="summary-button"
+                    onclick="window.location.href='opsummering.html'">
+
+                    Gå til opsummering
+
+                </button>
 
             </div>
 
         </div>
 
-        <p class="muted">
-            Simuleret hastighed
-        </p>
-
-    </div>
-
-    <div class="status-box feedback-message">
-        Feedback vises her
-    </div>
-
-</article>
-
-
-<article class="card session-card">
-
-    <h2>
-        Din session
-    </h2>
-
-    <div class="stats-grid">
-
-        <div class="stat-box">
-            📊 Antal målinger
-            <br>
-            <strong id="measurement-count">
-                --
-            </strong>
-        </div>
-
-        <div class="stat-box">
-            ⚡ Gns. hastighed
-            <br>
-            <strong id="average-speed">
-                --
-            </strong>
-        </div>
-
-        <div class="stat-box">
-            🌿 CO₂ sparet
-            <br>
-            <strong id="saved-co2">
-                --
-            </strong>
-        </div>
-
-        <div class="stat-box">
-            📈 Seneste måling
-            <br>
-            <strong id="latest-speed">
-                --
-            </strong>
-        </div>
-
-    </div>
-
-</article>
-
-</section>
-
-
-<section class="middle-column">
-
-
-<article class="card">
-
-    <h2>
-        Sådan beregnes hastigheden
-    </h2>
-
-    <div class="calculation-grid">
-
-        <div>
-            Distance
-            <br>
-            <strong id="distance">
-                --
-            </strong>
-        </div>
-
-        <div>
-            Tid
-            <br>
-            <strong id="tid">
-                --
-            </strong>
-        </div>
-
-        <div>
-            Fartgrænse
-            <br>
-            <strong id="limit-badge">
-                --
-            </strong>
-        </div>
-
-    </div>
-
-    <div
-        class="formula-box"
-        id="formulaText">
-
-        Hastighed = distance / tid × faktor
-
-    </div>
-
-</article>
-
-
-<article class="card">
-
-    <h2>
-        Sammenlign med grænse
-    </h2>
-
-    <div class="comparison-row">
-
-        <div
-            class="speed-limit"
-            id="speed-limit-display">
-
-            --
-
-        </div>
-
-        <div>
-            Din hastighed
-            <br>
-            <strong id="din-hastighed">
-                --
-            </strong>
-        </div>
-
-        <div>
-            Afvigelse
-            <br>
-            <strong id="afvigelse">
-                --
-            </strong>
-        </div>
-
-    </div>
-
-</article>
-
-
-<article class="card">
-
-    <h2>
-        CO₂-feedback
-    </h2>
-
-    <p id="co2Text">
-        CO₂-resultat vises efter måling.
-    </p>
-
-</article>
-
-</section>
-
-
-<aside class="right-column">
-
-
-<article class="card feedback-card">
-
-    <h2>
-        Feedback
-    </h2>
-
-    <div class="feedback-grid">
-
-        <button
-            type="button"
-            class="feedback-button">
-
-            😠 For hurtigt
-
-        </button>
-
-        <button
-            type="button"
-            class="feedback-button">
-
-            😐 Under
-
-        </button>
-
-        <button
-            type="button"
-            class="feedback-button">
-
-            😊 Perfekt
-
-        </button>
-
-    </div>
-
-    <div class="feedback-message">
-        Feedback vises her
-    </div>
-
-</article>
-
-
-<article class="card settings-card">
-
-    <h2>
-        Indstillinger
-    </h2>
-
-
-    <div class="setting-row">
-
-        <span>
-            🔔
-        </span>
-
-        <p>
-            Lyd (bip)
-        </p>
-
-        <label class="switch">
-
-            <input
-                type="checkbox"
-                id="beepLocalToggle"
-                checked>
-
-            <span></span>
-
-        </label>
-
-    </div>
-
-
-    <div class="setting-row">
-
-        <span>
-            🗣️
-        </span>
-
-        <p>
-            TTS (tale)
-        </p>
-
-        <label class="switch">
-
-            <input
-                type="checkbox"
-                id="ttsLocalToggle"
-                checked>
-
-            <span></span>
-
-        </label>
-
-    </div>
-
-
-    <div class="setting-row">
-
-        <span>
-            👁️
-        </span>
-
-        <p>
-            Visuel feedback
-        </p>
-
-        <label class="switch">
-
-            <input
-                type="checkbox"
-                id="visualFeedbackLocalToggle"
-                checked>
-
-            <span></span>
-
-        </label>
-
-    </div>
-
-
-    <div class="setting-row">
-
-        <span>
-            💡
-        </span>
-
-        <p>
-            Fun facts
-        </p>
-
-        <label class="switch">
-
-            <input
-                type="checkbox"
-                id="funfact-toggle"
-                checked>
-
-            <span></span>
-
-        </label>
-
-    </div>
-
-
-    <div class="setting-row">
-
-        <span>
-            🌍
-        </span>
-
-        <p>
-            TTS-sprog
-        </p>
-
-        <select id="ttsLanguageSelect">
-
-            <option value="da-DK">
-                Dansk
-            </option>
-
-            <option value="en-US">
-                Engelsk
-            </option>
-
-        </select>
-
-    </div>
-
-</article>
-
-
-<button
-    type="button"
-    class="next-button">
-
-    ▶ Næste måling
-
-</button>
-
-</aside>
-
-</section>
-</section>
-</main>
-
-
-<!-- Fun fact popup -->
-<div id="funfact-popup" class="funfact-toast">
-
-    <div class="funfact-toast-content">
-
-        <strong>
-            Fun fact 🌍
-        </strong>
-
-        <p id="funfactText">
-            Vidste du, at præcis hastighed kan give lavere brændstofforbrug og mindre CO₂?
-        </p>
-
-    </div>
+    </main>
 
 </div>
 
 
+<!-- Vue -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+<!-- Axios -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-<script src="api.js"></script>
-
+<!-- JS -->
 <script src="elev.js"></script>
 
 </body>

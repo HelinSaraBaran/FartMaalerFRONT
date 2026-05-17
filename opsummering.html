@@ -3,316 +3,419 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elev - Historik</title>
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="Style.css">
+    <title>
+        Elev - Historik
+    </title>
+
+    <link rel="stylesheet"
+          href="Style.css">
 </head>
 
-<body onload="loadHistory()">
+<body>
 
-<main class="summary-page">
+<div id="app">
 
-    <header class="summary-header">
+    <div class="layout">
 
-        <h1>
-            Min historik
-        </h1>
+        <!-- Sidebar -->
+        <aside class="sidebar">
 
-        <p>
-            Se tidligere sessions, målinger og udvikling over tid.
-        </p>
+            <div class="sidebar-title">
 
-    </header>
+                <span class="sidebar-icon">
+                    📊
+                </span>
 
-
-    <!-- Error message -->
-    <div
-        id="errorBox"
-        class="error-box"
-        style="display: none;">
-    </div>
-
-
-    <div class="summary-layout">
-
-        <!-- FILTERS -->
-        <aside class="summary-filters card">
-
-            <h2>
-                Filtre
-            </h2>
-
-            <!-- Road type -->
-            <div class="filter-block">
-
-                <label class="filter-label">
-                    Vejtype
-                </label>
-
-                <div class="filter-select">
-
-                    <span>
-                        ⚠️
-                    </span>
-
-                    <select id="historyRoadTypeFilter">
-
-                        <option value="">
-                            Alle vejtyper
-                        </option>
-
-                        <option value="Byzone">
-                            Byzone (50 km/t)
-                        </option>
-
-                        <option value="Landevej">
-                            Landevej (80 km/t)
-                        </option>
-
-                        <option value="Motorvej">
-                            Motorvej (110 km/t)
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <!-- Car type -->
-            <div class="filter-block">
-
-                <label class="filter-label">
-                    Biltype
-                </label>
-
-                <div class="filter-select">
-
-                    <span>
-                        🚗
-                    </span>
-
-                    <select id="historyCarTypeFilter">
-
-                        <option value="">
-                            Alle biltyper
-                        </option>
-
-                        <option value="Benzin Lille">
-                            Benzin - lille
-                        </option>
-
-                        <option value="Benzin Stor">
-                            Benzin - stor
-                        </option>
-
-                        <option value="Diesel">
-                            Diesel
-                        </option>
-
-                        <option value="Hybrid">
-                            Hybrid
-                        </option>
-
-                    </select>
-
-                </div>
-
-            </div>
-
-
-            <!-- Date -->
-            <div class="filter-block">
-
-                <label class="filter-label">
-                    Dato
-                </label>
-
-                <input
-                    type="date"
-                    id="historyDateFilter"
-                    class="filter-date">
-
-            </div>
-
-
-            <!-- Filter buttons -->
-            <button
-                type="button"
-                class="filter-apply"
-                onclick="loadHistory()">
-
-                Anvend filtre
-
-            </button>
-
-            <button
-                type="button"
-                class="filter-reset"
-                onclick="resetHistoryFilters()">
-
-                Ryd filtre
-
-            </button>
-
-        </aside>
-
-
-        <!-- SESSION TABLE -->
-        <section class="summary-sessions card">
-
-            <div class="sessions-header">
-
-                <h2 id="historyTitle">
-                    Dine sessioner
+                <h2>
+                    Fartmåler
                 </h2>
 
             </div>
 
-            <table class="sessions-table">
+            <nav class="sidebar-menu">
 
-                <thead>
+                <a href="session.html"
+                   class="menu-item">
 
-                    <tr>
+                    <span>⏰</span>
+                    Session
 
-                        <th>
-                            Dato
-                        </th>
+                </a>
 
-                        <th>
-                            Tidspunkt
-                        </th>
+                <a href="opsummering.html"
+                   class="menu-item active">
 
-                        <th>
-                            Vejtype
-                        </th>
+                    <span>📏</span>
+                    Målinger
 
-                        <th>
-                            Biltype
-                        </th>
+                </a>
 
-                        <th>
-                            Status
-                        </th>
+                <a href="leaderboardElev.html"
+                   class="menu-item">
 
-                        <th>
-                            Detaljer
-                        </th>
+                    <span>🏆</span>
+                    Leaderboard
 
-                    </tr>
+                </a>
 
-                </thead>
-
-                <tbody id="historyBody">
-
-                    <tr>
-
-                        <td colspan="6">
-                            Indlæser historik...
-                        </td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-            <div
-                class="table-footer"
-                id="historyFooter">
-
-                Viser --- sessioner
-
-            </div>
-
-        </section>
-
-
-        <!-- DEVELOPMENT CARD -->
-        <aside class="summary-chart card">
-
-            <h2>
-                Udvikling over tid
-            </h2>
-
-            <div class="chart-placeholder">
-
-                <span>
-                    Statistik og graf kan tilføjes senere
-                </span>
-
-            </div>
+            </nav>
 
         </aside>
 
+
+        <!-- Content -->
+        <main class="summary-page">
+
+            <header class="summary-header">
+
+                <h1>
+                    Min historik
+                </h1>
+
+                <p>
+                    Se tidligere sessions, målinger og udvikling over tid.
+                </p>
+
+            </header>
+
+
+            <!-- Error message -->
+            <section
+                v-if="errorMessage"
+                class="error-box">
+
+                {{ errorMessage }}
+
+            </section>
+
+
+            <div class="summary-layout">
+
+                <!-- Filters -->
+                <aside class="summary-filters card">
+
+                    <h2>
+                        Filtre
+                    </h2>
+
+                    <div class="filter-block">
+
+                        <label class="filter-label">
+                            Biltype
+                        </label>
+
+                        <div class="filter-select">
+
+                            <span>
+                                🚗
+                            </span>
+
+                            <select v-model="selectedCarTypeFilter">
+
+                                <option value="">
+                                    Alle biltyper
+                                </option>
+
+                                <option value="Benzin Lille">
+                                    Benzin - lille
+                                </option>
+
+                                <option value="Benzin Stor">
+                                    Benzin - stor
+                                </option>
+
+                                <option value="Diesel">
+                                    Diesel
+                                </option>
+
+                                <option value="Hybrid">
+                                    Hybrid
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="filter-block">
+
+                        <label class="filter-label">
+                            Vejtype
+                        </label>
+
+                        <div class="filter-select">
+
+                            <span>
+                                🛣
+                            </span>
+
+                            <select v-model="selectedRoadTypeFilter">
+
+                                <option value="">
+                                    Alle vejtyper
+                                </option>
+
+                                <option value="Byzone">
+                                    Byzone 50 km/t
+                                </option>
+
+                                <option value="Landevej">
+                                    Landevej 80 km/t
+                                </option>
+
+                                <option value="Motorvej">
+                                    Motorvej 110 km/t
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="filter-block">
+
+                        <label class="filter-label">
+                            Sortering
+                        </label>
+
+                        <div class="filter-select">
+
+                            <span>
+                                ↕️
+                            </span>
+
+                            <select v-model="sortType">
+
+                                <option value="">
+                                    Ingen sortering
+                                </option>
+
+                                <option value="bestCo2">
+                                    Laveste CO₂
+                                </option>
+
+                                <option value="worstCo2">
+                                    Højeste CO₂
+                                </option>
+
+                                <option value="bestTime">
+                                    Bedste tid
+                                </option>
+
+                                <option value="worstTime">
+                                    Værste tid
+                                </option>
+
+                                <option value="score">
+                                    Bedste score
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="filter-reset"
+                        v-on:click="resetFilters">
+
+                        Ryd filtre
+
+                    </button>
+
+                </aside>
+
+
+                <!-- Sessions -->
+                <section class="summary-sessions card">
+
+                    <div class="sessions-header">
+
+                        <h2>
+                            Dine sessioner
+                        </h2>
+
+                    </div>
+
+                    <div
+                        v-if="filteredSessions.length === 0"
+                        class="empty-history">
+
+                        Ingen sessioner fundet.
+
+                    </div>
+
+                    <div class="session-list">
+
+                        <div
+                            class="session-card"
+                            v-for="session in filteredSessions"
+                            v-bind:key="session.id">
+
+                            <h3>
+                                Session {{ session.id }}
+                            </h3>
+
+                            <p>
+                                🚗 {{ session.carType }}
+                            </p>
+
+                            <p>
+                                🛣 {{ session.roadType }}
+                            </p>
+
+                            <p>
+                                🌱 CO₂:
+                                {{ safeText(session.co2) }}
+                            </p>
+
+                            <p>
+                                ⭐ Score:
+                                {{ safeText(session.score) }}
+                            </p>
+
+                            <p>
+                                Status:
+                                {{ safeText(session.status) }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Measurements -->
+                <section class="summary-measurements card">
+
+                    <h2>
+                        Dine målinger
+                    </h2>
+
+                    <div
+                        v-if="filteredMeasurements.length === 0"
+                        class="empty-history">
+
+                        Ingen målinger fundet.
+
+                    </div>
+
+                    <div class="measurement-list">
+
+                        <div
+                            class="measurement-card"
+                            v-for="measurement in filteredMeasurements"
+                            v-bind:key="measurement.id">
+
+                            <h3>
+                                Måling {{ measurement.id }}
+                            </h3>
+
+                            <p>
+                                ⚡ Hastighed:
+                                {{ measurement.speed }} km/t
+                            </p>
+
+                            <p>
+                                ⏱ Tid:
+                                {{ measurement.time }} sek.
+                            </p>
+
+                            <p>
+                                📏 Distance:
+                                {{ measurement.distance }} m
+                            </p>
+
+                            <p>
+                                🌱 CO₂:
+                                {{ measurement.co2 }}
+                            </p>
+
+                            <p>
+                                ⭐ Score:
+                                {{ measurement.score }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- Best session -->
+            <section class="summary-best card">
+
+                <div class="best-score">
+                    {{ bestSession.score }}
+                </div>
+
+                <div class="best-info">
+
+                    <p>
+                        <strong>
+                            Bedste session
+                        </strong>
+                    </p>
+
+                    <p>
+                        🚗 {{ bestSession.carType }}
+                    </p>
+
+                    <p>
+                        🛣 {{ bestSession.roadType }}
+                    </p>
+
+                    <p>
+                        🌱 CO₂: {{ bestSession.co2 }}
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Navigation -->
+            <section class="summary-navigation">
+
+                <button
+                    type="button"
+                    class="back-button"
+                    onclick="window.location.href='session.html'">
+
+                    ← Tilbage til session
+
+                </button>
+
+            </section>
+
+        </main>
+
     </div>
 
-
-    <!-- BEST SESSION -->
-    <section class="summary-best card">
-
-        <div
-            class="best-score"
-            id="bestScoreText">
-
-            ---
-
-        </div>
-
-        <div class="best-info">
-
-            <p>
-
-                <strong id="bestSessionTitle">
-                    Bedste session
-                </strong>
-
-            </p>
-
-            <p id="bestSessionRoad">
-                ---
-            </p>
-
-            <p id="bestSessionCar">
-                ---
-            </p>
-
-        </div>
-
-        <button
-            type="button"
-            class="details-btn large">
-
-            Se detaljer →
-
-        </button>
-
-    </section>
+</div>
 
 
-    <!-- Navigation -->
-    <section class="summary-navigation">
+<!-- Vue -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-        <button
-            type="button"
-            class="back-button"
-            onclick="window.location.href='index.html'">
-
-            ← Tilbage til forsiden
-
-        </button>
-
-    </section>
-
-</main>
-
-
+<!-- Axios -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-<script src="api.js"></script>
-
+<!-- JS -->
 <script src="elev.js"></script>
 
 </body>
