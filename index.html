@@ -3,125 +3,199 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Fartmåler</title>
+    <title>Smart Fartmåler</title>
 
     <link rel="stylesheet" href="Style.css">
 </head>
 
-<body onload="loadFrontPageLeaderboard();">
+<body class="frontpage-body" onload="loadFrontPageLeaderboard();">
 
-    <!-- Navigation -->
-    <header class="navbar">
+<header class="frontpage-navbar">
 
-    <div class="logo">
-        Fartmåler
+    <div class="frontpage-logo">
+        🌿 Smart Fartmåler
     </div>
 
-    <div class="nav-actions">
+    <div class="frontpage-nav-actions">
 
         <button
             type="button"
-            class="start-btn"
+            class="frontpage-start-btn"
             onclick="goToMeasurement()">
+
             Start din måling →
+
         </button>
 
         <button
             type="button"
-            class="teacher-login-btn"
+            class="frontpage-login-btn"
             onclick="goToTeacherLogin()">
+
             Underviser login →
+
         </button>
 
     </div>
 
 </header>
 
-    <!-- Error message -->
-    <div
-        id="errorBox"
-        class="error-box"
-        style="display: none;">
+
+<div
+    id="errorBox"
+    class="error-box"
+    style="display: none;">
+</div>
+
+
+<section class="eco-hero">
+
+    <div class="eco-hero-text">
+
+        <div class="eco-badge">
+            🌱 Interaktiv læring om fart, CO₂ og bæredygtighed
+        </div>
+
+        <h1>
+            Gør fartmåling til grøn læring.
+        </h1>
+
+        <p>
+            Smart Fartmåler hjælper elever med at forstå sammenhængen mellem
+            hastighed, data, præcision og CO₂ gennem en sjov og praktisk målebane.
+        </p>
+
     </div>
 
 
+    <div class="eco-image-area">
 
-
-    <!-- Features -->
-    <section class="features">
-
-        <div class="card">
-            🌱 Forstå CO₂
+        <div class="eco-leaf eco-leaf-one">
+            🌿
         </div>
 
-        <div class="card">
-            👥 Sammenlign
+        <div class="eco-leaf eco-leaf-two">
+            🍃
         </div>
 
-        <div class="card">
-            🏆 Bliv bedre
+        <img
+            src="bil-(2).png"
+            alt="Fartmåler bil">
+
+    </div>
+
+</section>
+
+
+<section class="eco-features">
+
+    <div class="eco-feature-card">
+        <div class="eco-feature-icon">🌱</div>
+        <h3>Forstå CO₂</h3>
+        <p>Elever ser hvordan hastighed og kørselsadfærd kan kobles til miljø.</p>
+    </div>
+
+    <div class="eco-feature-card">
+        <div class="eco-feature-icon">👥</div>
+        <h3>Sammenlign grupper</h3>
+        <p>Grupper kan sammenligne resultater og lære af hinandens målinger.</p>
+    </div>
+
+    <div class="eco-feature-card">
+        <div class="eco-feature-icon">🏆</div>
+        <h3>Bliv bedre</h3>
+        <p>Score og leaderboard gør læringen mere motiverende og spilbaseret.</p>
+    </div>
+
+    <div class="eco-feature-card">
+        <div class="eco-feature-icon">📊</div>
+        <h3>Se udvikling</h3>
+        <p>Data kan bruges til refleksion, forbedring og forståelse af målinger.</p>
+    </div>
+
+</section>
+
+
+<section class="eco-bottom-wrapper">
+
+    <div class="eco-how-it-works-wide">
+
+        <div class="eco-bottom-leaf">
+            🌿
         </div>
 
-        <div class="card">
-            📊 Se udviklingen
-        </div>
+        <h2>
+            Hvordan virker det?
+        </h2>
 
-    </section>
+        <p>
+            Elever sender en bil gennem målebanen. Systemet beregner hastighed ud fra
+            afstand og tid, og viser resultatet digitalt med feedback, score og CO₂-information.
+        </p>
 
+        <div class="eco-steps">
 
-    <!-- Main content -->
-    <section class="main">
+            <div class="eco-step">
+                <span>1</span>
+                <h4>Vælg gruppe</h4>
+                <p>Start med at vælge den rigtige gruppe og session.</p>
+            </div>
 
-        <!-- Leaderboard - US7 -->
-        <div
-            class="leaderboard"
-            id="frontLeaderboardBox">
+            <div class="eco-step">
+                <span>2</span>
+                <h4>Kør bilen</h4>
+                <p>Kør bilen gennem målebanen, så sensorerne registrerer tiden.</p>
+            </div>
 
-            <h3>
-                Skole-leaderboard
-            </h3>
-
-            <p>
-                Resultater vises kun, hvis underviseren har slået leaderboard til.
-            </p>
-
-            <ul id="frontLeaderboardList">
-
-                <li>
-                    Indlæser leaderboard...
-                </li>
-
-            </ul>
-
-        </div>
-
-
-        <!-- Image section -->
-        <div class="visual">
-
-            <img
-                src="bil (2).png"
-                alt="Fartmåler bil">
-
-            <div class="info-box">
-
-                🌱 Prøv at ramme fartgrænsen præcist.
-                <br>
-                Præcis hastighed giver bedre score og lavere CO₂.
-
+            <div class="eco-step">
+                <span>3</span>
+                <h4>Se resultatet</h4>
+                <p>Få vist hastighed, score, feedback og relevant CO₂-information.</p>
             </div>
 
         </div>
 
-    </section>
+    </div>
 
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <div
+        class="eco-leaderboard-wide"
+        id="frontLeaderboardBox">
 
-    <script src="api.js"></script>
+        <div class="eco-section-header">
 
-    <script src="index.js"></script>
+            <div>
+                <h2>
+                    Skole-leaderboard
+                </h2>
+
+                <p>
+                    Resultater vises kun, hvis underviseren har slået leaderboard til.
+                </p>
+            </div>
+
+            <div class="eco-section-icon">
+                🏆
+            </div>
+
+        </div>
+
+        <ul id="frontLeaderboardList">
+
+            <li>
+                Indlæser leaderboard...
+            </li>
+
+        </ul>
+
+    </div>
+
+</section>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="api.js"></script>
+<script src="index.js"></script>
 
 </body>
 

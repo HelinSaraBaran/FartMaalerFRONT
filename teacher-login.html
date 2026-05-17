@@ -11,25 +11,32 @@
 
 <body>
 
-<div class="measurement-container">
+<div class="measurement-container login-page">
 
-    <div class="measurement-card">
+    <div class="measurement-card login-card">
 
-        <div class="header-row">
+        <div class="leaf-deco leaf-one">🌿</div>
+        <div class="leaf-deco leaf-two">🍃</div>
+
+        <div class="header-row login-header">
 
             <div class="icon-circle">
                 🔒
             </div>
 
-            <div>
+            <div class="login-text">
 
                 <h1>
                     Underviser login
                 </h1>
 
                 <p>
-                    Log ind for at administrere fartmåler-systemet.
+                    Log ind for at administrere Smart Fartmåler.
                 </p>
+
+                <span class="eco-tagline">
+                    🌿 Data, læring og bæredygtighed samlet ét sted.
+                </span>
 
             </div>
 
@@ -44,48 +51,52 @@
         </div>
 
 
-        <!-- Username -->
-        <label for="usernameInput">
-            Brugernavn
-        </label>
+        <div class="login-form">
 
-        <input
-            type="text"
-            id="usernameInput"
-            placeholder="Indtast brugernavn">
+            <!-- Username -->
+            <label for="usernameInput">
+                Brugernavn
+            </label>
 
-
-        <!-- Password -->
-        <label for="passwordInput">
-            Adgangskode
-        </label>
-
-        <input
-            type="password"
-            id="passwordInput"
-            placeholder="Indtast adgangskode">
+            <input
+                type="text"
+                id="usernameInput"
+                placeholder="Indtast brugernavn">
 
 
-        <!-- Login button -->
-        <button
-            type="button"
-            class="start-measure-btn"
-            onclick="loginTeacher()">
+            <!-- Password -->
+            <label for="passwordInput">
+                Adgangskode
+            </label>
 
-            Log ind →
+            <input
+                type="password"
+                id="passwordInput"
+                placeholder="Indtast adgangskode">
 
-        </button>
+
+            <!-- Login button -->
+            <button
+                type="button"
+                class="start-measure-btn"
+                onclick="loginTeacher()">
+
+                Log ind →
+
+            </button>
 
 
-        <!-- Back button -->
-        <button
-            type="button"
-            class="filter-reset"
-            onclick="window.location.href='index.html'">
+            <!-- Back button -->
+            <button
+                type="button"
+                class="filter-reset"
+                onclick="window.location.href='index.html'">
 
-            ← Tilbage til forsiden
+                ← Tilbage til forsiden
 
-        </button>
+            </button>
+
+        </div>
 
 
         <!-- Login info -->
@@ -101,9 +112,7 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
 <script src="api.js"></script>
-
 <script src="underviser.js"></script>
 
 </body>
