@@ -173,6 +173,7 @@ async function loadGroups() {
 
 
 // Opretter gruppe - US4
+// Opretter gruppe - US4
 async function createGroup() {
 
     clearError();
@@ -219,8 +220,25 @@ async function createGroup() {
 
         console.log(error);
 
-        showError(
-            "Kunne ikke oprette gruppe. Tjek Console eller Network."
+        if (
+            error.response !== undefined &&
+            error.response.data !== undefined &&
+            error.response.data.message !== undefined
+        ) {
+
+            showInfoModal(
+                "Gruppenavn er optaget",
+                error.response.data.message
+            );
+
+            groupNameInput.focus();
+
+            return;
+        }
+
+        showInfoModal(
+            "Fejl",
+            "Kunne ikke oprette gruppe"
         );
     }
 }
@@ -2276,6 +2294,48 @@ function setupTeacherEnterKeys() {
     );
 }
 
+// Viser info popup.
+function showInfoModal(title, text) {
+
+    const modal =
+        document.getElementById("infoModal");
+
+    const titleElement =
+        document.getElementById("infoModalTitle");
+
+    const textElement =
+        document.getElementById("infoModalText");
+
+    if (modal === null || titleElement === null || textElement === null) {
+
+        alert(text);
+
+        return;
+    }
+
+    titleElement.innerHTML =
+        title;
+
+    textElement.innerHTML =
+        text;
+
+    modal.style.display =
+        "flex";
+}
+
+
+// Lukker info popup.
+function closeInfoModal() {
+
+    const modal =
+        document.getElementById("infoModal");
+
+    if (modal !== null) {
+
+        modal.style.display =
+            "none";
+    }
+}
 
 // Starter funktioner når siden er loaded.
 window.addEventListener("load", function() {
