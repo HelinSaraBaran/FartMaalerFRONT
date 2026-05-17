@@ -225,13 +225,13 @@ function setRoadValues(roadValue) {
             15;
     }
 
-    if (roadValue === "Motorvej" || roadValue === "motorvej 130") {
+    if (roadValue === "Motorvej" || roadValue === "motorvej 110") {
 
         selectedRoadType =
-            "motorvej 130";
+            "motorvej 110";
 
         selectedSpeedLimit =
-            130;
+            110;
 
         selectedScalingFactor =
             20;
