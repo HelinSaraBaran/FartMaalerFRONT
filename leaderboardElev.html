@@ -11,7 +11,7 @@
     </title>
 
     <link rel="stylesheet"
-          href="Style.css?v=22">
+          href="Style.css?v=23">
 </head>
 
 <body>
@@ -21,62 +21,63 @@
 
     <!-- Sidebar -->
     <aside class="sidebar">
+            <div class="sidebar-title">
+                <span class="sidebar-icon">📊</span>
+                <h2>Fartmåler</h2>
+            </div>
 
-        <div class="sidebar-title">
+            <nav class="sidebar-menu">
 
-            <span class="sidebar-icon">
-                📊
-            </span>
+                <a href="index.html"
+                   class="menu-item">
+                    <span>🏠</span>
+                    Forside
+                </a>
 
-            <h2>
-                Fartmåler
-            </h2>
+                <a href="session.html"
+                   class="menu-item">
+                    <span>⏰</span>
+                    Session
+                </a>
 
-        </div>
+                <a href="opsummering.html"
+                   class="menu-item">
+                    <span>📏</span>
+                    Målinger
+                </a>
 
-        <nav class="sidebar-menu">
+                <a href="leaderboardElev.html"
+                   class="menu-item active">
+                    <span>🏆</span>
+                    Leaderboard
+                </a>
 
-            <a href="session.html"
-               class="menu-item">
+            </nav>
 
-                <span>⏰</span>
-                Session
-
-            </a>
-
-            <a href="opsummering.html"
-               class="menu-item">
-
-                <span>📏</span>
-                Målinger
-
-            </a>
-
-            <a href="leaderboardElev.html"
-               class="menu-item active">
-
-                <span>🏆</span>
-                Leaderboard
-
-            </a>
-
-        </nav>
-
-    </aside>
+        </aside>
 
 
     <!-- Content -->
     <main class="content">
 
+        <!-- Header -->
         <section class="leaderboard-header">
 
-            <h1>
-                Klasse leaderboard
-            </h1>
+            <div>
 
-            <p>
-                Sammenlign grupper i klassen og se, hvem der kører mest bæredygtigt.
-            </p>
+                <h1>
+                    Klasse leaderboard
+                </h1>
+
+                <p>
+                    Sammenlign grupper i klassen og se, hvem der kører mest bæredygtigt.
+                </p>
+
+            </div>
+
+            <div class="leaderboard-header-icon">
+                🏆
+            </div>
 
         </section>
 
@@ -96,12 +97,17 @@
             v-if="leaderboardEnabled === false"
             class="disabled-box">
 
+            <div class="disabled-icon">
+                🔒
+            </div>
+
             <h2>
-                Leaderboard er slået fra af din underviser
+                Leaderboard er slået fra
             </h2>
 
             <p>
-                Når underviseren slår leaderboard til igen, kan grupperne sammenlignes her.
+                Din underviser har slået leaderboard fra. Når det bliver slået til igen,
+                kan grupperne sammenlignes her.
             </p>
 
         </section>
@@ -148,14 +154,36 @@
 
             <section class="leaderboard-layout">
 
-                <!-- Table -->
+                <!-- Leaderboard table -->
                 <div class="leaderboard-card">
+
+                    <div class="leaderboard-card-header">
+
+                        <div>
+
+                            <h2>
+                                Resultater
+                            </h2>
+
+                            <p>
+                                Laveste score ligger øverst.
+                            </p>
+
+                        </div>
+
+                        <span class="leaderboard-card-badge">
+                            {{ leaderboardRoadType }}
+                        </span>
+
+                    </div>
+
 
                     <table class="leaderboard-table">
 
                         <thead>
 
                             <tr>
+
                                 <th>
                                     Placering
                                 </th>
@@ -175,6 +203,7 @@
                                 <th>
                                     Score
                                 </th>
+
                             </tr>
 
                         </thead>
@@ -183,34 +212,63 @@
 
                             <tr v-if="loading === true">
 
-                                <td colspan="5">
+                                <td colspan="5"
+                                    class="empty-table-message">
+
                                     Indlæser leaderboard...
+
                                 </td>
 
                             </tr>
+
 
                             <tr v-if="loading === false && leaderboard.length === 0">
 
-                                <td colspan="5">
+                                <td colspan="5"
+                                    class="empty-table-message">
+
                                     Ingen data endnu for denne vejtype.
+
                                 </td>
 
                             </tr>
 
+
                             <tr
                                 v-for="(item, index) in leaderboard"
-                                v-bind:key="index">
+                                v-bind:key="index"
+                                class="leaderboard-row">
 
                                 <td>
-                                    #{{ index + 1 }}
+
+                                    <span
+                                        class="rank-badge"
+                                        v-bind:class="{
+                                            gold: index === 0,
+                                            silver: index === 1,
+                                            bronze: index === 2
+                                        }">
+
+                                        #{{ index + 1 }}
+
+                                    </span>
+
                                 </td>
 
                                 <td>
-                                    {{ item.groupName }}
+
+                                    <strong>
+                                        {{ item.groupName }}
+                                    </strong>
+
                                 </td>
 
                                 <td>
-                                    {{ item.averageCo2 }} g
+
+                                    <span class="co2-value">
+                                        {{ item.averageCo2 }} g
+                                    </span>
+
                                 </td>
 
                                 <td>
@@ -218,7 +276,11 @@
                                 </td>
 
                                 <td>
-                                    {{ item.score }}
+
+                                    <strong class="score-value">
+                                        {{ item.score }}
+                                    </strong>
+
                                 </td>
 
                             </tr>
@@ -245,8 +307,32 @@
                         Leaderboardet viser gruppernes resultater ud fra den valgte vejtype.
                     </p>
 
-                    <p>
-                        Lavere CO₂ og bedre præcision giver en bedre score.
+                    <div class="leaderboard-info-box">
+
+                        <h3>
+                            Hvordan vinder man?
+                        </h3>
+
+                        <ul>
+
+                            <li>
+                                Kør tæt på fartgrænsen
+                            </li>
+
+                            <li>
+                                Få lav CO₂-score
+                            </li>
+
+                            <li>
+                                Lav flere præcise målinger
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                    <p class="leaderboard-note">
+                        Lavere score betyder bedre resultat.
                     </p>
 
                 </div>
@@ -260,14 +346,10 @@
 </div>
 
 
-<!-- Axios -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-<!-- Vue -->
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-<!-- JS -->
-<script src="elev.js?v=22"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="api.js"></script>
+<script src="elev.js?v=100"></script>
 
 </body>
 

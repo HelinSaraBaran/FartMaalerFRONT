@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>Ny Måling</title>
 
-    <link rel="stylesheet" href="Style.css?v=10">
+    <link rel="stylesheet" href="Style.css?v=101">
 </head>
 
 <body class="elev-green-page">
@@ -59,10 +59,9 @@
                 </option>
 
                 <option
-                    v-for="group in groups"
-                    v-bind:key="group.id"
-                    v-bind:value="group.id"
-                    v-bind:disabled="group.isLocked === true">
+    v-for="group in groups.filter(function(group) { return group.isLocked !== true; })"
+    v-bind:key="group.id"
+    v-bind:value="group.id">
 
                     {{ getGroupDisplayText(group) }}
 
@@ -148,14 +147,10 @@
 
 </div>
 
-<!-- Vue -->
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-<!-- Axios -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-<!-- Student JavaScript -->
-<script src="elev.js?v=10"></script>
+<script src="api.js"></script>
+<script src="elev.js?v=100"></script>
 
 </body>
 

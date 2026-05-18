@@ -11,7 +11,7 @@
     </title>
 
     <link rel="stylesheet"
-          href="Style.css">
+          href="Style.css?v=11">
 </head>
 
 <body>
@@ -20,56 +20,45 @@
      class="layout"
      v-cloak>
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
+     <aside class="sidebar">
 
-        <div class="sidebar-title">
+            <div class="sidebar-title">
+                <span class="sidebar-icon">📊</span>
+                <h2>Fartmåler</h2>
+            </div>
 
-            <span class="sidebar-icon">
-                📊
-            </span>
+            <nav class="sidebar-menu">
 
-            <h2>
-                Fartmåler
-            </h2>
+                <a href="index.html"
+                   class="menu-item">
+                    <span>🏠</span>
+                    Forside
+                </a>
 
-        </div>
+                <a href="session.html"
+                   class="menu-item active">
+                    <span>⏰</span>
+                    Session
+                </a>
 
-        <nav class="sidebar-menu">
+                <a href="opsummering.html"
+                   class="menu-item">
+                    <span>📏</span>
+                    Målinger
+                </a>
 
-            <a href="session.html"
-               class="menu-item active">
+                <a href="leaderboardElev.html"
+                   class="menu-item">
+                    <span>🏆</span>
+                    Leaderboard
+                </a>
 
-                <span>⏰</span>
-                Session
+            </nav>
 
-            </a>
+        </aside>
 
-            <a href="opsummering.html"
-               class="menu-item">
-
-                <span>📏</span>
-                Målinger
-
-            </a>
-
-            <a href="leaderboardElev.html"
-               class="menu-item">
-
-                <span>🏆</span>
-                Leaderboard
-
-            </a>
-
-        </nav>
-
-    </aside>
-
-
-    <!-- Content -->
     <main class="content session-page">
 
-        <!-- Top information -->
         <section class="session-top">
 
             <div class="session-info-box">
@@ -96,7 +85,6 @@
         </section>
 
 
-        <!-- Error message -->
         <section
             v-if="errorMessage"
             class="error-box">
@@ -106,16 +94,13 @@
         </section>
 
 
-        <!-- Locked message -->
         <section class="locked-box">
             🔒 Gruppen er låst mens session er aktiv
         </section>
 
 
-        <!-- Main dashboard -->
         <section class="content-grid">
 
-            <!-- Left column -->
             <section class="left-column">
 
                 <article class="card latest-card">
@@ -139,14 +124,6 @@
                     <p class="speed-text">
                         Simuleret hastighed
                     </p>
-
-                    <div
-                        class="feedback-box"
-                        v-if="settings.showFeedback">
-
-                        {{ feedback }}
-
-                    </div>
 
                 </article>
 
@@ -194,7 +171,6 @@
             </section>
 
 
-            <!-- Middle column -->
             <section class="middle-column">
 
                 <article class="card">
@@ -296,10 +272,8 @@
             </section>
 
 
-            <!-- Right column -->
             <aside class="right-column">
 
-                <!-- Feedback -->
                 <article
                     class="card"
                     v-if="settings.showFeedback">
@@ -331,7 +305,6 @@
                 </article>
 
 
-                <!-- Settings -->
                 <article class="card settings-card">
 
                     <h2>
@@ -372,6 +345,14 @@
 
                         </label>
 
+                    </div>
+                    <div class="setting-row language-setting-row" v-if="ttsEnabled">
+                        <span> 🌍 </span>
+                        <p> Sprog </p>
+                        <select id="ttsLanguageSelect" v-model="selectedTtsLanguage">
+                            <option value="da-DK"> Dansk </option>
+                            <option value="en-US"> Engelsk </option>
+                         </select>
                     </div>
 
                     <div class="setting-row">
@@ -417,17 +398,13 @@
         </section>
 
 
-        <!-- Fun fact -->
-        <section
-            class="funfact-box"
-            v-if="settings.showFunFact">
+        <section class="funfact-box" v-if="settings.showFunFact && funFactsEnabled">
 
             💡 {{ funFact }}
 
         </section>
 
 
-        <!-- Fun fact popup -->
         <section
             v-if="showFunFactPopup"
             class="funfact-toast">
@@ -456,102 +433,70 @@
         </section>
 
 
-        <!-- Next measurement -->
         <button
             type="button"
             class="next-button"
-            v-on:click="createMeasurement">
+            v-on:click="nextMeasurement">
 
             ▶ Næste måling
 
         </button>
 
 
-        <!-- Summary popup -->
         <div
-            v-if="showSummaryPopup"
-            class="summary-overlay">
+    v-if="showSummaryPopup"
+    class="summary-popup-overlay">
 
-            <div class="summary-popup">
+    <div class="summary-popup-card">
 
-                <div class="summary-icon">
-                    ✅
-                </div>
+        <h2>
+            🎉 Session afsluttet
+        </h2>
 
-                <h2>
-                    Session afsluttet
-                </h2>
+        <p>
+            Her er jeres resultat
+        </p>
 
-                <p class="summary-text">
-                    Her er jeres resultat
-                </p>
+        <div class="summary-popup-stats">
 
-                <div class="summary-stats">
+            <div>
+                📊 Målinger:
+                {{ measurementCount }}
+            </div>
 
-                    <div class="summary-stat">
+            <div>
+                ⚡ Gns. hastighed:
+                {{ averageSpeed }}
+            </div>
 
-                        <span>
-                            📊 Målinger
-                        </span>
-
-                        <strong>
-                            {{ measurementCount }}
-                        </strong>
-
-                    </div>
-
-                    <div class="summary-stat">
-
-                        <span>
-                            ⚡ Gns. hastighed
-                        </span>
-
-                        <strong>
-                            {{ averageSpeed }}
-                        </strong>
-
-                    </div>
-
-                    <div class="summary-stat">
-
-                        <span>
-                            🌿 CO₂ sparet
-                        </span>
-
-                        <strong>
-                            {{ savedCo2 }}
-                        </strong>
-
-                    </div>
-
-                </div>
-
-                <button
-                    type="button"
-                    class="summary-button"
-                    onclick="window.location.href='opsummering.html'">
-
-                    Gå til opsummering
-
-                </button>
-
+            <div>
+                🌿 CO₂ sparet:
+                {{ savedCo2 }}
             </div>
 
         </div>
+
+        <button
+            class="summary-popup-button"
+            onclick="window.location.href='opsummering.html'">
+
+            Gå til opsummering
+
+        </button>
+
+    </div>
+
+</div>
 
     </main>
 
 </div>
 
 
-<!-- Vue -->
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-<!-- Axios -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-<!-- JS -->
-<script src="elev.js"></script>
+<script src="api.js"></script>
+<script src="elev.js?v=99"></script>
 
 </body>
 

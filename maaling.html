@@ -26,7 +26,7 @@
                 <span>🏠</span> Overblik
             </a>
 
-            <a href="maaling.html" class="menu-item">
+            <a href="maaling.html" class="menu-item active">
                 <span>📏</span> Målinger
             </a>
 
@@ -57,9 +57,7 @@
 
             <div class="welcome-text">
 
-                <h1>
-                    Målinger
-                </h1>
+                <h1>Målinger</h1>
 
                 <p>
                     Se sessions, gruppernes resultater og klassens udvikling.
@@ -92,7 +90,6 @@
         </header>
 
 
-        <!-- Error message -->
         <div
             id="errorBox"
             class="error-box"
@@ -135,23 +132,17 @@
         </section>
 
 
-        <section class="mailer-grid">
+        <section class="measurement-grid">
 
-            <!-- Latest measurements - US6 and US12 -->
             <div class="card group-overview">
 
                 <div class="group-header">
-
-                    <h3>
-                        Seneste målinger
-                    </h3>
-
+                    <h3>Seneste målinger</h3>
                 </div>
 
                 <table class="group-overview-table">
 
                     <thead>
-
                         <tr>
                             <th>Gruppe</th>
                             <th>Hastighed</th>
@@ -159,17 +150,14 @@
                             <th>Score</th>
                             <th>Status</th>
                         </tr>
-
                     </thead>
 
                     <tbody id="latestMeasurementsBody">
-
                         <tr>
                             <td colspan="5">
                                 Indlæser målinger...
                             </td>
                         </tr>
-
                     </tbody>
 
                 </table>
@@ -177,15 +165,10 @@
             </div>
 
 
-            <!-- Simple placeholder because graph is not a core user story -->
             <div class="card group-graph">
 
                 <div class="graph-header">
-
-                    <h3>
-                        Udvikling over tid
-                    </h3>
-
+                    <h3>Udvikling over tid</h3>
                 </div>
 
                 <div class="graph-placeholder">
@@ -197,14 +180,11 @@
         </section>
 
 
-        <!-- Sessions - US3 and US14 -->
         <section class="card comparison-card">
 
             <div class="group-header">
 
-                <h3>
-                    Alle sessions
-                </h3>
+                <h3>Alle sessions</h3>
 
                 <button
                     type="button"
@@ -217,10 +197,75 @@
 
             </div>
 
+
+            <div class="sessions-filter-row">
+
+                <select
+                    id="measurementSessionGroupFilter"
+                    onchange="filterMeasurementSessions()">
+
+                    <option value="all">
+                        Alle grupper
+                    </option>
+
+                </select>
+
+                <select
+                    id="measurementSessionCarTypeFilter"
+                    onchange="filterMeasurementSessions()">
+
+                    <option value="all">
+                        Alle biltyper
+                    </option>
+
+                </select>
+
+                <select
+                    id="measurementSessionStatusFilter"
+                    onchange="filterMeasurementSessions()">
+
+                    <option value="all">
+                        Alle statusser
+                    </option>
+
+                </select>
+
+                <select
+                    id="measurementSessionSortSelect"
+                    onchange="sortMeasurementSessions()">
+
+                    <option value="dateDesc">
+                        Nyeste først
+                    </option>
+
+                    <option value="dateAsc">
+                        Ældste først
+                    </option>
+
+                    <option value="groupAsc">
+                        Gruppe A-Z
+                    </option>
+
+                    <option value="carTypeAsc">
+                        Biltype A-Z
+                    </option>
+
+                    <option value="speedAsc">
+                        Fartgrænse lav-høj
+                    </option>
+
+                    <option value="speedDesc">
+                        Fartgrænse høj-lav
+                    </option>
+
+                </select>
+
+            </div>
+
+
             <table class="comparison-table">
 
                 <thead>
-
                     <tr>
                         <th>Gruppe</th>
                         <th>Biltype</th>
@@ -231,17 +276,14 @@
                         <th>Afslut</th>
                         <th>Slet</th>
                     </tr>
-
                 </thead>
 
                 <tbody id="sessionsTableBody">
-
                     <tr>
                         <td colspan="8">
                             Indlæser sessions...
                         </td>
                     </tr>
-
                 </tbody>
 
             </table>
@@ -253,7 +295,65 @@
 </div>
 
 
-<!-- FÆLLES BEKRÆFTELSES POPUP -->
+<div
+    id="sessionDetailsModal"
+    class="custom-modal"
+    style="display: none;">
+
+    <div class="custom-modal-content large-modal">
+
+        <div class="session-popup-header">
+
+            <h3 id="sessionPopupTitle">
+                Session detaljer
+            </h3>
+
+            <button
+                type="button"
+                class="modal-close-btn"
+                onclick="closeSessionDetailsModal()">
+
+                ✕
+
+            </button>
+
+        </div>
+
+        <div
+            id="sessionPopupInfo"
+            class="session-popup-info">
+
+            Indlæser session...
+
+        </div>
+
+        <table class="session-popup-table">
+
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Hastighed</th>
+                    <th>CO₂</th>
+                    <th>Tid</th>
+                    <th>Distance</th>
+                </tr>
+            </thead>
+
+            <tbody id="sessionPopupMeasurementsBody">
+                <tr>
+                    <td colspan="5">
+                        Indlæser målinger...
+                    </td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
 <div id="confirmModal" class="custom-modal">
 
     <div class="custom-modal-content">
@@ -292,27 +392,6 @@
 
 </div>
 
-
-<script>
-
-const links =
-    document.querySelectorAll(".menu-item");
-
-const currentPage =
-    window.location.pathname.split("/").pop();
-
-for (let index = 0; index < links.length; index++) {
-
-    const link =
-        links[index];
-
-    if (link.getAttribute("href") === currentPage) {
-
-        link.classList.add("active");
-    }
-}
-
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="api.js"></script>
