@@ -439,24 +439,24 @@
 
                     <div class="student-popup-measurement-list">
 
-                        <div
-                            class="student-measurement-item"
-                            v-for="measurement in selectedHistoryMeasurements"
-                            v-bind:key="measurement.id">
+    <div
+        class="student-measurement-item"
+        v-for="measurement in selectedHistoryMeasurements"
+        v-bind:key="measurement.id">
 
-                            <h3>
-                                Måling {{ measurement.id }}
-                            </h3>
+        <h3>
+            Måling {{ measurement.id }}
+        </h3>
 
-                            <p>⚡ Hastighed: {{ safeText(measurement.speed) }} km/t</p>
-                            <p>⏱ Tid: {{ safeText(measurement.time) }} sek.</p>
-                            <p>📏 Distance: {{ safeText(measurement.distance) }} m</p>
-                            <p>🌱 CO₂: {{ safeText(measurement.co2) }}</p>
-                            <p>⭐ Score: {{ safeText(measurement.score) }}</p>
+        <p>⚡ Hastighed: {{ safeText(measurement.simulatedSpeed) }} km/t</p>
+        <p>⏱ Tid: {{ safeText(measurement.time) }} sek.</p>
+        <p>📏 Distance: {{ safeText(measurement.distance) }} m</p>
+        <p>🌱 CO₂: {{ safeText(measurement.co2) }}</p>
+        <p>⭐ Score: {{ safeText(measurement.score) }}</p>
 
-                        </div>
+    </div>
 
-                    </div>
+</div>
 
                     <button
                         type="button"
