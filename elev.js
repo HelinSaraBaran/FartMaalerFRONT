@@ -77,7 +77,17 @@ const app = Vue.createApp({
 
 
     methods: {
+        async showFunFact() {
 
+    if (
+        this.funFactsEnabled === false ||
+        this.settings.showFunFact === false
+    ) {
+        return;
+    }
+
+    this.showFunFactPopup = true;
+},
         normalizeArray(responseData) {
 
             if (Array.isArray(responseData)) {
@@ -555,7 +565,12 @@ window.location.href =
 
             this.showCo2Feedback(savedMeasurement);
 
-            this.showFunFact();
+           if (
+    this.funFactsEnabled === true &&
+    this.settings.showFunFact === true
+) {
+    this.showFunFactPopup = true;
+}
         },
 
 
@@ -699,70 +714,7 @@ window.location.href =
         },
 
 
-        async showFunFact() {
-
-            if (
-                this.funFactsEnabled === false ||
-                this.settings.showFunFact === false
-            ) {
-                return;
-            }
-
-            try {
-
-                const response =
-                    await axios.get(
-                        apiUrl + "/FunFacts/random"
-                    );
-
-                if (
-                    response.data !== undefined &&
-                    response.data !== null &&
-                    response.data.text !== undefined
-                ) {
-                    this.funFact =
-                        response.data.text;
-                }
-                else {
-                    this.funFact =
-                        "Vidste du at jævn fart kan give mindre CO₂?";
-                }
-
-                this.showFunFactPopup = true;
-
-                if (
-                    this.ttsFunFactEnabled === true &&
-                    this.ttsEnabled === true
-                ) {
-                    this.speakText(this.funFact);
-                }
-
-                const currentApp = this;
-
-                setTimeout(function() {
-                    currentApp.showFunFactPopup = false;
-                }, 5000);
-            }
-
-            catch(error) {
-
-                console.log(error);
-
-                this.funFact =
-                    "Vidste du at jævn fart ofte bruger mindre energi?";
-
-                this.showFunFactPopup = true;
-            }
-        },
-
-
-        closeFunFactPopup() {
-
-            this.showFunFactPopup = false;
-        },
-
-
-        async loadHistory() {
+       async loadHistory() {
 
     this.errorMessage = "";
 
@@ -773,91 +725,53 @@ window.location.href =
 
         if (!groupId) {
             this.sessions = [];
+            this.measurementsHistory = [];
             this.errorMessage = "Ingen gruppe valgt.";
             return;
         }
 
-        let endpoint =
+        const endpoint =
             apiUrl +
             "/Sessions/group/" +
             groupId +
             "/history";
-
-        let query =
-            "?";
-
-        if (this.selectedCarTypeFilter !== "") {
-            query =
-                query +
-                "carType=" +
-                encodeURIComponent(this.selectedCarTypeFilter) +
-                "&";
-        }
-
-        if (this.selectedRoadTypeFilter !== "") {
-
-            const roadValues =
-                this.getRoadValues(this.selectedRoadTypeFilter);
-
-            query =
-                query +
-                "roadType=" +
-                encodeURIComponent(roadValues.roadType) +
-                "&";
-        }
-
-        if (this.startDate !== "") {
-            query =
-                query +
-                "startDate=" +
-                encodeURIComponent(this.startDate) +
-                "&";
-        }
-
-        if (this.endDate !== "") {
-            query =
-                query +
-                "endDate=" +
-                encodeURIComponent(this.endDate) +
-                "&";
-        }
-
-        if (this.sortType !== "") {
-            query =
-                query +
-                "sortBy=" +
-                encodeURIComponent(this.sortType) +
-                "&sortDirection=asc&";
-        }
-
-        if (query !== "?") {
-            endpoint =
-                endpoint +
-                query.slice(0, -1);
-        }
 
         const sessionResponse =
             await axios.get(endpoint);
 
         this.sessions =
             this.normalizeArray(sessionResponse.data);
-            this.measurementsHistory = [];
 
-for (let index = 0; index < this.sessions.length; index++) {
+        console.log("Sessions fra backend:", this.sessions);
 
-    const session =
-        this.sessions[index];
+        this.measurementsHistory = [];
 
-    const measurements =
-        this.normalizeArray(session.measurements);
+        for (let index = 0; index < this.sessions.length; index++) {
 
-    for (let measurementIndex = 0; measurementIndex < measurements.length; measurementIndex++) {
+            const session =
+                this.sessions[index];
 
-        this.measurementsHistory.push(
-            measurements[measurementIndex]
-        );
-    }
-}
+            let measurements =
+                session.measurements;
+
+            if (measurements === undefined || measurements === null) {
+                measurements = session.Measurements;
+            }
+
+            measurements =
+                this.normalizeArray(measurements);
+
+            console.log("Målinger for session " + session.id + ":", measurements);
+
+            for (let measurementIndex = 0; measurementIndex < measurements.length; measurementIndex++) {
+
+                this.measurementsHistory.push(
+                    measurements[measurementIndex]
+                );
+            }
+        }
+
+        console.log("Alle målinger samlet:", this.measurementsHistory);
     }
 
     catch(error) {
@@ -865,10 +779,10 @@ for (let index = 0; index < this.sessions.length; index++) {
         console.log(error);
 
         this.sessions = [];
+        this.measurementsHistory = [];
         this.errorMessage = "Kunne ikke hente historik";
     }
 },
-
 
        resetFilters() {
 
