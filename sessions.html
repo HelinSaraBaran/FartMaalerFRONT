@@ -70,7 +70,7 @@
 
             <button
                 type="button"
-                class="logout-btn"
+                class="logout-btn global-logout"
                 onclick="logout()">
 
                 Log ud →
@@ -144,19 +144,10 @@
                     Aktive og afsluttede sessions
                 </h3>
 
-                <button
-                    type="button"
-                    class="danger-btn"
-                    onclick="deleteAllHistory()">
-
-                    Slet al historik
-
-                </button>
-
             </div>
 
 
-            <!-- FILTRE OG SORTERING -->
+            <!-- FILTRE -->
             <div class="sessions-filter-row">
 
                 <select
@@ -261,6 +252,70 @@
 </div>
 
 
+<!-- SESSION DETAILS POPUP -->
+<div
+    id="sessionDetailsModal"
+    class="custom-modal"
+    style="display:none;">
+
+    <div class="custom-modal-content large-modal">
+
+        <div class="session-popup-header">
+
+            <h3 id="sessionPopupTitle">
+                Session detaljer
+            </h3>
+
+            <button
+                type="button"
+                class="modal-close-btn"
+                onclick="closeSessionDetailsModal()">
+
+                ✕
+
+            </button>
+
+        </div>
+
+        <div
+            id="sessionPopupInfo"
+            class="session-popup-info">
+
+            Indlæser session...
+
+        </div>
+
+        <table class="session-popup-table">
+
+            <thead>
+
+                <tr>
+                    <th>#</th>
+                    <th>Hastighed</th>
+                    <th>CO₂</th>
+                    <th>Tid</th>
+                    <th>Distance</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="sessionPopupMeasurementsBody">
+
+                <tr>
+                    <td colspan="5">
+                        Indlæser målinger...
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
 <!-- FÆLLES BEKRÆFTELSES POPUP -->
 <div id="confirmModal" class="custom-modal">
 
@@ -303,8 +358,12 @@
 
 <!-- ACTIVE MENU -->
 <script>
-const links = document.querySelectorAll(".menu-item");
-const currentPage = window.location.pathname.split("/").pop();
+
+const links =
+    document.querySelectorAll(".menu-item");
+
+const currentPage =
+    window.location.pathname.split("/").pop();
 
 for (let index = 0; index < links.length; index++) {
 
@@ -313,6 +372,7 @@ for (let index = 0; index < links.length; index++) {
         links[index].classList.add("active");
     }
 }
+
 </script>
 
 

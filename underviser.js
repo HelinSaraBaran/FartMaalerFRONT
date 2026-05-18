@@ -1,7 +1,7 @@
 // Denne fil håndterer underviser funktioner.
 
 let selectedLeaderboardType = "schools";
-let selectedLeaderboardRoadType = "Byzone";
+let selectedLeaderboardRoadType = "byzone 50";
 
 let confirmModalAction = null;
 let teacherActionIsRunning = false;
@@ -689,6 +689,7 @@ async function loadTeacherOverview() {
 
 
 // Henter overblik og live målinger - US6
+// Henter overblik og live målinger - US6
 async function loadOverview() {
 
     const latestMeasurementsBody =
@@ -704,15 +705,19 @@ async function loadOverview() {
 
         const response =
             await axios.get(
-                apiUrl + "/Measurements"
+                apiUrl + "/Measurements/live-overview"
             );
 
         let measurements =
             response.data;
 
-        if (measurements.measurements !== undefined && measurements.measurements !== null) {
-            measurements = measurements.measurements;
+        if (
+            measurements.$values !== undefined &&
+            measurements.$values !== null
+        ) {
 
+            measurements =
+                measurements.$values;
         }
 
         let totalSpeed =
@@ -744,17 +749,37 @@ async function loadOverview() {
 
         for (let index = 0; index < measurements.length; index++) {
 
-            const measurement =
+            const overview =
                 measurements[index];
 
+            const latestMeasurement =
+                overview.latestMeasurement;
+
+            if (
+                latestMeasurement === undefined ||
+                latestMeasurement === null
+            ) {
+
+                continue;
+            }
+
             const speed =
-             getNumber(measurement.simulatedSpeed);
+                getNumber(
+                    latestMeasurement.simulatedSpeed
+                );
 
             const co2 =
-             getNumber(measurement.co2);
+                getNumber(
+                    latestMeasurement.co2
+                );
 
             const score =
-              Math.abs(speed - getNumber(measurement.speedLimit)) + co2;
+                Math.abs(
+                    speed -
+                    getNumber(
+                        latestMeasurement.speedLimit
+                    )
+                ) + co2;
 
             totalSpeed =
                 totalSpeed + speed;
@@ -767,7 +792,7 @@ async function loadOverview() {
 
             latestMeasurementsBody.innerHTML +=
                 "<tr>" +
-                    "<td>Gruppe " + getValue(measurement.groupId) + "</td>" +
+                    "<td>Gruppe " + getValue(overview.groupId) + "</td>" +
                     "<td>" + speed + " km/t</td>" +
                     "<td>" + co2 + " g</td>" +
                     "<td><span class='status green'>Målt</span></td>" +
@@ -845,7 +870,7 @@ async function loadGroupsCount() {
 
         const response =
             await axios.get(
-                apiUrl + "/Groups"
+                apiUrl + "/Measurements/live-overview"
             );
 
         let groups =
@@ -936,7 +961,14 @@ async function loadSessions() {
 
             return;
         }
+        allSessionsPageSessions = sessions;
+filteredSessionsPageSessions = sessions;
 
+fillMeasurementSessionFilters(sessions);
+
+displayMeasurementSessions(
+    filteredSessionsPageSessions
+);
         for (let index = 0; index < sessions.length; index++) {
 
             const session =
@@ -1339,7 +1371,7 @@ function displaySessionsPage(sessions) {
         }
 
         sessionsPageTableBody.innerHTML +=
-            "<tr class='click-row'>" +
+            "<tr class='click-row' onclick='openSessionDetails(" + getSessionId(session) + ")'>" +
                 "<td>" + getSessionGroupName(session) + "</td>" +
                 "<td>" + formatSessionDate(session) + "</td>" +
                 "<td>" + getValue(session.carType) + "</td>" +
@@ -1737,14 +1769,6 @@ function deleteAllGroups() {
     );
 }
 
-
-// Henter underviser leaderboard - US7
-async function loadTeacherLeaderboard() {
-
-    await loadLeaderboard();
-}
-
-
 // Skifter leaderboard type - US7
 function changeLeaderboardType(type) {
 
@@ -1763,9 +1787,20 @@ function changeLeaderboardType(type) {
 
     loadLeaderboard();
 }
+// Henter underviser leaderboard - US7
+async function loadTeacherLeaderboard() {
+
+    await loadLeaderboard();
+
+    setInterval(function () {
+
+        loadLeaderboard();
+
+    }, 5000);
+}
 
 
-// Skifter leaderboard vejtype - US7
+// Skifter leaderboard type - US7
 function changeLeaderboardRoadType(roadType) {
 
     selectedLeaderboardRoadType =
@@ -1773,23 +1808,21 @@ function changeLeaderboardRoadType(roadType) {
 
     setTabActive(
         "byzoneTab",
-        roadType === "Byzone"
+        roadType === "byzone 50"
     );
 
     setTabActive(
         "landevejTab",
-        roadType === "Landevej"
+        roadType === "landevej 80"
     );
 
     setTabActive(
         "motorvejTab",
-        roadType === "Motorvej"
+        roadType === "motorvej 110"
     );
 
     loadLeaderboard();
 }
-
-
 // Henter leaderboard - US7
 async function loadLeaderboard() {
 
@@ -1807,13 +1840,22 @@ async function loadLeaderboard() {
         let endpoint =
             apiUrl + "/Leaderboard";
 
-        if (selectedLeaderboardType === "schools") {
-            endpoint = apiUrl + "/Leaderboard/schools?roadType=" + selectedLeaderboardRoadType;
-        }
+       const backendRoadType =
+    getBackendRoadType(selectedLeaderboardRoadType);
 
-        if (selectedLeaderboardType === "classes") {
-            endpoint = apiUrl + "/Leaderboard/classes?roadType=" + selectedLeaderboardRoadType;
-        }
+if (selectedLeaderboardType === "schools") {
+    endpoint =
+        apiUrl +
+        "/Leaderboard/admin/school?roadType=" +
+        encodeURIComponent(backendRoadType);
+}
+
+if (selectedLeaderboardType === "classes") {
+    endpoint =
+        apiUrl +
+        "/Leaderboard/admin/class?roadType=" +
+        encodeURIComponent(backendRoadType);
+}
 
         const response =
             await axios.get(
@@ -1821,8 +1863,7 @@ async function loadLeaderboard() {
             );
 
         let leaderboard =
-            response.data;
-
+    response.data.leaderboard;
         if (leaderboard.$values !== undefined && leaderboard.$values !== null) {
 
             leaderboard =
@@ -1904,7 +1945,29 @@ async function loadLeaderboard() {
     }
 }
 
+function getBackendRoadType(roadType) {
 
+    if (roadType === undefined || roadType === null) {
+        return "byzone 50";
+    }
+
+    const roadText =
+        roadType.toString().toLowerCase().trim();
+
+    if (roadText.includes("byzone") || roadText.includes("50")) {
+        return "byzone 50";
+    }
+
+    if (roadText.includes("landevej") || roadText.includes("80")) {
+        return "landevej 80";
+    }
+
+    if (roadText.includes("motorvej") || roadText.includes("110")) {
+        return "motorvej 110";
+    }
+
+    return "byzone 50";
+}
 // Opdaterer top 3 - US7
 function updateTopThree(leaderboard) {
 
@@ -2336,23 +2399,446 @@ function closeInfoModal() {
     }
 }
 
-// Starter funktioner når siden er loaded.
-window.addEventListener("load", function() {
+// Åbner popup med session detaljer og målinger.
+async function openSessionDetails(sessionId) {
 
-    setupTeacherEnterKeys();
+    const modal =
+        document.getElementById("sessionDetailsModal");
 
-    const logoutButtons =
-        document.querySelectorAll(".global-logout");
+    const title =
+        document.getElementById("sessionPopupTitle");
 
-    for (let index = 0; index < logoutButtons.length; index++) {
+    const info =
+        document.getElementById("sessionPopupInfo");
 
-        const button =
-            logoutButtons[index];
+    const body =
+        document.getElementById("sessionPopupMeasurementsBody");
 
-        button.addEventListener("click", function() {
-            logoutTeacher();
-        });
+    if (
+        modal === null ||
+        title === null ||
+        info === null ||
+        body === null
+    ) {
+        return;
     }
-    
+
+    modal.style.display =
+        "flex";
+
+    title.innerHTML =
+        "Session #" + sessionId;
+
+    info.innerHTML =
+        "Indlæser session...";
+
+    body.innerHTML =
+        "<tr><td colspan='5'>Indlæser målinger...</td></tr>";
+
+    try {
+
+        const response =
+            await axios.get(
+                apiUrl + "/Sessions/" + sessionId
+            );
+
+        const session =
+            response.data;
+
+        let measurements =
+            session.measurements;
+
+        if (
+            measurements !== undefined &&
+            measurements !== null &&
+            measurements.$values !== undefined
+        ) {
+
+            measurements =
+                measurements.$values;
+        }
+
+        if (
+            measurements === undefined ||
+            measurements === null ||
+            measurements.length === 0
+        ) {
+
+            info.innerHTML =
+                "<strong>Gruppe:</strong> " +
+                getSessionGroupName(session) +
+                " | <strong>Status:</strong> " +
+                getValue(session.status);
+
+            body.innerHTML =
+                "<tr><td colspan='5'>Ingen målinger endnu</td></tr>";
+
+            return;
+        }
+
+        let totalSpeed =
+            0;
+
+        let totalCo2 =
+            0;
+
+        let bestSpeed =
+            0;
+
+        for (let index = 0; index < measurements.length; index++) {
+
+            const measurement =
+                measurements[index];
+
+            const speed =
+                getNumber(
+                    measurement.simulatedSpeed
+                );
+
+            const co2 =
+                getNumber(
+                    measurement.co2
+                );
+
+            totalSpeed =
+                totalSpeed + speed;
+
+            totalCo2 =
+                totalCo2 + co2;
+
+            if (speed > bestSpeed) {
+
+                bestSpeed =
+                    speed;
+            }
+        }
+
+        const averageSpeed =
+            Math.round(
+                totalSpeed / measurements.length
+            );
+
+        info.innerHTML =
+            "<strong>Gruppe:</strong> " +
+            getSessionGroupName(session) +
+
+            " | <strong>Status:</strong> " +
+            getValue(session.status) +
+
+            "<br><br>" +
+
+            "<strong>Antal målinger:</strong> " +
+            measurements.length +
+
+            " | <strong>Gns. hastighed:</strong> " +
+            averageSpeed + " km/t" +
+
+            " | <strong>Samlet CO₂:</strong> " +
+            totalCo2 + " g" +
+
+            " | <strong>Bedste hastighed:</strong> " +
+            bestSpeed + " km/t";
+
+        body.innerHTML =
+            "";
+
+        for (let index = 0; index < measurements.length; index++) {
+
+            const measurement =
+                measurements[index];
+
+            body.innerHTML +=
+                "<tr>" +
+
+                    "<td>" +
+                        (index + 1) +
+                    "</td>" +
+
+                    "<td>" +
+                        getNumber(measurement.simulatedSpeed) +
+                        " km/t" +
+                    "</td>" +
+
+                    "<td>" +
+                        getNumber(measurement.co2) +
+                        " g" +
+                    "</td>" +
+
+                    "<td>" +
+                        getNumber(measurement.time) +
+                        " sek" +
+                    "</td>" +
+
+                    "<td>" +
+                        getNumber(measurement.distance) +
+                        " m" +
+                    "</td>" +
+
+                "</tr>";
+        }
+    }
+
+    catch(error) {
+
+        console.log(error);
+
+        body.innerHTML =
+            "<tr><td colspan='5'>Kunne ikke hente session detaljer</td></tr>";
+    }
 }
-);
+
+
+// Lukker popup.
+function closeSessionDetailsModal() {
+
+    const modal =
+        document.getElementById("sessionDetailsModal");
+
+    if (modal !== null) {
+        modal.style.display =
+            "none";
+    }
+}
+// Fylder filter dropdowns på målings-siden.
+function fillMeasurementSessionFilters(sessions) {
+
+    const groupFilter =
+        document.getElementById("measurementSessionGroupFilter");
+
+    const carTypeFilter =
+        document.getElementById("measurementSessionCarTypeFilter");
+
+    const statusFilter =
+        document.getElementById("measurementSessionStatusFilter");
+
+    if (groupFilter !== null) {
+
+        groupFilter.innerHTML =
+            "<option value='all'>Alle grupper</option>";
+    }
+
+    if (carTypeFilter !== null) {
+
+        carTypeFilter.innerHTML =
+            "<option value='all'>Alle biltyper</option>";
+    }
+
+    if (statusFilter !== null) {
+
+        statusFilter.innerHTML =
+            "<option value='all'>Alle statusser</option>";
+    }
+
+    for (let index = 0; index < sessions.length; index++) {
+
+        const session =
+            sessions[index];
+
+        addUniqueOption(
+            groupFilter,
+            getSessionGroupName(session),
+            getSessionGroupName(session)
+        );
+
+        addUniqueOption(
+            carTypeFilter,
+            getValue(session.carType),
+            getValue(session.carType)
+        );
+
+        addUniqueOption(
+            statusFilter,
+            getValue(session.status),
+            getValue(session.status)
+        );
+    }
+}
+// Filtrerer sessions på målings-siden.
+function filterMeasurementSessions() {
+
+    const groupFilter =
+        document.getElementById("measurementSessionGroupFilter");
+
+    const carTypeFilter =
+        document.getElementById("measurementSessionCarTypeFilter");
+
+    const statusFilter =
+        document.getElementById("measurementSessionStatusFilter");
+
+    let selectedGroup =
+        "all";
+
+    let selectedCarType =
+        "all";
+
+    let selectedStatus =
+        "all";
+
+    if (groupFilter !== null) {
+        selectedGroup = groupFilter.value;
+    }
+
+    if (carTypeFilter !== null) {
+        selectedCarType = carTypeFilter.value;
+    }
+
+    if (statusFilter !== null) {
+        selectedStatus = statusFilter.value;
+    }
+
+    filteredSessionsPageSessions =
+        [];
+
+    for (let index = 0; index < allSessionsPageSessions.length; index++) {
+
+        const session =
+            allSessionsPageSessions[index];
+
+        let shouldShow =
+            true;
+
+        if (
+            selectedGroup !== "all" &&
+            getSessionGroupName(session) !== selectedGroup
+        ) {
+            shouldShow = false;
+        }
+
+        if (
+            selectedCarType !== "all" &&
+            getValue(session.carType) !== selectedCarType
+        ) {
+            shouldShow = false;
+        }
+
+        if (
+            selectedStatus !== "all" &&
+            getValue(session.status) !== selectedStatus
+        ) {
+            shouldShow = false;
+        }
+
+        if (shouldShow === true) {
+
+            filteredSessionsPageSessions.push(
+                session
+            );
+        }
+    }
+
+    sortMeasurementSessions();
+}
+
+
+// Sorterer sessions på målings-siden.
+function sortMeasurementSessions() {
+
+    const sortSelect =
+        document.getElementById("measurementSessionSortSelect");
+
+    let sortValue =
+        "dateDesc";
+
+    if (sortSelect !== null) {
+        sortValue = sortSelect.value;
+    }
+
+    filteredSessionsPageSessions.sort(function(firstSession, secondSession) {
+
+        if (sortValue === "dateAsc") {
+            return new Date(getSessionDate(firstSession)) - new Date(getSessionDate(secondSession));
+        }
+
+        if (sortValue === "dateDesc") {
+            return new Date(getSessionDate(secondSession)) - new Date(getSessionDate(firstSession));
+        }
+
+        if (sortValue === "groupAsc") {
+            return getSessionGroupName(firstSession).localeCompare(getSessionGroupName(secondSession));
+        }
+
+        if (sortValue === "carTypeAsc") {
+            return getValue(firstSession.carType).localeCompare(getValue(secondSession.carType));
+        }
+
+        if (sortValue === "speedAsc") {
+            return getSessionSpeed(firstSession) - getSessionSpeed(secondSession);
+        }
+
+        if (sortValue === "speedDesc") {
+            return getSessionSpeed(secondSession) - getSessionSpeed(firstSession);
+        }
+
+        return 0;
+    });
+
+    displayMeasurementSessions(
+        filteredSessionsPageSessions
+    );
+}
+
+
+// Viser sessions på målings-siden.
+function displayMeasurementSessions(sessions) {
+
+    const sessionsTableBody =
+        document.getElementById("sessionsTableBody");
+
+    if (sessionsTableBody === null) {
+        return;
+    }
+
+    sessionsTableBody.innerHTML =
+        "";
+
+    if (sessions.length === 0) {
+
+        sessionsTableBody.innerHTML =
+            "<tr><td colspan='8'>Ingen sessions fundet</td></tr>";
+
+        return;
+    }
+
+    for (let index = 0; index < sessions.length; index++) {
+
+        const session =
+            sessions[index];
+
+        let endButton =
+            "";
+
+        if (getValue(session.status).toLowerCase() === "ended") {
+
+            endButton =
+                "<span class='status green'>Afsluttet</span>";
+        }
+        else {
+
+            endButton =
+                "<button type='button' class='edit-btn' onclick='endSession(" + getSessionId(session) + "); event.stopPropagation();'>Afslut</button>";
+        }
+
+        sessionsTableBody.innerHTML +=
+            "<tr class='click-row' onclick='openSessionDetails(" + getSessionId(session) + ")'>" +
+
+                "<td>" + getSessionGroupName(session) + "</td>" +
+
+                "<td>" + getValue(session.carType) + "</td>" +
+
+                "<td>" + getValue(session.roadType) + "</td>" +
+
+                "<td>" + getSessionSpeed(session) + " km/t</td>" +
+
+                "<td>" + getValue(session.status) + "</td>" +
+
+                "<td>" + formatSessionDate(session) + "</td>" +
+
+                "<td>" + endButton + "</td>" +
+
+                "<td>" +
+                    "<button type='button' class='delete-btn-sm' onclick='deleteSession(" + getSessionId(session) + "); event.stopPropagation();'>Slet</button>" +
+                "</td>" +
+
+            "</tr>";
+    }
+}

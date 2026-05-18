@@ -1,59 +1,33 @@
-const apiUrl =
-    "https://fartmaalerapi20260511134506-fnarawbzewapckck.switzerlandnorth-01.azurewebsites.net/api";
-
-
 const app = Vue.createApp({
 
     data() {
 
         return {
 
-            /* Session */
-
-            sessionId:
-                Number(localStorage.getItem("sessionId")) || 0,
-
-            groupId:
-                Number(localStorage.getItem("groupId")) || 0,
-
-            groupName:
-                localStorage.getItem("groupName") || "---",
-
-            carType:
-                localStorage.getItem("carType") || "---",
-
-            roadType:
-                localStorage.getItem("roadType") || "---",
-
-            speedLimit:
-                Number(localStorage.getItem("speedLimit")) || 0,
-
-            scalingFactor:
-                Number(localStorage.getItem("scalingFactor")) || 0,
-
+            sessionId: Number(localStorage.getItem("sessionId")) || 0,
+            groupId: Number(localStorage.getItem("groupId")) || 0,
+            groupName: localStorage.getItem("groupName") || "---",
+            carType: localStorage.getItem("carType") || "---",
+            roadType: localStorage.getItem("roadType") || "---",
+            speedLimit: Number(localStorage.getItem("speedLimit")) || 0,
+            scalingFactor: Number(localStorage.getItem("scalingFactor")) || 0,
 
             latestSpeed: "---",
             distance: "---",
             time: "---",
             difference: "---",
 
-            feedback:
-                "Feedback vises her",
-
-            co2Text:
-                "CO₂ resultat vises efter måling.",
+            feedback: "Feedback vises her",
+            co2Text: "CO₂ resultat vises efter måling.",
 
             measurementCount: 0,
-
+            totalSpeed: 0,
+            totalCo2: 0,
             averageSpeed: "---",
-
             savedCo2: "---",
 
-            funFact:
-                "Vidste du at jævn fart kan give mindre CO₂?",
-
+            funFact: "Vidste du at jævn fart kan give mindre CO₂?",
             showSummaryPopup: false,
-
             showFunFactPopup: false,
 
             settings: {
@@ -64,13 +38,10 @@ const app = Vue.createApp({
             soundEnabled: true,
             ttsEnabled: true,
             visualEnabled: true,
-
             beepEnabled: true,
             funFactsEnabled: true,
             ttsFunFactEnabled: true,
-
-
-            /* Leaderboard */
+            selectedTtsLanguage: "da-DK",
 
             leaderboard: [],
             leaderboardRoadType: "byzone 50",
@@ -78,34 +49,34 @@ const app = Vue.createApp({
             loading: false,
             errorMessage: "",
 
-
-            /* Start session */
-
             groups: [],
             selectedGroupId: "",
             selectedCarType: "",
             selectedRoadType: "",
 
-
-            /* Opsummering */
-
             sessions: [],
             measurementsHistory: [],
 
-            filterSessions: true,
-            filterMeasurements: true,
-
             selectedCarTypeFilter: "",
             selectedRoadTypeFilter: "",
+            sortType: "",
+            
+            selectedDate: "",
+            startDate: "",
+            endDate: "",
+            
+            showStudentSessionPopup: false, 
+            selectedHistorySession: {},
+            selectedHistoryMeasurements: []
 
-            sortType: ""
+
+
+
         };
     },
 
 
     methods: {
-
-        /* HELPERS */
 
         normalizeArray(responseData) {
 
@@ -120,6 +91,14 @@ const app = Vue.createApp({
                 Array.isArray(responseData.$values)
             ) {
                 return responseData.$values;
+            }
+
+            if (
+                responseData !== undefined &&
+                responseData !== null &&
+                responseData.measurements !== undefined
+            ) {
+                return this.normalizeArray(responseData.measurements);
             }
 
             return [];
@@ -139,73 +118,31 @@ const app = Vue.createApp({
             return text;
         },
 
-
-        safeNumber(numberValue) {
-
-            if (
-                numberValue === undefined ||
-                numberValue === null ||
-                numberValue === ""
-            ) {
-                return "---";
-            }
-
-            return numberValue;
-        },
-
-
         clearError() {
 
-            this.errorMessage =
-                "";
+            this.errorMessage = "";
         },
 
 
         convertSettingValueToBoolean(value) {
 
-            if (value === true) {
+            if (value === true || value === "true" || value === 1) {
                 return true;
-            }
-
-            if (value === false) {
-                return false;
-            }
-
-            if (value === "true") {
-                return true;
-            }
-
-            if (value === "false") {
-                return false;
-            }
-
-            if (value === 1) {
-                return true;
-            }
-
-            if (value === 0) {
-                return false;
             }
 
             return false;
         },
 
 
-        /* SETTINGS */
-
         async loadGlobalSettings() {
 
             try {
 
                 const response =
-                    await axios.get(
-                        apiUrl + "/Settings"
-                    );
+                    await axios.get(apiUrl + "/Settings");
 
                 const settings =
-                    this.normalizeArray(
-                        response.data
-                    );
+                    this.normalizeArray(response.data);
 
                 for (
                     let index = 0;
@@ -213,8 +150,7 @@ const app = Vue.createApp({
                     index++
                 ) {
 
-                    const setting =
-                        settings[index];
+                    const setting = settings[index];
 
                     if (
                         setting.key === undefined ||
@@ -227,9 +163,7 @@ const app = Vue.createApp({
                         setting.key.toLowerCase();
 
                     const value =
-                        this.convertSettingValueToBoolean(
-                            setting.value
-                        );
+                        this.convertSettingValueToBoolean(setting.value);
 
                     if (key === "tts") {
                         this.ttsEnabled = value;
@@ -262,12 +196,10 @@ const app = Vue.createApp({
 
             catch(error) {
 
-                console.log(error);
+                console.log("Kunne ikke hente settings:", error);
             }
         },
 
-
-        /* LOAD GROUPS */
 
         async loadGroups() {
 
@@ -276,41 +208,32 @@ const app = Vue.createApp({
             try {
 
                 const response =
-                    await axios.get(
-                        apiUrl + "/Groups"
-                    );
+                    await axios.get(apiUrl + "/Groups");
 
                 this.groups =
-                    this.normalizeArray(
-                        response.data
-                    );
+                    this.normalizeArray(response.data);
             }
 
             catch(error) {
 
                 console.log(error);
 
-                this.groups =
-                    [];
-
-                this.errorMessage =
-                    "Kunne ikke hente grupper";
+                this.groups = [];
+                this.errorMessage = "Kunne ikke hente grupper";
             }
         },
 
 
         getGroupDisplayText(group) {
 
-            let displayText =
-                "";
+            let displayText = "";
 
             if (
                 group.name !== undefined &&
                 group.name !== null &&
                 group.name !== ""
             ) {
-                displayText =
-                    group.name;
+                displayText = group.name;
             }
 
             if (
@@ -318,13 +241,11 @@ const app = Vue.createApp({
                 group.school !== null &&
                 group.school !== ""
             ) {
-                displayText =
-                    displayText + " - " + group.school;
+                displayText = displayText + " - " + group.school;
             }
 
             if (group.isLocked === true) {
-                displayText =
-                    displayText + " (aktiv session)";
+                displayText = displayText + " (aktiv session)";
             }
 
             return displayText;
@@ -339,8 +260,7 @@ const app = Vue.createApp({
                 index++
             ) {
 
-                const group =
-                    this.groups[index];
+                const group = this.groups[index];
 
                 if (
                     Number(group.id) ===
@@ -370,25 +290,15 @@ const app = Vue.createApp({
             }
 
             const roadText =
-                roadType
-                    .toString()
-                    .toLowerCase()
-                    .trim();
+                roadType.toString().toLowerCase().trim();
 
             if (
                 roadText.includes("byzone") ||
                 roadText.includes("50")
             ) {
-
-                roadValues.roadType =
-                    "byzone 50";
-
-                roadValues.speedLimit =
-                    50;
-
-                roadValues.scalingFactor =
-                    10;
-
+                roadValues.roadType = "byzone 50";
+                roadValues.speedLimit = 50;
+                roadValues.scalingFactor = 10;
                 return roadValues;
             }
 
@@ -396,16 +306,9 @@ const app = Vue.createApp({
                 roadText.includes("landevej") ||
                 roadText.includes("80")
             ) {
-
-                roadValues.roadType =
-                    "landevej 80";
-
-                roadValues.speedLimit =
-                    80;
-
-                roadValues.scalingFactor =
-                    15;
-
+                roadValues.roadType = "landevej 80";
+                roadValues.speedLimit = 80;
+                roadValues.scalingFactor = 15;
                 return roadValues;
             }
 
@@ -413,16 +316,9 @@ const app = Vue.createApp({
                 roadText.includes("motorvej") ||
                 roadText.includes("110")
             ) {
-
-                roadValues.roadType =
-                    "motorvej 110";
-
-                roadValues.speedLimit =
-                    110;
-
-                roadValues.scalingFactor =
-                    20;
-
+                roadValues.roadType = "motorvej 110";
+                roadValues.speedLimit = 110;
+                roadValues.scalingFactor = 20;
                 return roadValues;
             }
 
@@ -430,97 +326,40 @@ const app = Vue.createApp({
         },
 
 
-        getRoadDisplayText(roadType) {
-
-            if (
-                roadType === undefined ||
-                roadType === null
-            ) {
-                return "---";
-            }
-
-            const roadText =
-                roadType
-                    .toString()
-                    .toLowerCase()
-                    .trim();
-
-            if (roadText.includes("byzone")) {
-                return "Byzone 50";
-            }
-
-            if (roadText.includes("landevej")) {
-                return "Landevej 80";
-            }
-
-            if (roadText.includes("motorvej")) {
-                return "Motorvej 110";
-            }
-
-            return roadType;
-        },
-
-
-        /* START SESSION */
-
         async startSession() {
 
-            this.errorMessage =
-                "";
+            this.errorMessage = "";
 
             if (
                 this.selectedGroupId === "" ||
                 this.selectedCarType === "" ||
                 this.selectedRoadType === ""
             ) {
-
-                this.errorMessage =
-                    "Udfyld alle felter";
-
+                this.errorMessage = "Udfyld alle felter";
                 return;
             }
 
             const roadValues =
-                this.getRoadValues(
-                    this.selectedRoadType
-                );
+                this.getRoadValues(this.selectedRoadType);
 
             if (
                 roadValues.roadType === "" ||
-                roadValues.speedLimit === 0 ||
-                roadValues.scalingFactor === 0
+                roadValues.speedLimit === 0
             ) {
-
                 this.errorMessage =
-                    "Vejtypen er ikke gyldig: " + this.selectedRoadType;
-
+                    "Vejtypen er ikke gyldig";
                 return;
             }
 
             const session = {
-
-                groupId:
-                    Number(this.selectedGroupId),
-
-                carType:
-                    this.selectedCarType,
-
-                roadType:
-                    roadValues.roadType,
-
-                speedLimit:
-                    roadValues.speedLimit,
-
-                status:
-                    "Active"
+                groupId: Number(this.selectedGroupId),
+                carType: this.selectedCarType,
+                roadType: roadValues.roadType,
+                speedLimit: roadValues.speedLimit,
+                status: "Active"
             };
 
             try {
-
-                console.log(
-                    "Session der sendes til backend:",
-                    session
-                );
 
                 const response =
                     await axios.post(
@@ -528,75 +367,62 @@ const app = Vue.createApp({
                         session
                     );
 
-                localStorage.setItem(
-                    "sessionId",
-                    response.data.id
-                );
+                if (
+                    response.data === undefined ||
+                    response.data === null ||
+                    response.data.id === undefined
+                ) {
+                    this.errorMessage =
+                        "Session blev oprettet, men id mangler.";
+                    return;
+                }
+
+                localStorage.setItem("sessionId", response.data.id);
+                localStorage.setItem("groupId", this.selectedGroupId);
+                localStorage.setItem("groupName", this.getSelectedGroupName());
+                localStorage.setItem("carType", this.selectedCarType);
+                localStorage.setItem("roadType", roadValues.roadType);
+                localStorage.setItem("speedLimit", roadValues.speedLimit);
+                localStorage.setItem("scalingFactor", roadValues.scalingFactor);
 
                 localStorage.setItem(
-                    "groupId",
-                    this.selectedGroupId
-                );
+    "isNavigating",
+    "true"
+);
 
-                localStorage.setItem(
-                    "groupName",
-                    this.getSelectedGroupName()
-                );
-
-                localStorage.setItem(
-                    "carType",
-                    this.selectedCarType
-                );
-
-                localStorage.setItem(
-                    "roadType",
-                    roadValues.roadType
-                );
-
-                localStorage.setItem(
-                    "speedLimit",
-                    roadValues.speedLimit
-                );
-
-                localStorage.setItem(
-                    "scalingFactor",
-                    roadValues.scalingFactor
-                );
-
-                window.location.href =
-                    "session.html";
+window.location.href =
+    "session.html";
             }
 
             catch(error) {
 
-                console.log(error);
+                console.log("Kunne ikke starte session:", error);
 
                 if (
                     error.response !== undefined &&
-                    error.response !== null &&
                     error.response.data !== undefined &&
-                    error.response.data !== null &&
                     error.response.data.message !== undefined
                 ) {
-
-                    this.errorMessage =
-                        error.response.data.message;
-
+                    this.errorMessage = error.response.data.message;
                     return;
                 }
 
-                this.errorMessage =
-                    "Kunne ikke starte session";
+                this.errorMessage = "Kunne ikke starte session";
             }
         },
 
 
-        /* SESSION PAGE */
-
         loadStudentSessionPage() {
-
+                localStorage.removeItem(
+    "isNavigating"
+);
             this.sessionId =
                 Number(localStorage.getItem("sessionId")) || 0;
+
+            if (this.sessionId === 0) {
+                window.location.href = "elev.html";
+                return;
+            }
 
             this.groupId =
                 Number(localStorage.getItem("groupId")) || 0;
@@ -622,143 +448,62 @@ const app = Vue.createApp({
 
         async createMeasurement() {
 
-            this.errorMessage =
-                "";
+            this.errorMessage = "";
 
             this.sessionId =
                 Number(localStorage.getItem("sessionId")) || 0;
 
-            this.carType =
-                localStorage.getItem("carType") || "";
-
-            this.roadType =
-                localStorage.getItem("roadType") || "";
-
-            this.speedLimit =
-                Number(localStorage.getItem("speedLimit")) || 0;
-
-            this.scalingFactor =
-                Number(localStorage.getItem("scalingFactor")) || 0;
-
             if (this.sessionId === 0) {
-
-                this.errorMessage =
-                    "Ingen aktiv session";
-
+                this.errorMessage = "Ingen aktiv session";
                 return;
             }
-
-            if (
-                this.carType === "" ||
-                this.roadType === "" ||
-                this.speedLimit === 0 ||
-                this.scalingFactor === 0
-            ) {
-
-                this.errorMessage =
-                    "Sessionens data mangler. Start en ny session.";
-
-                return;
-            }
-
-            const measuredDistance =
-                1;
 
             const measuredTime =
                 Math.random() * 0.5 + 0.2;
 
-            const realSpeed =
-                measuredDistance / measuredTime;
-
-            const simulatedSpeed =
-                Math.round(
-                    realSpeed * this.scalingFactor
-                );
-
-            const calculatedCo2 =
-                this.calculateCo2(
-                    this.carType,
-                    simulatedSpeed
-                );
-
-            const calculatedScore =
-                this.calculateScore(
-                    simulatedSpeed,
-                    this.speedLimit,
-                    calculatedCo2
-                );
-
             const measurement = {
-
-                sessionId:
-                    this.sessionId,
-
-                speed:
-                    simulatedSpeed,
-
-                time:
-                    Math.round(measuredTime * 100) / 100,
-
-                distance:
-                    measuredDistance,
-
-                roadType:
-                    this.roadType,
-
-                carType:
-                    this.carType,
-
-                co2:
-                    calculatedCo2,
-
-                score:
-                    calculatedScore
+                sessionId: this.sessionId,
+                time: Math.round(measuredTime * 100) / 100
             };
 
             try {
 
-                await axios.post(
-                    apiUrl + "/Measurements",
-                    measurement
-                );
+                const response =
+                    await axios.post(
+                        apiUrl + "/Measurements",
+                        measurement
+                    );
 
-                this.latestSpeed =
-                    measurement.speed;
+                const savedMeasurement =
+                    response.data;
 
-                this.distance =
-                    measurement.distance + " m";
-
-                this.time =
-                    measurement.time + " sek.";
-
-                this.difference =
-                    Math.abs(
-                        measurement.speed - this.speedLimit
-                    ) + " km/t";
-
-                this.showFeedback(
-                    measurement.speed,
-                    this.speedLimit,
-                    measurement.co2
-                );
-
-                this.showCo2Feedback(
-                    measurement
-                );
-
-                this.measurementCount =
-                    this.measurementCount + 1;
-
-                this.calculateSessionAverages(
-                    measurement
-                );
-
-                this.showFunFact();
+                this.showMeasurementResult(savedMeasurement);
             }
 
             catch(error) {
 
-                console.log(error);
+                console.log("Måling fejl:", error);
+
+                if (
+                    error.response !== undefined &&
+                    error.response.data !== undefined &&
+                    error.response.data.message !== undefined
+                ) {
+                    this.errorMessage =
+                        error.response.data.message;
+
+                    return;
+                }
+
+                if (
+                    error.response !== undefined &&
+                    error.response.data !== undefined
+                ) {
+                    this.errorMessage =
+                        JSON.stringify(error.response.data);
+
+                    return;
+                }
 
                 this.errorMessage =
                     "Kunne ikke gemme måling";
@@ -766,65 +511,93 @@ const app = Vue.createApp({
         },
 
 
-        calculateSessionAverages(measurement) {
+        showMeasurementResult(savedMeasurement) {
 
-            if (
-                this.averageSpeed === "---" ||
-                this.measurementCount === 1
-            ) {
+            this.latestSpeed =
+                Math.round(savedMeasurement.simulatedSpeed);
 
-                this.averageSpeed =
-                    measurement.speed + " km/t";
+            this.distance =
+                Math.round(savedMeasurement.distance) + " m";
 
-                this.savedCo2 =
-                    measurement.co2 + " g";
+            this.time =
+                Math.round(savedMeasurement.time * 100) / 100 + " sek.";
 
-                return;
-            }
+            this.difference =
+                Math.round(
+                    Math.abs(
+                        savedMeasurement.simulatedSpeed -
+                        savedMeasurement.speedLimit
+                    )
+                );
+
+            this.measurementCount =
+                this.measurementCount + 1;
+
+            this.totalSpeed =
+                this.totalSpeed + savedMeasurement.simulatedSpeed;
+
+            this.totalCo2 =
+                this.totalCo2 + savedMeasurement.co2;
 
             this.averageSpeed =
-                measurement.speed + " km/t";
+                Math.round(
+                    this.totalSpeed / this.measurementCount
+                ) + " km/t";
 
             this.savedCo2 =
-                measurement.co2 + " g";
+                Math.round(this.totalCo2) + " g";
+
+            this.showFeedback(
+                savedMeasurement.simulatedSpeed,
+                savedMeasurement.speedLimit,
+                savedMeasurement.co2
+            );
+
+            this.showCo2Feedback(savedMeasurement);
+
+            this.showFunFact();
         },
 
 
-        calculateCo2(carType, speed) {
+        nextMeasurement() {
 
-            let baseCo2 =
-                90;
+            this.errorMessage = "";
+            this.showFunFactPopup = false;
 
-            if (carType === "Benzin Lille") {
-                baseCo2 = 95;
-            }
-
-            if (carType === "Benzin Stor") {
-                baseCo2 = 130;
-            }
-
-            if (carType === "Diesel") {
-                baseCo2 = 120;
-            }
-
-            if (carType === "Hybrid") {
-                baseCo2 = 70;
-            }
-
-            return Math.round(
-                baseCo2 + speed * 0.4
-            );
+            this.createMeasurement();
         },
 
 
-        calculateScore(speed, speedLimit, co2) {
+        async endSession() {
 
-            const difference =
-                Math.abs(speed - speedLimit);
+            this.errorMessage = "";
 
-            return Math.round(
-                difference + co2 / 10
-            );
+            try {
+
+                this.sessionId =
+                    Number(localStorage.getItem("sessionId")) || 0;
+
+                if (this.sessionId === 0) {
+                    window.location.href = "elev.html";
+                    return;
+                }
+
+                await axios.put(
+                    apiUrl + "/Sessions/" + this.sessionId + "/end"
+                );
+
+                this.showSummaryPopup = true;
+
+                localStorage.removeItem("sessionId");
+            }
+
+            catch(error) {
+
+                console.log("Kunne ikke afslutte session:", error);
+
+                this.errorMessage =
+                    "Kunne ikke afslutte session";
+            }
         },
 
 
@@ -844,13 +617,10 @@ const app = Vue.createApp({
                 }
 
                 if (this.ttsEnabled === true) {
-
                     this.speakText(
                         "For hurtigt. Din hastighed er " +
-                        speed +
-                        " kilometer i timen. CO2 udledning er " +
-                        co2 +
-                        " gram."
+                        Math.round(speed) +
+                        " kilometer i timen."
                     );
                 }
 
@@ -863,12 +633,9 @@ const app = Vue.createApp({
                     "😐 For langsomt — prøv at komme tættere på fartgrænsen.";
 
                 if (this.ttsEnabled === true) {
-
                     this.speakText(
                         "For langsomt. Din hastighed er " +
-                        speed +
-                        " kilometer i timen. Prøv at komme tættere på " +
-                        speedLimit +
+                        Math.round(speed) +
                         " kilometer i timen."
                     );
                 }
@@ -880,11 +647,8 @@ const app = Vue.createApp({
                 "🙂 Perfekt! Du ramte præcis fartgrænsen.";
 
             if (this.ttsEnabled === true) {
-
                 this.speakText(
-                    "Perfekt. Du ramte præcis " +
-                    speedLimit +
-                    " kilometer i timen."
+                    "Perfekt. Du ramte præcis fartgrænsen."
                 );
             }
         },
@@ -892,45 +656,30 @@ const app = Vue.createApp({
 
         showCo2Feedback(measurement) {
 
-            const co2AtLimit =
-                this.calculateCo2(
-                    measurement.carType,
-                    this.speedLimit
-                );
-
-            const difference =
-                measurement.co2 - co2AtLimit;
-
-            if (difference > 0) {
-
+            if (measurement.co2 === undefined) {
                 this.co2Text =
-                    "Du brugte ca. " +
-                    difference +
-                    " gram mere CO₂ end ved fartgrænsen.";
-
+                    "CO₂-data mangler fra backend.";
                 return;
             }
 
-            if (difference < 0) {
-
+            if (measurement.simulatedSpeed > measurement.speedLimit) {
                 this.co2Text =
-                    "Du sparede ca. " +
-                    Math.abs(difference) +
+                    "Du brugte ca. " +
+                    Math.round(measurement.co2) +
                     " gram CO₂.";
-
                 return;
             }
 
             this.co2Text =
-                "Du ramte fartgrænsen og holdt CO₂-forbruget stabilt.";
+                "Du sparede ca. " +
+                Math.round(measurement.co2) +
+                " gram CO₂.";
         },
 
 
         playBeep() {
 
-            console.log(
-                "Bip lyd"
-            );
+            console.log("Bip lyd");
         },
 
 
@@ -943,320 +692,292 @@ const app = Vue.createApp({
             const speech =
                 new SpeechSynthesisUtterance(text);
 
-            speech.lang =
-                "da-DK";
+            speech.lang = this.selectedTtsLanguage;
 
             window.speechSynthesis.cancel();
-
-            window.speechSynthesis.speak(
-                speech
-            );
+            window.speechSynthesis.speak(speech);
         },
 
 
-        showFunFact() {
-
-            if (this.funFactsEnabled === false) {
-                return;
-            }
-
-            this.funFact =
-                "Vidste du at jævn fart kan give mindre CO₂ end hårde accelerationer?";
-
-            this.showFunFactPopup =
-                true;
+        async showFunFact() {
 
             if (
-                this.ttsFunFactEnabled === true &&
-                this.ttsEnabled === true
+                this.funFactsEnabled === false ||
+                this.settings.showFunFact === false
             ) {
-
-                this.speakText(
-                    this.funFact
-                );
-            }
-
-            const currentApp =
-                this;
-
-            setTimeout(function() {
-
-                currentApp.showFunFactPopup =
-                    false;
-
-            }, 5000);
-        },
-
-
-        closeFunFactPopup() {
-
-            this.showFunFactPopup =
-                false;
-        },
-
-
-        async endSession() {
-
-            this.errorMessage =
-                "";
-
-            this.sessionId =
-                Number(localStorage.getItem("sessionId")) || 0;
-
-            if (this.sessionId === 0) {
-
-                this.errorMessage =
-                    "Ingen aktiv session";
-
                 return;
             }
-
-            try {
-
-                await axios.put(
-                    apiUrl +
-                    "/Sessions/" +
-                    this.sessionId +
-                    "/end",
-                    null
-                );
-
-                window.location.href =
-                    "opsummering.html";
-            }
-
-            catch(error) {
-
-                console.log(error);
-
-                this.errorMessage =
-                    "Kunne ikke afslutte session";
-            }
-        },
-
-
-        /* HISTORY */
-
-        async loadHistory() {
-
-            try {
-
-                const groupId =
-                    localStorage.getItem(
-                        "groupId"
-                    );
-
-                if (!groupId) {
-                    return;
-                }
-
-                const sessionResponse =
-                    await axios.get(
-                        apiUrl +
-                        "/Sessions/group/" +
-                        groupId +
-                        "/history"
-                    );
-
-                this.sessions =
-                    this.normalizeArray(
-                        sessionResponse.data
-                    );
-
-                const allMeasurements =
-                    [];
-
-                for (
-                    let i = 0;
-                    i < this.sessions.length;
-                    i++
-                ) {
-
-                    const session =
-                        this.sessions[i];
-
-                    try {
-
-                        const measurementResponse =
-                            await axios.get(
-                                apiUrl +
-                                "/Measurements/session/" +
-                                session.id
-                            );
-
-                        const measurements =
-                            this.normalizeArray(
-                                measurementResponse.data
-                            );
-
-                        for (
-                            let measurementIndex = 0;
-                            measurementIndex < measurements.length;
-                            measurementIndex++
-                        ) {
-
-                            allMeasurements.push(
-                                measurements[measurementIndex]
-                            );
-                        }
-                    }
-
-                    catch(error) {
-
-                        console.log(error);
-                    }
-                }
-
-                this.measurementsHistory =
-                    allMeasurements;
-            }
-
-            catch(error) {
-
-                console.log(error);
-
-                this.sessions =
-                    [];
-
-                this.measurementsHistory =
-                    [];
-            }
-        },
-
-
-        resetFilters() {
-
-            this.selectedCarTypeFilter =
-                "";
-
-            this.selectedRoadTypeFilter =
-                "";
-
-            this.sortType =
-                "";
-        },
-
-
-        /* LEADERBOARD */
-
-        changeLeaderboardRoadType(roadType) {
-
-            const roadValues =
-                this.getRoadValues(
-                    roadType
-                );
-
-            if (roadValues.roadType !== "") {
-
-                this.leaderboardRoadType =
-                    roadValues.roadType;
-            }
-
-            this.selectedRoadType =
-                roadType;
-
-            this.loadLeaderboard();
-        },
-
-
-        changeRoadType(roadType) {
-
-            this.changeLeaderboardRoadType(
-                roadType
-            );
-        },
-
-
-        async loadLeaderboard() {
-
-            this.errorMessage =
-                "";
-
-            await this.loadGlobalSettings();
-
-            if (this.leaderboardEnabled === false) {
-
-                this.leaderboard =
-                    [];
-
-                return;
-            }
-
-            this.loading =
-                true;
 
             try {
 
                 const response =
                     await axios.get(
-                        apiUrl +
-                        "/Leaderboard?roadType=" +
-                        encodeURIComponent(
-                            this.leaderboardRoadType
-                        )
+                        apiUrl + "/FunFacts/random"
                     );
 
-                const leaderboardData =
-                    this.normalizeArray(
-                        response.data
-                    );
-
-                const normalizedLeaderboard =
-                    [];
-
-                for (
-                    let index = 0;
-                    index < leaderboardData.length;
-                    index++
+                if (
+                    response.data !== undefined &&
+                    response.data !== null &&
+                    response.data.text !== undefined
                 ) {
-
-                    const item =
-                        leaderboardData[index];
-
-                    normalizedLeaderboard.push({
-
-                        groupName:
-                            this.safeText(
-                                item.groupName
-                            ),
-
-                        averageCo2:
-                            this.safeNumber(
-                                item.averageCo2
-                            ),
-
-                        measurementCount:
-                            this.safeNumber(
-                                item.measurementCount
-                            ),
-
-                        score:
-                            this.safeNumber(
-                                item.score
-                            )
-                    });
+                    this.funFact =
+                        response.data.text;
+                }
+                else {
+                    this.funFact =
+                        "Vidste du at jævn fart kan give mindre CO₂?";
                 }
 
-                this.leaderboard =
-                    normalizedLeaderboard;
+                this.showFunFactPopup = true;
+
+                if (
+                    this.ttsFunFactEnabled === true &&
+                    this.ttsEnabled === true
+                ) {
+                    this.speakText(this.funFact);
+                }
+
+                const currentApp = this;
+
+                setTimeout(function() {
+                    currentApp.showFunFactPopup = false;
+                }, 5000);
             }
 
             catch(error) {
 
                 console.log(error);
 
-                this.leaderboard =
-                    [];
+                this.funFact =
+                    "Vidste du at jævn fart ofte bruger mindre energi?";
 
-                this.errorMessage =
-                    "Kunne ikke hente leaderboard";
+                this.showFunFactPopup = true;
             }
+        },
 
-            finally {
 
-                this.loading =
-                    false;
-            }
+        closeFunFactPopup() {
+
+            this.showFunFactPopup = false;
+        },
+
+
+        async loadHistory() {
+
+    this.errorMessage = "";
+
+    try {
+
+        const groupId =
+            localStorage.getItem("groupId");
+
+        if (!groupId) {
+            this.sessions = [];
+            this.errorMessage = "Ingen gruppe valgt.";
+            return;
+        }
+
+        let endpoint =
+            apiUrl +
+            "/Sessions/group/" +
+            groupId +
+            "/history";
+
+        let query =
+            "?";
+
+        if (this.selectedCarTypeFilter !== "") {
+            query =
+                query +
+                "carType=" +
+                encodeURIComponent(this.selectedCarTypeFilter) +
+                "&";
+        }
+
+        if (this.selectedRoadTypeFilter !== "") {
+
+            const roadValues =
+                this.getRoadValues(this.selectedRoadTypeFilter);
+
+            query =
+                query +
+                "roadType=" +
+                encodeURIComponent(roadValues.roadType) +
+                "&";
+        }
+
+        if (this.startDate !== "") {
+            query =
+                query +
+                "startDate=" +
+                encodeURIComponent(this.startDate) +
+                "&";
+        }
+
+        if (this.endDate !== "") {
+            query =
+                query +
+                "endDate=" +
+                encodeURIComponent(this.endDate) +
+                "&";
+        }
+
+        if (this.sortType !== "") {
+            query =
+                query +
+                "sortBy=" +
+                encodeURIComponent(this.sortType) +
+                "&sortDirection=asc&";
+        }
+
+        if (query !== "?") {
+            endpoint =
+                endpoint +
+                query.slice(0, -1);
+        }
+
+        const sessionResponse =
+            await axios.get(endpoint);
+
+        this.sessions =
+            this.normalizeArray(sessionResponse.data);
+            this.measurementsHistory = [];
+
+for (let index = 0; index < this.sessions.length; index++) {
+
+    const session =
+        this.sessions[index];
+
+    const measurements =
+        this.normalizeArray(session.measurements);
+
+    for (let measurementIndex = 0; measurementIndex < measurements.length; measurementIndex++) {
+
+        this.measurementsHistory.push(
+            measurements[measurementIndex]
+        );
+    }
+}
+    }
+
+    catch(error) {
+
+        console.log(error);
+
+        this.sessions = [];
+        this.errorMessage = "Kunne ikke hente historik";
+    }
+},
+
+
+       resetFilters() {
+
+    this.selectedCarTypeFilter = "";
+    this.selectedRoadTypeFilter = "";
+    this.selectedDate = "";
+    this.startDate = "";
+    this.endDate = "";
+    this.sortType = "";
+},
+
+        openStudentSessionDetails(session) {
+
+    this.selectedHistorySession =
+        session;
+
+    let measurements =
+        session.measurements;
+
+    if (
+        measurements !== undefined &&
+        measurements !== null &&
+        measurements.$values !== undefined
+    ) {
+        measurements =
+            measurements.$values;
+    }
+
+    if (
+        measurements === undefined ||
+        measurements === null
+    ) {
+        measurements =
+            [];
+    }
+
+    this.selectedHistoryMeasurements =
+        measurements;
+
+    this.showStudentSessionPopup =
+        true;
+},
+
+closeStudentSessionDetails() {
+
+    this.showStudentSessionPopup =
+        false;
+
+    this.selectedHistorySession =
+        {};
+
+    this.selectedHistoryMeasurements =
+        [];
+},
+
+     async loadLeaderboard() {
+
+    this.errorMessage = "";
+    this.loading = true;
+
+    await this.loadGlobalSettings();
+
+    if (this.leaderboardEnabled === false) {
+        this.leaderboard = [];
+        this.loading = false;
+        return;
+    }
+
+    try {
+
+        const response =
+            await axios.get(
+                apiUrl +
+                "/Leaderboard/student/school?roadType=" +
+                encodeURIComponent(this.leaderboardRoadType)
+            );
+
+        let leaderboardData =
+            response.data;
+
+        if (
+            leaderboardData !== undefined &&
+            leaderboardData !== null &&
+            leaderboardData.leaderboard !== undefined
+        ) {
+            leaderboardData =
+                leaderboardData.leaderboard;
+        }
+
+        this.leaderboard =
+            this.normalizeArray(leaderboardData);
+
+        this.loading = false;
+    }
+
+    catch(error) {
+
+        console.log(error);
+
+        this.leaderboard = [];
+        this.errorMessage = "Kunne ikke hente leaderboard";
+        this.loading = false;
+    }
+},
+
+        changeLeaderboardRoadType(roadType) {
+
+            this.leaderboardRoadType = roadType;
+            this.loadLeaderboard();
         },
 
 
@@ -1270,10 +991,7 @@ const app = Vue.createApp({
                 return "---";
             }
 
-            return dateText.substring(
-                0,
-                10
-            );
+            return dateText.substring(0, 10);
         },
 
 
@@ -1287,10 +1005,7 @@ const app = Vue.createApp({
                 return "---";
             }
 
-            return dateText.substring(
-                11,
-                16
-            );
+            return dateText.substring(11, 16);
         }
     },
 
@@ -1299,64 +1014,118 @@ const app = Vue.createApp({
 
         filteredSessions() {
 
-            let result =
-                Array.isArray(this.sessions)
-                    ? this.sessions.slice()
-                    : [];
+    let result =
+        Array.isArray(this.sessions)
+            ? this.sessions.slice()
+            : [];
 
-            if (this.selectedCarTypeFilter !== "") {
+    if (this.selectedCarTypeFilter !== "") {
 
-                result =
-                    result.filter(function(session) {
+        result =
+            result.filter(function(session) {
 
-                        return session.carType ===
-                            this.selectedCarTypeFilter;
+                return session.carType ===
+                    this.selectedCarTypeFilter;
 
-                    }, this);
-            }
+            }, this);
+    }
 
-            if (this.selectedRoadTypeFilter !== "") {
+    if (this.selectedRoadTypeFilter !== "") {
 
-                result =
-                    result.filter(function(session) {
+        result =
+            result.filter(function(session) {
 
-                        const roadValues =
-                            this.getRoadValues(
-                                this.selectedRoadTypeFilter
-                            );
+                const roadValues =
+                    this.getRoadValues(
+                        this.selectedRoadTypeFilter
+                    );
 
-                        return session.roadType ===
-                            roadValues.roadType;
+                return session.roadType ===
+                    roadValues.roadType;
 
-                    }, this);
-            }
+            }, this);
+    }
 
-            if (this.sortType === "bestCo2") {
+    if (this.selectedDate !== "") {
 
-                result.sort(function(firstSession, secondSession) {
+        result =
+            result.filter(function(session) {
 
-                    return firstSession.co2 - secondSession.co2;
-                });
-            }
+                return this.formatDate(session.date) ===
+                    this.selectedDate;
 
-            if (this.sortType === "worstCo2") {
+            }, this);
+    }
 
-                result.sort(function(firstSession, secondSession) {
+    if (this.startDate !== "") {
 
-                    return secondSession.co2 - firstSession.co2;
-                });
-            }
+        result =
+            result.filter(function(session) {
 
-            if (this.sortType === "score") {
+                return this.formatDate(session.date) >=
+                    this.startDate;
 
-                result.sort(function(firstSession, secondSession) {
+            }, this);
+    }
 
-                    return firstSession.score - secondSession.score;
-                });
-            }
+    if (this.endDate !== "") {
 
-            return result;
-        },
+        result =
+            result.filter(function(session) {
+
+                return this.formatDate(session.date) <=
+                    this.endDate;
+
+            }, this);
+    }
+
+    if (this.sortType === "bestCo2") {
+
+        result.sort(function(firstSession, secondSession) {
+
+            return Number(firstSession.co2) -
+                Number(secondSession.co2);
+        });
+    }
+
+    if (this.sortType === "score") {
+
+        result.sort(function(firstSession, secondSession) {
+
+            return Number(firstSession.score) -
+                Number(secondSession.score);
+        });
+    }
+
+    if (this.sortType === "speedHigh") {
+
+        result.sort(function(firstSession, secondSession) {
+
+            return Number(secondSession.averageSpeed) -
+                Number(firstSession.averageSpeed);
+        });
+    }
+
+    if (this.sortType === "speedLow") {
+
+        result.sort(function(firstSession, secondSession) {
+
+            return Number(firstSession.averageSpeed) -
+                Number(secondSession.averageSpeed);
+        });
+    }
+
+    if (this.sortType === "timeLow") {
+
+        result.sort(function(firstSession, secondSession) {
+
+            return Number(firstSession.time) -
+                Number(secondSession.time);
+        });
+    }
+
+    return result;
+},
 
 
         filteredMeasurements() {
@@ -1365,22 +1134,6 @@ const app = Vue.createApp({
                 Array.isArray(this.measurementsHistory)
                     ? this.measurementsHistory.slice()
                     : [];
-
-            if (this.sortType === "bestTime") {
-
-                result.sort(function(firstMeasurement, secondMeasurement) {
-
-                    return firstMeasurement.time - secondMeasurement.time;
-                });
-            }
-
-            if (this.sortType === "worstTime") {
-
-                result.sort(function(firstMeasurement, secondMeasurement) {
-
-                    return secondMeasurement.time - firstMeasurement.time;
-                });
-            }
 
             return result;
         },
@@ -1392,7 +1145,6 @@ const app = Vue.createApp({
                 !this.sessions ||
                 this.sessions.length === 0
             ) {
-
                 return {
                     score: "---",
                     carType: "---",
@@ -1426,39 +1178,97 @@ const app = Vue.createApp({
             return best;
         }
     },
+    watch: {
 
+    selectedCarTypeFilter() {
+        this.loadHistory(); 
+    },
+
+    selectedRoadTypeFilter() {
+        this.loadHistory();
+    },
+
+    selectedDate() {
+
+        if (this.selectedDate !== "") {
+            this.startDate = this.selectedDate;
+            this.endDate = this.selectedDate;
+        }
+
+        this.loadHistory();
+    },
+
+    startDate() {
+        this.loadHistory();
+    },
+
+    endDate() {
+        this.loadHistory();
+    },
+
+    sortType() {
+        this.loadHistory();
+    }
+},
 
     mounted() {
 
         console.log("Vue mounted");
 
-        if (
-            document.querySelector("#groupSelect")
-        ) {
+        if (document.querySelector("#groupSelect")) {
             this.loadGroups();
         }
 
-        if (
-            document.querySelector(".session-page") ||
-            document.querySelector(".next-button") ||
-            document.querySelector(".end-session-button")
-        ) {
+        if (document.querySelector(".session-page")) {
             this.loadStudentSessionPage();
         }
 
-        if (
-            document.querySelector(".summary-layout")
-        ) {
+        if (document.querySelector(".student-history-page")) {
             this.loadHistory();
         }
 
-        if (
-            document.querySelector(".leaderboard-header")
-        ) {
-            this.loadLeaderboard();
-        }
+       if (document.querySelector(".leaderboard-header")) {
+        this.loadLeaderboard();
+        const currentApp =
+        this;
+        const activeSessionId =
+        localStorage.getItem("sessionId");
+        if ( activeSessionId === null || activeSessionId === "")
+             {
+            setInterval(function () {
+            currentApp.loadLeaderboard();
+        }, 5000);
+    }
+}
     }
 });
 
 
 app.mount("#app");
+
+window.addEventListener("beforeunload", function () {
+
+    const sessionId =
+        localStorage.getItem("sessionId");
+
+    const isNavigating =
+        localStorage.getItem("isNavigating");
+
+    if (
+        sessionId !== null &&
+        sessionId !== "" &&
+        isNavigating !== "true"
+    ) {
+
+        fetch(
+            apiUrl +
+            "/Sessions/" +
+            sessionId +
+            "/end",
+            {
+                method: "PUT",
+                keepalive: true
+            }
+        );
+    }
+});

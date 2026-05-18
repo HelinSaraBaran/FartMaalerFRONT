@@ -6,12 +6,10 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Elev - Historik
-    </title>
+    <title>Elev - Historik</title>
 
     <link rel="stylesheet"
-          href="Style.css">
+          href="Style.css?v=101">
 </head>
 
 <body>
@@ -20,45 +18,37 @@
 
     <div class="layout">
 
-        <!-- Sidebar -->
         <aside class="sidebar">
 
             <div class="sidebar-title">
-
-                <span class="sidebar-icon">
-                    📊
-                </span>
-
-                <h2>
-                    Fartmåler
-                </h2>
-
+                <span class="sidebar-icon">📊</span>
+                <h2>Fartmåler</h2>
             </div>
 
             <nav class="sidebar-menu">
 
+                <a href="index.html"
+                   class="menu-item">
+                    <span>🏠</span>
+                    Forside
+                </a>
+
                 <a href="session.html"
                    class="menu-item">
-
                     <span>⏰</span>
                     Session
-
                 </a>
 
                 <a href="opsummering.html"
                    class="menu-item active">
-
                     <span>📏</span>
                     Målinger
-
                 </a>
 
                 <a href="leaderboardElev.html"
                    class="menu-item">
-
                     <span>🏆</span>
                     Leaderboard
-
                 </a>
 
             </nav>
@@ -66,23 +56,19 @@
         </aside>
 
 
-        <!-- Content -->
-        <main class="summary-page">
+        <main class="summary-page student-history-page">
 
             <header class="summary-header">
 
-                <h1>
-                    Min historik
-                </h1>
+                <h1>Min historik</h1>
 
                 <p>
-                    Se tidligere sessions, målinger og udvikling over tid.
+                    Se dine sessioner, målinger og bedste resultater.
                 </p>
 
             </header>
 
 
-            <!-- Error message -->
             <section
                 v-if="errorMessage"
                 class="error-box">
@@ -92,160 +78,11 @@
             </section>
 
 
-            <div class="summary-layout">
+            <section class="student-history-grid">
 
-                <!-- Filters -->
-                <aside class="summary-filters card">
+                <article class="student-history-card">
 
-                    <h2>
-                        Filtre
-                    </h2>
-
-                    <div class="filter-block">
-
-                        <label class="filter-label">
-                            Biltype
-                        </label>
-
-                        <div class="filter-select">
-
-                            <span>
-                                🚗
-                            </span>
-
-                            <select v-model="selectedCarTypeFilter">
-
-                                <option value="">
-                                    Alle biltyper
-                                </option>
-
-                                <option value="Benzin Lille">
-                                    Benzin - lille
-                                </option>
-
-                                <option value="Benzin Stor">
-                                    Benzin - stor
-                                </option>
-
-                                <option value="Diesel">
-                                    Diesel
-                                </option>
-
-                                <option value="Hybrid">
-                                    Hybrid
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="filter-block">
-
-                        <label class="filter-label">
-                            Vejtype
-                        </label>
-
-                        <div class="filter-select">
-
-                            <span>
-                                🛣
-                            </span>
-
-                            <select v-model="selectedRoadTypeFilter">
-
-                                <option value="">
-                                    Alle vejtyper
-                                </option>
-
-                                <option value="Byzone">
-                                    Byzone 50 km/t
-                                </option>
-
-                                <option value="Landevej">
-                                    Landevej 80 km/t
-                                </option>
-
-                                <option value="Motorvej">
-                                    Motorvej 110 km/t
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="filter-block">
-
-                        <label class="filter-label">
-                            Sortering
-                        </label>
-
-                        <div class="filter-select">
-
-                            <span>
-                                ↕️
-                            </span>
-
-                            <select v-model="sortType">
-
-                                <option value="">
-                                    Ingen sortering
-                                </option>
-
-                                <option value="bestCo2">
-                                    Laveste CO₂
-                                </option>
-
-                                <option value="worstCo2">
-                                    Højeste CO₂
-                                </option>
-
-                                <option value="bestTime">
-                                    Bedste tid
-                                </option>
-
-                                <option value="worstTime">
-                                    Værste tid
-                                </option>
-
-                                <option value="score">
-                                    Bedste score
-                                </option>
-
-                            </select>
-
-                        </div>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        class="filter-reset"
-                        v-on:click="resetFilters">
-
-                        Ryd filtre
-
-                    </button>
-
-                </aside>
-
-
-                <!-- Sessions -->
-                <section class="summary-sessions card">
-
-                    <div class="sessions-header">
-
-                        <h2>
-                            Dine sessioner
-                        </h2>
-
-                    </div>
+                    <h2>Dine sessioner</h2>
 
                     <div
                         v-if="filteredSessions.length === 0"
@@ -255,53 +92,35 @@
 
                     </div>
 
-                    <div class="session-list">
+                    <div class="student-scroll-list">
 
                         <div
-                            class="session-card"
+                            class="student-session-item clickable-session"
                             v-for="session in filteredSessions"
-                            v-bind:key="session.id">
+                            v-bind:key="session.id"
+                            v-on:click="openStudentSessionDetails(session)">
 
                             <h3>
                                 Session {{ session.id }}
                             </h3>
 
-                            <p>
-                                🚗 {{ session.carType }}
-                            </p>
-
-                            <p>
-                                🛣 {{ session.roadType }}
-                            </p>
-
-                            <p>
-                                🌱 CO₂:
-                                {{ safeText(session.co2) }}
-                            </p>
-
-                            <p>
-                                ⭐ Score:
-                                {{ safeText(session.score) }}
-                            </p>
-
-                            <p>
-                                Status:
-                                {{ safeText(session.status) }}
-                            </p>
+                            <p>🚗 {{ session.carType }}</p>
+                            <p>🛣 {{ session.roadType }}</p>
+                            <p>🌱 CO₂: {{ safeText(session.co2) }}</p>
+                            <p>⭐ Score: {{ safeText(session.score) }}</p>
+                            <p>Status: {{ safeText(session.status) }}</p>
+                            <p class="small-link-text">Klik for at se målinger</p>
 
                         </div>
 
                     </div>
 
-                </section>
+                </article>
 
 
-                <!-- Measurements -->
-                <section class="summary-measurements card">
+                <article class="student-history-card">
 
-                    <h2>
-                        Dine målinger
-                    </h2>
+                    <h2>Dine målinger</h2>
 
                     <div
                         v-if="filteredMeasurements.length === 0"
@@ -311,10 +130,10 @@
 
                     </div>
 
-                    <div class="measurement-list">
+                    <div class="student-scroll-list">
 
                         <div
-                            class="measurement-card"
+                            class="student-measurement-item"
                             v-for="measurement in filteredMeasurements"
                             v-bind:key="measurement.id">
 
@@ -322,83 +141,333 @@
                                 Måling {{ measurement.id }}
                             </h3>
 
-                            <p>
-                                ⚡ Hastighed:
-                                {{ measurement.speed }} km/t
-                            </p>
-
-                            <p>
-                                ⏱ Tid:
-                                {{ measurement.time }} sek.
-                            </p>
-
-                            <p>
-                                📏 Distance:
-                                {{ measurement.distance }} m
-                            </p>
-
-                            <p>
-                                🌱 CO₂:
-                                {{ measurement.co2 }}
-                            </p>
-
-                            <p>
-                                ⭐ Score:
-                                {{ measurement.score }}
-                            </p>
+                            <p>⚡ Hastighed: {{ safeText(measurement.speed) }} km/t</p>
+                            <p>⏱ Tid: {{ safeText(measurement.time) }} sek.</p>
+                            <p>📏 Distance: {{ safeText(measurement.distance) }} m</p>
+                            <p>🌱 CO₂: {{ safeText(measurement.co2) }}</p>
+                            <p>⭐ Score: {{ safeText(measurement.score) }}</p>
 
                         </div>
 
                     </div>
 
-                </section>
-
-            </div>
+                </article>
 
 
-            <!-- Best session -->
-            <section class="summary-best card">
+                <aside class="student-history-card student-filter-card">
 
-                <div class="best-score">
-                    {{ bestSession.score }}
-                </div>
+                    <h2>Filtre</h2>
 
-                <div class="best-info">
+                    <div class="filter-button-group">
 
-                    <p>
-                        <strong>
-                            Bedste session
-                        </strong>
-                    </p>
+                        <p>Vis</p>
 
-                    <p>
-                        🚗 {{ bestSession.carType }}
-                    </p>
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: selectedCarTypeFilter === '' && selectedRoadTypeFilter === '' && selectedDate === '' && startDate === '' && endDate === '' }"
+                            v-on:click="resetFilters">
 
-                    <p>
-                        🛣 {{ bestSession.roadType }}
-                    </p>
+                            Alle
 
-                    <p>
-                        🌱 CO₂: {{ bestSession.co2 }}
-                    </p>
+                        </button>
 
-                </div>
+                    </div>
+
+
+                    <div class="filter-button-group">
+
+                        <p>Biltype</p>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: selectedCarTypeFilter === 'Benzin Lille' }"
+                            v-on:click="selectedCarTypeFilter = 'Benzin Lille'">
+
+                            Benzin lille
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: selectedCarTypeFilter === 'Benzin Stor' }"
+                            v-on:click="selectedCarTypeFilter = 'Benzin Stor'">
+
+                            Benzin stor
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: selectedCarTypeFilter === 'Diesel' }"
+                            v-on:click="selectedCarTypeFilter = 'Diesel'">
+
+                            Diesel
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: selectedCarTypeFilter === 'Hybrid' }"
+                            v-on:click="selectedCarTypeFilter = 'Hybrid'">
+
+                            Hybrid
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="filter-button-group">
+
+                        <p>Vejtype</p>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: selectedRoadTypeFilter === 'Byzone' }"
+                            v-on:click="selectedRoadTypeFilter = 'Byzone'">
+
+                            Byzone 50
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: selectedRoadTypeFilter === 'Landevej' }"
+                            v-on:click="selectedRoadTypeFilter = 'Landevej'">
+
+                            Landevej 80
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: selectedRoadTypeFilter === 'Motorvej' }"
+                            v-on:click="selectedRoadTypeFilter = 'Motorvej'">
+
+                            Motorvej 110
+
+                        </button>
+
+                    </div>
+
+
+                    <div class="filter-button-group">
+
+                        <p>Dato</p>
+
+                        <input
+                            type="date"
+                            class="history-date-input"
+                            v-model="selectedDate">
+
+                    </div>
+
+
+                    <div class="filter-button-group">
+
+                        <p>Fra dato</p>
+
+                        <input
+                            type="date"
+                            class="history-date-input"
+                            v-model="startDate">
+
+                    </div>
+
+
+                    <div class="filter-button-group">
+
+                        <p>Til dato</p>
+
+                        <input
+                            type="date"
+                            class="history-date-input"
+                            v-model="endDate">
+
+                    </div>
+
+
+                    <div class="filter-button-group">
+
+                        <p>Sortering</p>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: sortType === 'bestCo2' }"
+                            v-on:click="sortType = 'bestCo2'">
+
+                            Laveste CO₂
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: sortType === 'score' }"
+                            v-on:click="sortType = 'score'">
+
+                            Bedste score
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: sortType === 'speedHigh' }"
+                            v-on:click="sortType = 'speedHigh'">
+
+                            Højeste hastighed
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: sortType === 'speedLow' }"
+                            v-on:click="sortType = 'speedLow'">
+
+                            Laveste hastighed
+
+                        </button>
+
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: sortType === 'timeLow' }"
+                            v-on:click="sortType = 'timeLow'">
+
+                            Hurtigste tid
+
+                        </button>
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        class="history-reset-button"
+                        v-on:click="resetFilters">
+
+                        Ryd filtre
+
+                    </button>
+
+                </aside>
 
             </section>
 
 
-            <!-- Navigation -->
-            <section class="summary-navigation">
+            <section class="student-bottom-row">
+
+                <article class="student-best-card">
+
+                    <h2>Bedste session</h2>
+
+                    <div class="best-info">
+
+                        <p>⭐ Score: {{ bestSession.score }}</p>
+                        <p>🚗 {{ bestSession.carType }}</p>
+                        <p>🛣 {{ bestSession.roadType }}</p>
+                        <p>🌱 CO₂: {{ bestSession.co2 }}</p>
+
+                    </div>
+
+                </article>
 
                 <button
                     type="button"
-                    class="back-button"
-                    onclick="window.location.href='session.html'">
+                    class="start-new-session-button"
+                    onclick="window.location.href='elev.html'">
 
-                    ← Tilbage til session
+                    Start en ny session
 
                 </button>
+
+            </section>
+
+
+            <section
+                v-if="showStudentSessionPopup === true"
+                class="summary-popup-overlay">
+
+                <div class="summary-popup-card large-history-popup">
+
+                    <h2>
+                        Session {{ selectedHistorySession.id }}
+                    </h2>
+
+                    <p>
+                        Her kan du se målingerne for den valgte session.
+                    </p>
+
+                    <div class="summary-popup-stats">
+
+                        <div>
+                            🚗 {{ safeText(selectedHistorySession.carType) }}
+                        </div>
+
+                        <div>
+                            🛣 {{ safeText(selectedHistorySession.roadType) }}
+                        </div>
+
+                        <div>
+                            🌱 CO₂: {{ safeText(selectedHistorySession.co2) }}
+                        </div>
+
+                        <div>
+                            ⭐ Score: {{ safeText(selectedHistorySession.score) }}
+                        </div>
+
+                    </div>
+
+                    <div
+                        v-if="selectedHistoryMeasurements.length === 0"
+                        class="empty-history">
+
+                        Ingen målinger fundet for denne session.
+
+                    </div>
+
+                    <div class="student-popup-measurement-list">
+
+                        <div
+                            class="student-measurement-item"
+                            v-for="measurement in selectedHistoryMeasurements"
+                            v-bind:key="measurement.id">
+
+                            <h3>
+                                Måling {{ measurement.id }}
+                            </h3>
+
+                            <p>⚡ Hastighed: {{ safeText(measurement.speed) }} km/t</p>
+                            <p>⏱ Tid: {{ safeText(measurement.time) }} sek.</p>
+                            <p>📏 Distance: {{ safeText(measurement.distance) }} m</p>
+                            <p>🌱 CO₂: {{ safeText(measurement.co2) }}</p>
+                            <p>⭐ Score: {{ safeText(measurement.score) }}</p>
+
+                        </div>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="summary-popup-button"
+                        v-on:click="closeStudentSessionDetails">
+
+                        Luk
+
+                    </button>
+
+                </div>
 
             </section>
 
@@ -409,14 +478,10 @@
 </div>
 
 
-<!-- Vue -->
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-
-<!-- Axios -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-<!-- JS -->
-<script src="elev.js"></script>
+<script src="api.js"></script>
+<script src="elev.js?v=101"></script>
 
 </body>
 

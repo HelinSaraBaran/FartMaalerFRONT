@@ -3,48 +3,85 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard - Underviser</title>
 
-    <link rel="stylesheet" href="underviser.css">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Leaderboard - Underviser
+    </title>
+
+    <link rel="stylesheet"
+          href="underviser.css?v=24">
 </head>
 
 <body onload="protectTeacherPage(); loadTeacherLeaderboard();">
 
 <div class="layout">
 
-    <!-- SIDEBAR -->
+    <!-- Sidebar -->
     <aside class="sidebar">
 
         <div class="sidebar-title">
-            <span class="sidebar-icon">📊</span>
-            <h2>Fartmåler</h2>
+
+            <span class="sidebar-icon">
+                📊
+            </span>
+
+            <h2>
+                Fartmåler
+            </h2>
+
         </div>
 
         <nav class="sidebar-menu">
 
-            <a href="overblik.html" class="menu-item">
-                <span>🏠</span> Overblik
+            <a href="overblik.html"
+               class="menu-item">
+
+                <span>🏠</span>
+                Overblik
+
             </a>
 
-            <a href="maaling.html" class="menu-item">
-                <span>📏</span> Målinger
+            <a href="maaling.html"
+               class="menu-item">
+
+                <span>📏</span>
+                Målinger
+
             </a>
 
-            <a href="gruppe.html" class="menu-item">
-                <span>👥</span> Grupper
+            <a href="gruppe.html"
+               class="menu-item">
+
+                <span>👥</span>
+                Grupper
+
             </a>
 
-            <a href="leaderboard.html" class="menu-item">
-                <span>🏆</span> Leaderboard
+            <a href="leaderboard.html"
+               class="menu-item active">
+
+                <span>🏆</span>
+                Leaderboard
+
             </a>
 
-            <a href="sessions.html" class="menu-item">
-                <span>📊</span> Sessions
+            <a href="sessions.html"
+               class="menu-item">
+
+                <span>📊</span>
+                Sessions
+
             </a>
 
-            <a href="indstillinger.html" class="menu-item">
-                <span>⚙️</span> Indstillinger
+            <a href="indstillinger.html"
+               class="menu-item">
+
+                <span>⚙️</span>
+                Indstillinger
+
             </a>
 
         </nav>
@@ -52,43 +89,42 @@
     </aside>
 
 
-    <!-- MAIN -->
+    <!-- Main content -->
     <main class="content">
 
-        <!-- HEADER -->
-        <header class="topbar">
+        <!-- Header -->
+        <header class="topbar leaderboard-topbar">
 
             <div>
 
-                <h1>Leaderboard</h1>
+                <h1>
+                    Leaderboard
+                </h1>
 
                 <p>
-                    Sammenlign grupper og skoler på præcision, CO₂ og score.
+                    Sammenlign grupper og skoler på præcision,
+                    CO₂ og score.
                 </p>
 
             </div>
 
             <div class="topbar-actions">
 
-                <div class="user-box">
+                <button
+                    type="button"
+                    class="logout-btn global-logout"
+                    onclick="logout()">
 
-                    <button
-                        type="button"
-                        class="logout-btn global-logout"
-                        onclick="logout()">
+                    Log ud →
 
-                        Log ud →
-
-                    </button>
-
-                </div>
+                </button>
 
             </div>
 
         </header>
 
 
-        <!-- Error message -->
+        <!-- Error -->
         <div
             id="errorBox"
             class="error-box"
@@ -96,8 +132,8 @@
         </div>
 
 
-        <!-- LEADERBOARD TYPE TABS -->
-        <div class="leader-tabs">
+        <!-- Leaderboard type -->
+        <section class="leader-tabs">
 
             <button
                 type="button"
@@ -119,17 +155,17 @@
 
             </button>
 
-        </div>
+        </section>
 
 
-        <!-- ROAD TYPE TABS -->
-        <div class="leader-tabs">
+        <!-- Road type -->
+        <section class="leader-tabs road-tabs">
 
             <button
                 type="button"
                 id="byzoneTab"
                 class="leader-tab active"
-                onclick="changeLeaderboardRoadType('Byzone')">
+                onclick="changeLeaderboardRoadType('byzone 50')">
 
                 Byzone 50
 
@@ -139,7 +175,7 @@
                 type="button"
                 id="landevejTab"
                 class="leader-tab"
-                onclick="changeLeaderboardRoadType('Landevej')">
+                onclick="changeLeaderboardRoadType('landevej 80')">
 
                 Landevej 80
 
@@ -149,20 +185,45 @@
                 type="button"
                 id="motorvejTab"
                 class="leader-tab"
-                onclick="changeLeaderboardRoadType('Motorvej')">
+                onclick="changeLeaderboardRoadType('motorvej 110')">
 
                 Motorvej 110
 
             </button>
 
-        </div>
+        </section>
 
 
-        <!-- GRID -->
+        <!-- Leaderboard -->
         <section class="leaderboard-grid">
 
-            <!-- TABLE -->
+            <!-- Table -->
             <div class="card leader-table">
+
+                <div class="leaderboard-card-header">
+
+                    <div>
+
+                        <h2>
+                            Resultater
+                        </h2>
+
+                        <p>
+                            Laveste score ligger øverst.
+                        </p>
+
+                    </div>
+
+                    <span
+                        id="leaderboardRoadBadge"
+                        class="leaderboard-card-badge">
+
+                        Byzone 50
+
+                    </span>
+
+                </div>
+
 
                 <table>
 
@@ -170,11 +231,25 @@
 
                         <tr>
 
-                            <th>Placering</th>
-                            <th>Navn</th>
-                            <th>Gns. CO₂</th>
-                            <th>Antal målinger</th>
-                            <th>Score</th>
+                            <th>
+                                Placering
+                            </th>
+
+                            <th>
+                                Navn
+                            </th>
+
+                            <th>
+                                Gns. CO₂
+                            </th>
+
+                            <th>
+                                Målinger
+                            </th>
+
+                            <th>
+                                Score
+                            </th>
 
                         </tr>
 
@@ -184,8 +259,11 @@
 
                         <tr>
 
-                            <td colspan="5">
+                            <td colspan="5"
+                                class="empty-table-message">
+
                                 Indlæser leaderboard...
+
                             </td>
 
                         </tr>
@@ -195,16 +273,39 @@
                 </table>
 
                 <p class="table-note">
-                    Laveste score vinder. Score bygger på afvigelse fra fartgrænsen og CO₂.
+
+                    Laveste score vinder.
+                    Score bygger på afvigelse fra fartgrænsen
+                    og CO₂.
+
                 </p>
 
             </div>
 
 
-            <!-- RIGHT PANEL -->
+            <!-- Right side -->
             <div class="card leader-side">
 
-                <h3>Din skole</h3>
+                <div class="leaderboard-info-top">
+
+                    <div class="eco-section-icon">
+                        🏆
+                    </div>
+
+                    <div>
+
+                        <h3>
+                            Din skole
+                        </h3>
+
+                        <p>
+                            Følg placering og score live.
+                        </p>
+
+                    </div>
+
+                </div>
+
 
                 <div class="school-box">
 
@@ -226,8 +327,11 @@
                             ---
                         </h2>
 
-                        <p class="green" id="ownSchoolScore">
+                        <p class="green"
+                           id="ownSchoolScore">
+
                             Score opdateres når leaderboard hentes
+
                         </p>
 
                     </div>
@@ -235,25 +339,34 @@
                 </div>
 
 
-                <h4>Top 3</h4>
+                <div class="top-three-wrapper">
 
-                <ol class="top-three" id="topThreeList">
+                    <h4>
+                        Top 3
+                    </h4>
 
-                    <li>
-                        Indlæser top 3...
-                    </li>
+                    <ol class="top-three"
+                        id="topThreeList">
 
-                </ol>
+                        <li>
+                            Indlæser top 3...
+                        </li>
+
+                    </ol>
+
+                </div>
 
 
                 <div class="score-expl">
 
-                    <h4>Sådan beregnes score</h4>
+                    <h4>
+                        Sådan beregnes score
+                    </h4>
 
                     <ul>
 
                         <li>
-                            Præcis hastighed tæt på fartgrænsen
+                            Hastighed tæt på fartgrænsen
                         </li>
 
                         <li>
@@ -261,7 +374,7 @@
                         </li>
 
                         <li>
-                            Bedste afsluttede session tæller
+                            Flere præcise målinger
                         </li>
 
                     </ul>
@@ -305,7 +418,7 @@ for (let index = 0; index < links.length; index++) {
 
 <script src="api.js"></script>
 
-<script src="underviser.js"></script>
+<script src="underviser.js?v=24"></script>
 
 </body>
 
