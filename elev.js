@@ -76,57 +76,92 @@ const app = Vue.createApp({
     },
 
 
-    methods: {
-        async showFunFact() {
+   methods: {
+    async loadRandomFunFact() {
 
-    if (
-        this.funFactsEnabled === false ||
-        this.settings.showFunFact === false
-    ) {
-        return;
+    try {
+
+        const response =
+            await axios.get(
+                apiUrl + "/FunFacts/random"
+            );
+
+        if (
+            response.data !== undefined &&
+            response.data !== null &&
+            response.data.text !== undefined
+        ) {
+            this.funFact =
+                response.data.text;
+        }
     }
 
-    this.showFunFactPopup = true;
+    catch(error) {
+
+        console.log(
+            "Kunne ikke hente fun fact:",
+            error
+        );
+
+        this.funFact =
+            "Vidste du at jævn fart kan give mindre CO₂?";
+    }
 },
-        normalizeArray(responseData) {
+    async showFunFact() {
 
-            if (Array.isArray(responseData)) {
-                return responseData;
-            }
+        if (
+            this.funFactsEnabled === false ||
+            this.settings.showFunFact === false
+        ) {
+            return;
+        }
 
-            if (
-                responseData !== undefined &&
-                responseData !== null &&
-                responseData.$values !== undefined &&
-                Array.isArray(responseData.$values)
-            ) {
-                return responseData.$values;
-            }
+        this.showFunFactPopup = true;
+    },
 
-            if (
-                responseData !== undefined &&
-                responseData !== null &&
-                responseData.measurements !== undefined
-            ) {
-                return this.normalizeArray(responseData.measurements);
-            }
+    closeFunFactPopup() {
 
-            return [];
-        },
+        this.showFunFactPopup = false;
+    },
 
+   normalizeArray(responseData) {
 
-        safeText(text) {
+    if (Array.isArray(responseData)) {
+        return responseData;
+    }
 
-            if (
-                text === undefined ||
-                text === null ||
-                text === ""
-            ) {
-                return "---";
-            }
+    if (
+        responseData !== undefined &&
+        responseData !== null &&
+        responseData.$values !== undefined &&
+        Array.isArray(responseData.$values)
+    ) {
+        return responseData.$values;
+    }
 
-            return text;
-        },
+    if (
+        responseData !== undefined &&
+        responseData !== null &&
+        responseData.measurements !== undefined
+    ) {
+        return this.normalizeArray(responseData.measurements);
+    }
+
+    return [];
+},
+
+safeText(text) {
+
+    if (
+        text === undefined ||
+        text === null ||
+        text === ""
+    ) {
+        return "---";
+    }
+
+    return text;
+},
 
         clearError() {
 
@@ -457,7 +492,7 @@ window.location.href =
 
 
         async createMeasurement() {
-
+            console.log("createMeasurement kører");
             this.errorMessage = "";
 
             this.sessionId =
@@ -479,15 +514,17 @@ window.location.href =
             try {
 
                 const response =
-                    await axios.post(
-                        apiUrl + "/Measurements",
-                        measurement
-                    );
+    await axios.post(
+        apiUrl + "/Measurements",
+        measurement
+    );
 
-                const savedMeasurement =
-                    response.data;
+console.log(response.data);
 
-                this.showMeasurementResult(savedMeasurement);
+const savedMeasurement =
+    response.data;
+
+                await this.showMeasurementResult(savedMeasurement);
             }
 
             catch(error) {
@@ -521,7 +558,7 @@ window.location.href =
         },
 
 
-        showMeasurementResult(savedMeasurement) {
+       async showMeasurementResult(savedMeasurement) {
 
             this.latestSpeed =
                 Math.round(savedMeasurement.simulatedSpeed);
@@ -558,63 +595,80 @@ window.location.href =
                 Math.round(this.totalCo2) + " g";
 
             this.showFeedback(
-                savedMeasurement.simulatedSpeed,
-                savedMeasurement.speedLimit,
-                savedMeasurement.co2
-            );
+    savedMeasurement.simulatedSpeed,
+    savedMeasurement.speedLimit,
+    savedMeasurement.co2
+);
 
-            this.showCo2Feedback(savedMeasurement);
+this.showCo2Feedback(savedMeasurement);
 
-           if (
+          if (
     this.funFactsEnabled === true &&
     this.settings.showFunFact === true
 ) {
+
+    await this.loadRandomFunFact();
+
     this.showFunFactPopup = true;
 }
-        },
 
+},
 
-        nextMeasurement() {
-
+async nextMeasurement() {
             this.errorMessage = "";
             this.showFunFactPopup = false;
 
-            this.createMeasurement();
+            await this.createMeasurement();
         },
 
 
         async endSession() {
 
-            this.errorMessage = "";
+    this.errorMessage = "";
 
-            try {
+    try {
 
-                this.sessionId =
-                    Number(localStorage.getItem("sessionId")) || 0;
+        this.sessionId =
+            Number(localStorage.getItem("sessionId")) || 0;
 
-                if (this.sessionId === 0) {
-                    window.location.href = "elev.html";
-                    return;
-                }
+        if (this.sessionId === 0) {
 
-                await axios.put(
-                    apiUrl + "/Sessions/" + this.sessionId + "/end"
-                );
+            window.location.href =
+                "elev.html";
 
-                this.showSummaryPopup = true;
+            return;
+        }
 
-                localStorage.removeItem("sessionId");
-            }
+        await axios.put(
+            apiUrl +
+            "/Sessions/" +
+            this.sessionId +
+            "/end"
+        );
 
-            catch(error) {
+        this.showSummaryPopup = true;
 
-                console.log("Kunne ikke afslutte session:", error);
+        localStorage.removeItem("sessionId");
+        localStorage.removeItem("groupId");
+        localStorage.removeItem("groupName");
+        localStorage.removeItem("carType");
+        localStorage.removeItem("roadType");
+        localStorage.removeItem("speedLimit");
+        localStorage.removeItem("scalingFactor");
+        localStorage.removeItem("isNavigating");
+    }
 
-                this.errorMessage =
-                    "Kunne ikke afslutte session";
-            }
-        },
+    catch(error) {
 
+        console.log(
+            "Kunne ikke afslutte session:",
+            error
+        );
+
+        this.errorMessage =
+            "Kunne ikke afslutte session";
+    }
+},
 
         showFeedback(speed, speedLimit, co2) {
 
@@ -1160,29 +1214,3 @@ closeStudentSessionDetails() {
 
 app.mount("#app");
 
-window.addEventListener("beforeunload", function () {
-
-    const sessionId =
-        localStorage.getItem("sessionId");
-
-    const isNavigating =
-        localStorage.getItem("isNavigating");
-
-    if (
-        sessionId !== null &&
-        sessionId !== "" &&
-        isNavigating !== "true"
-    ) {
-
-        fetch(
-            apiUrl +
-            "/Sessions/" +
-            sessionId +
-            "/end",
-            {
-                method: "PUT",
-                keepalive: true
-            }
-        );
-    }
-});
