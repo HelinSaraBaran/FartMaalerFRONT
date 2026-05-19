@@ -676,8 +676,7 @@ startMeasurementPolling() {
             this.latestSpeed =
                 Math.round(savedMeasurement.simulatedSpeed);
 
-            this.distance =
-                Math.round(savedMeasurement.distance) + " m";
+            this.distance = "0.3 m";
 
             this.time =
                 Math.round(savedMeasurement.time * 100) / 100 + " sek.";
