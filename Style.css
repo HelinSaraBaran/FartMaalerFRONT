@@ -70,9 +70,16 @@ button:hover {
 
 .card {
     background: var(--white);
-    border-radius: 18px;
-    padding: 24px;
-    box-shadow: var(--shadow-soft);
+
+    border-radius: 22px;
+
+    padding: 26px;
+
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.05);
+
+    border:
+        1px solid #eeeeee;
 }
 
 .card h2 {
@@ -856,8 +863,14 @@ body.elev-green-page .info-text {
 
 .content-grid {
     display: grid;
-    grid-template-columns: 1.3fr 0.9fr 0.65fr;
-    gap: 18px;
+
+    grid-template-columns:
+        1.2fr
+        0.82fr
+        0.6fr;
+
+    gap: 20px;
+
     align-items: start;
 }
 
@@ -872,28 +885,29 @@ body.elev-green-page .info-text {
 /* ---------- Speed area ---------- */
 
 .speed-circle {
-    width: 180px;
-    height: 180px;
-    margin: 10px auto 20px;
-    border: 10px solid #ececec;
+    width: 210px;
+    height: 210px;
+    margin: 0 auto 24px;
+    border: 10px solid #efefef;
     border-radius: 50%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    background: white;
 }
 
 .speed-number {
     color: #333;
-    font-size: 50px;
+    font-size: 64px;
     font-weight: 900;
 }
 
 .speed-unit {
     color: #666;
-    font-size: 24px;
+    font-size: 34px;
+    margin-top: 4px;
 }
-
 .speed-text {
     text-align: center;
     margin-bottom: 20px;
@@ -909,15 +923,22 @@ body.elev-green-page .info-text {
 
 .stats-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    grid-template-columns:
+        repeat(3, 1fr);
+    gap: 18px;
+    width: 100%;
 }
 
 .stat-box {
-    padding: 20px;
-    border-radius: 12px;
-    background: #f8f8f8;
-    font-weight: 600;
+    background-color: #f8f8f8;
+    border-radius: 18px;
+    padding: 28px;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 18px;
+    border: 1px solid #ececec;
 }
 
 .stat-box strong {
@@ -970,37 +991,52 @@ body.elev-green-page .info-text {
 
 .feedback-buttons,
 .feedback-grid {
-    display: flex;
-    gap: 10px;
+    display: grid;
+    grid-template-columns:
+        repeat(3, 1fr);
+    gap: 12px;
 }
-
 .feedback-button {
-    flex: 1;
-    min-height: 110px;
+    min-height: 96px;
     padding: 18px;
-    border: 2px solid #e1e3e8;
-    border-radius: 12px;
-    background: #f8f8f8;
+    border: 1px solid #e7e7e7;
+    border-radius: 16px;
+    background: #fafafa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-}
-
-.next-button {
-    min-height: 58px;
-    border: 1px solid #dedede;
-    border-radius: 11px;
-    background: white;
-    color: #333;
     font-size: 18px;
+    font-weight: 700;
+}
+.next-button {
+    width: 210px;
+    height: 90px;
+    border: none;
+    border-radius: 20px;
+    background:
+        linear-gradient(
+            135deg,
+            #3f6f46,
+            #2f5435
+        );
+
+    color: white;
+    font-weight: 900;
+    box-shadow:
+        0 6px 18px rgba(47,84,53,0.2);
 }
 
 /* ---------- Settings switch ---------- */
 
 .setting-row {
-    display: grid;
-    grid-template-columns: 40px 1fr auto;
+    display: flex;
+    justify-content: space-between;
     align-items: center;
+    width: 100%;
     padding: 14px 0;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #ececec;
+    gap: 20px;
 }
 
 .setting-row p {
@@ -1637,6 +1673,9 @@ a:hover {
         0 25px 60px rgba(0, 0, 0, 0.25);
 
     animation: popupFade 0.25s ease;
+
+    position: relative;
+    z-index: 9999;
 }
 
 .summary-popup-card h2 {
@@ -1653,8 +1692,12 @@ a:hover {
 
 .summary-popup-stats {
     display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
     gap: 14px;
-    margin-bottom: 28px;
+
+    margin-bottom: 24px;
 }
 
 .summary-popup-stats div {
@@ -1688,7 +1731,10 @@ a:hover {
     font-size: 19px;
     font-weight: 800;
 
-    transition: 0.2s ease;
+    cursor: pointer;
+
+    position: relative;
+    z-index: 999999;
 }
 
 .summary-popup-button:hover {
@@ -2284,54 +2330,258 @@ a:hover {
     opacity: 0.97;
 }
 
-/* SESSION FUNFACT + NEXT BUTTON FIX */
-
-.funfact-box {
-    margin-top: 24px;
-    max-width: 520px;
-    padding: 18px 22px;
-    border-radius: 18px;
-    background: #fff8dd;
-    border: 1px solid #f1d77a;
-    color: #5f4200;
-    font-weight: 800;
-    box-shadow: var(--shadow-soft);
-}
-
-.next-button {
-    margin-top: 14px;
-    min-width: 220px;
-    min-height: 52px;
-    padding: 0 22px;
-    border: none;
-    border-radius: 16px;
-    background: #3f6f46;
-    color: white;
-    font-weight: 900;
-    box-shadow: var(--shadow-soft);
-}
 /* SESSION BOTTOM ACTION AREA */
 
+.road-image-section {
+    margin-top: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.08);
+}
+
+.road-image {
+    width: 100%;
+    height: 290px;
+    object-fit: cover;
+    display: block;
+}
+
+/* =================================
+   SESSION BOTTOM AREA
+================================= */
+
+.session-bottom-area {
+    display: grid;
+    grid-template-columns: 1fr 180px;
+    align-items: stretch;
+    gap: 18px;
+    margin-top: 22px;
+    width: 100%;
+}
+
+/* FUN FACT */
+
 .funfact-box {
-    width: calc(100% - 300px);
-    max-width: 980px;
-    min-height: 56px;
-    margin-top: 28px;
-    padding: 18px 22px;
+
+    flex: 1;
+
+    min-height: 82px;
+
+    padding: 0 24px;
 
     display: flex;
     align-items: center;
 
-    border-radius: 16px;
-    background: #fff8dd;
-    border: 1px solid #f1d77a;
-    color: #5f4200;
+    border-radius: 22px;
+
+    background: #fff8e7;
+
+    border: 2px solid #f1d77a;
+
+    color: #7a4200;
+
+    font-size: 20px;
+
     font-weight: 800;
-    box-shadow: var(--shadow-soft);
+
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.05);
 }
 
-.next-button {
-    margin-top: 14px;
-    width: 220px;
-    min-height: 54px;
+.next-button:hover {
+
+    transform: translateY(-2px);
+
+    opacity: 0.97;
+}
+
+/* =================================
+   FINAL SESSION LAYOUT FIX
+================================= */
+
+.content-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.85fr 0.55fr;
+    gap: 20px;
+    align-items: stretch;
+}
+
+/* Kolonner */
+.left-column,
+.middle-column,
+.right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Alle cards */
+.card {
+    background: white;
+    border-radius: 22px;
+    padding: 24px;
+    border: 1px solid #ececec;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* SESSION CARD */
+.session-card {
+    flex: 1;
+    min-height: 245px;
+}
+
+/* ROAD IMAGE */
+.road-image-section {
+    flex: 1;
+    min-height: 245px;
+
+    border-radius: 22px;
+    overflow: hidden;
+
+    box-shadow:
+        0 4px 12px rgba(0,0,0,0.08);
+}
+
+.road-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* SETTINGS */
+.settings-card {
+    flex: 1;
+    min-height: 470px;
+}
+
+/* FEEDBACK CARD */
+.right-column .card:first-child {
+    min-height: 250px;
+}
+
+/* =================================
+   BOTTOM AREA
+================================= */
+
+/* FUN FACT */
+.funfact-box {
+
+    flex: 1;
+
+    min-height: 82px;
+
+    padding: 0 24px;
+
+    display: flex;
+    align-items: center;
+
+    border-radius: 22px;
+
+    background: #fff8e7;
+
+    border: 2px solid #f1d77a;
+
+    color: #7a4200;
+
+    font-size: 20px;
+
+    font-weight: 800;
+}
+
+.student-popup-measurement-list {
+    max-height: 320px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+/* =================================
+   Bedste session design
+================================= */
+
+
+.best-session-card {
+
+    width: 100%;
+
+    background: white;
+
+    border-radius: 24px;
+
+    padding: 24px;
+
+    margin-top: 30px;
+
+    box-shadow:
+        0 4px 15px rgba(0,0,0,0.06);
+}
+
+.best-session-header {
+
+    font-size: 32px;
+
+    font-weight: 700;
+
+    margin-bottom: 25px;
+
+    color: #1d2b1f;
+}
+
+.best-session-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 18px;
+}
+
+.best-session-box {
+
+    background: #f3f8f1;
+
+    border-radius: 18px;
+
+    padding: 20px;
+
+    font-size: 18px;
+
+    color: #2d3b2f;
+
+    border:
+        1px solid #dbe7d8;
+
+    transition: 0.2s;
+}
+
+.best-session-box:hover {
+
+    transform: translateY(-2px);
+
+    background: #edf6ea;
+}
+
+.best-session-box strong {
+
+    display: block;
+
+    margin-top: 10px;
+
+    font-size: 22px;
+
+    color: #1d2b1f;
+}
+
+.best-session-empty {
+
+    background: #f3f8f1;
+
+    border-radius: 16px;
+
+    padding: 18px;
+
+    color: #5f6b5f;
+
+    font-weight: 600;
 }

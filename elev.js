@@ -41,6 +41,10 @@ const app = Vue.createApp({
             beepEnabled: true,
             funFactsEnabled: true,
             ttsFunFactEnabled: true,
+            globalTtsLocked: false,
+            globalSoundLocked: false,
+            globalVisualLocked: false,
+            globalFunFactsLocked: false,    
             selectedTtsLanguage: "da-DK",
 
             leaderboard: [],
@@ -77,6 +81,31 @@ const app = Vue.createApp({
 
 
    methods: {
+
+    getSessionCo2(session) {
+
+    const measurements =
+        this.measurementsHistory.filter(
+            measurement =>
+                measurement.sessionId === session.id
+        );
+
+    if (measurements.length === 0) {
+        return 0;
+    }
+
+    let total = 0;
+
+    measurements.forEach(measurement => {
+
+        total +=
+            Number(measurement.co2 || 0);
+    });
+
+    return Math.round(total);
+},
+
+
     async loadRandomFunFact() {
 
     try {
@@ -123,6 +152,14 @@ const app = Vue.createApp({
 
         this.showFunFactPopup = false;
     },
+    closeStudentSessionDetails() {
+
+    this.showStudentSessionPopup = false;
+
+    this.selectedHistorySession = {};
+
+    this.selectedHistoryMeasurements = [];
+},
 
    normalizeArray(responseData) {
 
@@ -181,69 +218,100 @@ safeText(text) {
 
         async loadGlobalSettings() {
 
-            try {
+    try {
 
-                const response =
-                    await axios.get(apiUrl + "/Settings");
+        const response =
+            await axios.get(
+                apiUrl + "/Settings"
+            );
 
-                const settings =
-                    this.normalizeArray(response.data);
+        const settings =
+            this.normalizeArray(
+                response.data
+            );
 
-                for (
-                    let index = 0;
-                    index < settings.length;
-                    index++
-                ) {
+        for (
+            let index = 0;
+            index < settings.length;
+            index++
+        ) {
 
-                    const setting = settings[index];
+            const setting =
+                settings[index];
 
-                    if (
-                        setting.key === undefined ||
-                        setting.key === null
-                    ) {
-                        continue;
-                    }
-
-                    const key =
-                        setting.key.toLowerCase();
-
-                    const value =
-                        this.convertSettingValueToBoolean(setting.value);
-
-                    if (key === "tts") {
-                        this.ttsEnabled = value;
-                    }
-
-                    if (key === "biplyd") {
-                        this.beepEnabled = value;
-                        this.soundEnabled = value;
-                    }
-
-                    if (key === "funfacts") {
-                        this.funFactsEnabled = value;
-                        this.settings.showFunFact = value;
-                    }
-
-                    if (key === "ttsfunfact") {
-                        this.ttsFunFactEnabled = value;
-                    }
-
-                    if (key === "leaderboard") {
-                        this.leaderboardEnabled = value;
-                    }
-
-                    if (key === "visuelfeedback") {
-                        this.visualEnabled = value;
-                        this.settings.showFeedback = value;
-                    }
-                }
+            if (
+                setting.key === undefined
+            ) {
+                continue;
             }
 
-            catch(error) {
+            const key =
+                setting.key.toLowerCase();
 
-                console.log("Kunne ikke hente settings:", error);
+            const value =
+                this.convertSettingValueToBoolean(
+                    setting.value
+                );
+
+            // TTS
+            if (key === "tts") {
+
+                this.ttsEnabled = value;
+
+                this.globalTtsLocked =
+                    value === false;
             }
-        },
+
+            // Lyd
+            if (key === "biplyd") {
+
+                this.soundEnabled = value;
+
+                this.beepEnabled = value;
+
+                this.globalSoundLocked =
+                    value === false;
+            }
+
+            // Fun facts
+            if (key === "funfacts") {
+
+                this.funFactsEnabled = value;
+
+                this.settings.showFunFact = value;
+
+                this.globalFunFactsLocked =
+                    value === false;
+            }
+
+            // Visuel feedback
+            if (key === "visuelfeedback") {
+
+                this.visualEnabled = value;
+
+                this.settings.showFeedback = value;
+
+                this.globalVisualLocked =
+                    value === false;
+            }
+
+            // Leaderboard
+            if (key === "leaderboard") {
+
+                this.leaderboardEnabled =
+                    value;
+            }
+        }
+    }
+
+    catch(error) {
+
+        console.log(
+            "Kunne ikke hente settings:",
+            error
+        );
+    }
+},
 
 
         async loadGroups() {
@@ -622,7 +690,7 @@ async nextMeasurement() {
         },
 
 
-        async endSession() {
+async endSession() {
 
     this.errorMessage = "";
 
@@ -633,9 +701,7 @@ async nextMeasurement() {
 
         if (this.sessionId === 0) {
 
-            window.location.href =
-                "elev.html";
-
+            window.location.href = "elev.html";
             return;
         }
 
@@ -649,12 +715,6 @@ async nextMeasurement() {
         this.showSummaryPopup = true;
 
         localStorage.removeItem("sessionId");
-        localStorage.removeItem("groupId");
-        localStorage.removeItem("groupName");
-        localStorage.removeItem("carType");
-        localStorage.removeItem("roadType");
-        localStorage.removeItem("speedLimit");
-        localStorage.removeItem("scalingFactor");
         localStorage.removeItem("isNavigating");
     }
 
@@ -768,7 +828,7 @@ async nextMeasurement() {
         },
 
 
-       async loadHistory() {
+async loadHistory() {
 
     this.errorMessage = "";
 
@@ -805,24 +865,34 @@ async nextMeasurement() {
             const session =
                 this.sessions[index];
 
-            let measurements =
-                session.measurements;
+            let measurements = [];
 
-            if (measurements === undefined || measurements === null) {
-                measurements = session.Measurements;
-            }
+        try {
 
-            measurements =
-                this.normalizeArray(measurements);
+    const measurementResponse =
+        await axios.get(
+            apiUrl +
+            "/Measurements/session/" +
+            session.id
+        );
+        measurements = this.normalizeArray( measurementResponse.data);
+
+}
+    catch(error) {
+        console.log(
+            "Kunne ikke hente målinger for session:", session.id);
+        }
 
             console.log("Målinger for session " + session.id + ":", measurements);
 
-            for (let measurementIndex = 0; measurementIndex < measurements.length; measurementIndex++) {
-
-                this.measurementsHistory.push(
-                    measurements[measurementIndex]
-                );
-            }
+            for ( let measurementIndex = 0; measurementIndex < measurements.length; measurementIndex++) {
+                measurements[measurementIndex].carType = session.carType;
+                measurements[measurementIndex].roadType = session.roadType;
+                measurements[measurementIndex].sessionDate = session.date;
+                
+                this.measurementsHistory.push(measurements[measurementIndex]
+    );
+}
         }
 
         console.log("Alle målinger samlet:", this.measurementsHistory);
@@ -848,51 +918,79 @@ async nextMeasurement() {
     this.sortType = "";
 },
 
-        openStudentSessionDetails(session) {
+async openStudentSessionDetails(session) {
 
     this.selectedHistorySession =
         session;
 
-    let measurements =
-        session.measurements;
-
-    if (
-        measurements !== undefined &&
-        measurements !== null &&
-        measurements.$values !== undefined
-    ) {
-        measurements =
-            measurements.$values;
-    }
-
-    if (
-        measurements === undefined ||
-        measurements === null
-    ) {
-        measurements =
-            [];
-    }
-
-    this.selectedHistoryMeasurements =
-        measurements;
-
-    this.showStudentSessionPopup =
-        true;
-},
-
-closeStudentSessionDetails() {
-
-    this.showStudentSessionPopup =
-        false;
-
-    this.selectedHistorySession =
-        {};
-
     this.selectedHistoryMeasurements =
         [];
+
+    try {
+
+        const response =
+            await axios.get(
+                apiUrl +
+                "/Measurements/session/" +
+                session.id
+            );
+
+        let measurements =
+            this.normalizeArray(response.data);
+
+        this.selectedHistoryMeasurements =
+            measurements;
+
+        if (measurements.length > 0) {
+
+            let totalCo2 = 0;
+            let totalScore = 0;
+
+            for (
+                let index = 0;
+                index < measurements.length;
+                index++
+            ) {
+
+                const measurement =
+                    measurements[index];
+
+                totalCo2 =
+                    totalCo2 +
+                    Number(measurement.co2 || 0);
+
+                totalScore =
+                    totalScore +
+                    Number(measurement.score || 0);
+            }
+
+            this.selectedHistorySession.co2 =
+                Math.round(totalCo2) + " g";
+
+            this.selectedHistorySession.score =
+                Math.round(totalScore);
+        }
+
+        this.showStudentSessionPopup =
+            true;
+    }
+
+    catch(error) {
+
+        console.log(
+            "Kunne ikke hente målinger:",
+            error
+        );
+
+        this.selectedHistoryMeasurements =
+            [];
+
+        this.showStudentSessionPopup =
+            true;
+    }
 },
 
-     async loadLeaderboard() {
+    async loadLeaderboard() {
 
     this.errorMessage = "";
     this.loading = true;
@@ -907,15 +1005,18 @@ closeStudentSessionDetails() {
 
     try {
 
+        const backendRoadType =
+            this.leaderboardRoadType;
+
         const response =
             await axios.get(
                 apiUrl +
-                "/Leaderboard/student/school?roadType=" +
-                encodeURIComponent(this.leaderboardRoadType)
+                "/Leaderboard/student/class?roadType=" +
+                encodeURIComponent(backendRoadType)
             );
 
         let leaderboardData =
-            response.data;
+            response.data.leaderboard;
 
         if (
             leaderboardData !== undefined &&
@@ -929,6 +1030,8 @@ closeStudentSessionDetails() {
         this.leaderboard =
             this.normalizeArray(leaderboardData);
 
+        console.log("Leaderboard:", this.leaderboard);
+
         this.loading = false;
     }
 
@@ -937,7 +1040,9 @@ closeStudentSessionDetails() {
         console.log(error);
 
         this.leaderboard = [];
-        this.errorMessage = "Kunne ikke hente leaderboard";
+        this.errorMessage =
+            "Kunne ikke hente leaderboard";
+
         this.loading = false;
     }
 },
@@ -951,16 +1056,17 @@ closeStudentSessionDetails() {
 
         formatDate(dateText) {
 
-            if (
-                dateText === undefined ||
-                dateText === null ||
-                dateText.length < 10
-            ) {
-                return "---";
-            }
-
-            return dateText.substring(0, 10);
-        },
+        if ( 
+            dateText === undefined || dateText === null) {
+            return "";
+        }
+        const date = new Date(dateText);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1) .padStart(2, "0");
+        const day = String(date.getDate()) .padStart(2, "0");
+        
+        return year + "-" + month + "-" + day;
+},
 
 
         formatTime(dateText) {
@@ -1019,7 +1125,7 @@ closeStudentSessionDetails() {
         result =
             result.filter(function(session) {
 
-                return this.formatDate(session.date) ===
+                return this.formatDate(session.createdAt) ===
                     this.selectedDate;
 
             }, this);
@@ -1030,7 +1136,7 @@ closeStudentSessionDetails() {
         result =
             result.filter(function(session) {
 
-                return this.formatDate(session.date) >=
+                return this.formatDate(session.createdAt) >=
                     this.startDate;
 
             }, this);
@@ -1041,7 +1147,7 @@ closeStudentSessionDetails() {
         result =
             result.filter(function(session) {
 
-                return this.formatDate(session.date) <=
+                return this.formatDate(session.createdAt) <=
                     this.endDate;
 
             }, this);
@@ -1095,56 +1201,198 @@ closeStudentSessionDetails() {
     return result;
 },
 
+filteredMeasurements() {
 
-        filteredMeasurements() {
+    let result =
+        Array.isArray(this.measurementsHistory)
+            ? this.measurementsHistory.slice()
+            : [];
 
-            let result =
-                Array.isArray(this.measurementsHistory)
-                    ? this.measurementsHistory.slice()
-                    : [];
+    if (this.selectedCarTypeFilter !== "") {
 
-            return result;
-        },
+        result =
+            result.filter(function(measurement) {
+
+                return (
+                    measurement.carType ===
+                    this.selectedCarTypeFilter
+                );
+
+            }, this);
+    }
+
+    if (this.selectedRoadTypeFilter !== "") {
+
+        result =
+            result.filter(function(measurement) {
+
+                const roadValues =
+                    this.getRoadValues(
+                        this.selectedRoadTypeFilter
+                    );
+
+                return (
+                    measurement.roadType ===
+                    roadValues.roadType
+                );
+
+            }, this);
+    }
+
+    if (this.selectedDate !== "") {
+
+        result =
+            result.filter(function(measurement) {
+
+                return (
+                    this.formatDate(
+                        measurement.createdAt
+                    ) === this.selectedDate
+                );
+
+            }, this);
+    }
+
+    if (this.startDate !== "") {
+
+        result =
+            result.filter(function(measurement) {
+
+                return (
+                    this.formatDate(
+                        measurement.createdAt
+                    ) >= this.startDate
+                );
+
+            }, this);
+    }
+
+    if (this.endDate !== "") {
+
+        result =
+            result.filter(function(measurement) {
+
+                return (
+                    this.formatDate(
+                        measurement.createdAt
+                    ) <= this.endDate
+                );
+
+            }, this);
+    }
+
+    if (this.sortType === "bestCo2") {
+
+        result.sort(function(first, second) {
+
+            return Number(first.co2) -
+                Number(second.co2);
+        });
+    }
+
+    if (this.sortType === "speedHigh") {
+
+        result.sort(function(first, second) {
+
+            return Number(second.simulatedSpeed) -
+                Number(first.simulatedSpeed);
+        });
+    }
+
+    if (this.sortType === "speedLow") {
+
+        result.sort(function(first, second) {
+
+            return Number(first.simulatedSpeed) -
+                Number(second.simulatedSpeed);
+        });
+    }
+
+    if (this.sortType === "timeLow") {
+
+        result.sort(function(first, second) {
+
+            return Number(first.time) -
+                Number(second.time);
+        });
+    }
+
+    if (this.sortType === "timeHigh") {
+
+        result.sort(function(first, second) {
+
+            return Number(second.time) -
+                Number(first.time);
+        });
+    }
+
+    return result;
+},
 
 
         bestSession() {
 
-            if (
-                !this.sessions ||
-                this.sessions.length === 0
-            ) {
-                return {
-                    score: "---",
-                    carType: "---",
-                    roadType: "---",
-                    co2: "---"
-                };
-            }
+    if (
+        this.sessions.length === 0
+    ) {
+        return null;
+    }
 
-            let best =
-                this.sessions[0];
+    let best =
+        this.sessions[0];
 
-            for (
-                let index = 1;
-                index < this.sessions.length;
-                index++
-            ) {
+    let bestCo2 =
+        this.getSessionCo2(best);
 
-                const current =
-                    this.sessions[index];
+    for (
+        let index = 1;
+        index < this.sessions.length;
+        index++
+    ) {
 
-                if (
-                    current.score !== undefined &&
-                    best.score !== undefined &&
-                    current.score < best.score
-                ) {
-                    best =
-                        current;
-                }
-            }
+        const current =
+            this.sessions[index];
 
-            return best;
+        const currentCo2 =
+            this.getSessionCo2(current);
+
+        if (
+            currentCo2 < bestCo2
+        ) {
+
+            best = current;
+            bestCo2 = currentCo2;
         }
+    }
+
+    let totalScore = 0;
+
+    const measurements =
+        this.measurementsHistory.filter(
+            measurement =>
+                measurement.sessionId === best.id
+        );
+
+    measurements.forEach(measurement => {
+
+        totalScore +=
+            Number(measurement.score || 0);
+    });
+
+    return {
+
+        ...best,
+
+        co2:
+            bestCo2,
+
+        totalCo2:
+            bestCo2,
+
+        score:
+            totalScore
+    };
+}
     },
     watch: {
 

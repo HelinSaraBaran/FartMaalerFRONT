@@ -151,13 +151,6 @@
                         </div>
 
                         <div class="stat-box">
-                            🌿 CO₂ sparet
-                            <strong>
-                                {{ savedCo2 }}
-                            </strong>
-                        </div>
-
-                        <div class="stat-box">
                             📝 Seneste måling
                             <strong>
                                 {{ latestSpeed }}
@@ -256,18 +249,14 @@
 
                 </article>
 
-
-                <article class="card">
-
-                    <h2>
-                        CO₂-feedback
-                    </h2>
-
-                    <p class="co2-text">
-                        {{ co2Text }}
-                    </p>
-
-                </article>
+                <section class="road-image-section">
+                    
+                    <img
+                     src="car-road.png"
+                       alt="Bil måling"
+                        class="road-image">
+                    
+                    </section>
 
             </section>
 
@@ -285,7 +274,7 @@
                     <div class="feedback-buttons">
 
                         <div class="feedback-button">
-                            😬 For hurtigt
+                            😠 For hurtigt
                         </div>
 
                         <div class="feedback-button">
@@ -297,6 +286,7 @@
                         </div>
 
                     </div>
+                    <br>
 
                     <div class="feedback-box">
                         {{ feedback }}
@@ -320,8 +310,7 @@
                         <label class="switch">
 
                             <input
-                                type="checkbox"
-                                v-model="soundEnabled">
+                                 type="checkbox" v-model="soundEnabled" :disabled="globalSoundLocked">
 
                             <span></span>
 
@@ -337,9 +326,9 @@
 
                         <label class="switch">
 
-                            <input
-                                type="checkbox"
-                                v-model="ttsEnabled">
+                            <input 
+                            type="checkbox"
+                            v-model="ttsEnabled" :disabled="globalTtsLocked">
 
                             <span></span>
 
@@ -363,9 +352,7 @@
 
                         <label class="switch">
 
-                            <input
-                                type="checkbox"
-                                v-model="visualEnabled">
+                            <input type="checkbox" v-model="visualEnabled" :disabled="globalVisualLocked">
 
                             <span></span>
 
@@ -382,8 +369,7 @@
                         <label class="switch">
 
                             <input
-                                type="checkbox"
-                                v-model="settings.showFunFact">
+                                type="checkbox" v-model="settings.showFunFact" :disabled="globalFunFactsLocked">
 
                             <span></span>
 
@@ -398,49 +384,15 @@
         </section>
 
 
-        <section class="funfact-box" v-if="settings.showFunFact && funFactsEnabled">
+        <div class="session-bottom-area">
+            <section class="funfact-box" v-if="settings.showFunFact && funFactsEnabled">
+                💡 {{ funFact }}
+            </section>
+            <button type="button" class="next-button" v-on:click="nextMeasurement">
+                <h3> ▶ Næste måling </h3>
+            </button>
 
-            💡 {{ funFact }}
-
-        </section>
-
-
-        <section
-            v-if="showFunFactPopup"
-            class="funfact-toast">
-
-            <div class="funfact-toast-content">
-
-                <strong>
-                    Fun fact 🌍
-                </strong>
-
-                <p>
-                    {{ funFact }}
-                </p>
-
-                <button
-                    type="button"
-                    class="summary-button"
-                    v-on:click="closeFunFactPopup">
-
-                    Luk
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <button
-            type="button"
-            class="next-button"
-            v-on:click="nextMeasurement">
-
-            ▶ Næste måling
-
-        </button>
+</div>
 
 
         <div
@@ -467,11 +419,6 @@
             <div>
                 ⚡ Gns. hastighed:
                 {{ averageSpeed }}
-            </div>
-
-            <div>
-                🌿 CO₂ sparet:
-                {{ savedCo2 }}
             </div>
 
         </div>

@@ -308,6 +308,15 @@
                             Laveste CO₂
 
                         </button>
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: sortType === 'worstCo2' }"
+                            v-on:click="sortType = 'worstCo2'">
+
+                            Højeste CO₂
+
+                        </button>
 
                         <button
                             type="button"
@@ -348,6 +357,15 @@
                             Hurtigste tid
 
                         </button>
+                        <button
+                            type="button"
+                            class="history-filter-button"
+                            v-bind:class="{ active: sortType === 'timeHigh' }"
+                            v-on:click="sortType = 'timeHigh'">
+
+                            Længste tid
+
+                        </button>
 
                     </div>
 
@@ -370,18 +388,69 @@
 
                 <article class="student-best-card">
 
-                    <h2>Bedste session</h2>
+    <div v-if="bestSession">
 
-                    <div class="best-info">
+        <div class="best-session-header">
 
-                        <p>⭐ Score: {{ bestSession.score }}</p>
-                        <p>🚗 {{ bestSession.carType }}</p>
-                        <p>🛣 {{ bestSession.roadType }}</p>
-                        <p>🌱 CO₂: {{ bestSession.co2 }}</p>
+            🏆 Bedste session
 
-                    </div>
+        </div>
 
-                </article>
+        <div class="best-session-grid">
+
+            <div class="best-session-box">
+
+                ⭐ Score
+
+                <strong>
+                    {{ bestSession.score ?? 0 }}
+                </strong>
+
+            </div>
+
+            <div class="best-session-box">
+
+                🚗 Biltype
+
+                <strong>
+                    {{ safeText(bestSession.carType) }}
+                </strong>
+
+            </div>
+
+            <div class="best-session-box">
+
+                🛣️ Vejtype
+
+                <strong>
+                    {{ safeText(bestSession.roadType) }}
+                </strong>
+
+            </div>
+
+            <div class="best-session-box">
+
+                🌱 CO₂
+
+                <strong>
+                    {{ safeText(bestSession.co2) }} g
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div
+        v-else
+        class="best-session-empty">
+
+        Ingen bedste session fundet.
+
+    </div>
+
+</article>
 
                 <button
                     type="button"
@@ -410,23 +479,10 @@
                     </p>
 
                     <div class="summary-popup-stats">
-
-                        <div>
-                            🚗 {{ safeText(selectedHistorySession.carType) }}
-                        </div>
-
-                        <div>
-                            🛣 {{ safeText(selectedHistorySession.roadType) }}
-                        </div>
-
-                        <div>
-                            🌱 CO₂: {{ safeText(selectedHistorySession.co2) }}
-                        </div>
-
-                        <div>
-                            ⭐ Score: {{ safeText(selectedHistorySession.score) }}
-                        </div>
-
+                        <div> 🚗 {{ safeText(selectedHistorySession.carType) }} </div>
+                        <div> 🛣 {{ safeText(selectedHistorySession.roadType) }} </div>
+                        <div> 🌱 CO₂: {{ safeText(selectedHistorySession.co2) }} </div>
+                        <div> ⏱ Tid: {{ selectedHistoryMeasurements.length > 0 ? safeText(selectedHistoryMeasurements[0].time): '---'}} sek. </div>
                     </div>
 
                     <div
