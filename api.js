@@ -1,6 +1,6 @@
 // Denne fil indeholder fælles API indstillinger og hjælpe metoder.
 
-const apiUrl = "https://fartmaalerapi20260511134506-fnarawbzewapckck.switzerlandnorth-01.azurewebsites.net/api";
+const apiUrl = "https://faartmaalerv2-fzgub9frhhb2ckb9.switzerlandnorth-01.azurewebsites.net/api";
 
 let requestIsRunning = false;
 
