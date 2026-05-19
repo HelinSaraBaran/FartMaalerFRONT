@@ -1751,7 +1751,7 @@ function deleteAllGroups() {
             try {
 
                 await axios.delete(
-                    apiUrl + "/Groups"
+                    apiUrl + "/Groups/all"
                 );
 
                 await loadGroups();
