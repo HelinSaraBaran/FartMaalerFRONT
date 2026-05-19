@@ -1,0 +1,33 @@
+name: Deploy static site to Azure Web App - FaartmaalerV2Front
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.x'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Zip all files
+        run: zip -r app.zip . -x ".git/*" -x ".github/*"
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'FaartmaalerV2Front'
+          slot-name: 'Production'
+          package: ./app.zip
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_977F6E9F116A49C58FD1EEA681725FA4 }}
