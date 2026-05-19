@@ -59,7 +59,12 @@ const app = Vue.createApp({
             selectedRoadType: "",
 
             sessions: [],
-            measurementsHistory: [],
+measurementsHistory: [],
+measurements: [],
+latestMeasurementId: 0,
+co2: "---",
+status: "---",
+measurementPollingId: null,
 
             selectedCarTypeFilter: "",
             selectedRoadTypeFilter: "",
@@ -553,12 +558,96 @@ window.location.href =
                 Number(localStorage.getItem("speedLimit")) || 0;
 
             this.scalingFactor =
-                Number(localStorage.getItem("scalingFactor")) || 0;
+    Number(localStorage.getItem("scalingFactor")) || 0;
 
-            this.loadGlobalSettings();
-        },
+this.loadGlobalSettings();
 
+this.loadMeasurements();
 
+this.startMeasurementPolling();
+},
+        
+async loadMeasurements() {
+
+    this.sessionId =
+        Number(localStorage.getItem("sessionId")) || 0;
+
+    if (this.sessionId === 0) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await axios.get(
+                apiUrl +
+                "/Measurements/session/" +
+                this.sessionId
+            );
+
+        let measurements =
+            this.normalizeArray(response.data);
+
+        measurements.sort(function(firstMeasurement, secondMeasurement) {
+
+            return Number(secondMeasurement.id) -
+                Number(firstMeasurement.id);
+        });
+
+        this.measurements =
+            measurements;
+
+        if (measurements.length === 0) {
+            return;
+        }
+
+        const latest =
+            measurements[0];
+
+        if (
+            this.latestMeasurementId ===
+            Number(latest.id)
+        ) {
+            return;
+        }
+
+        this.latestMeasurementId =
+            Number(latest.id);
+
+        await this.showMeasurementResult(latest);
+
+        this.measurementCount =
+            measurements.length;
+    }
+
+    catch(error) {
+
+        console.log(
+            "Kunne ikke hente live measurements:",
+            error
+        );
+    }
+},
+startMeasurementPolling() {
+
+    const currentApp =
+        this;
+
+    if (
+        this.measurementPollingId !== null
+    ) {
+        clearInterval(
+            this.measurementPollingId
+        );
+    }
+
+    this.measurementPollingId =
+        setInterval(async function() {
+
+            await currentApp.loadMeasurements();
+
+        }, 2000);
+},
         async createMeasurement() {
 
     console.log("createMeasurement kører");
@@ -951,7 +1040,10 @@ async openStudentSessionDetails(session) {
     this.errorMessage = "";
     this.loading = true;
 
-    await this.loadGlobalSettings();
+    
+    this.loadGlobalSettings();
+
+
 
     if (this.leaderboardEnabled === false) {
         this.leaderboard = [];
