@@ -208,35 +208,42 @@
             </div>
 
 
-            <!-- Class score - US6 and US7 -->
-            <div class="card dark-card center">
+    <!-- Class score - US6 and US7 -->
+        <div class="class-score-card">
+            <h1> Klasse score </h1>
+            
+        <div class="score-circle">
+            <span id="classScoreValue">
+                ---
+            </span>
 
-                <h3>
-                    Klasse score
-                </h3>
+        <p> klasse gns. </p>
 
-                <div class="score-circle">
+        </div>
 
-                    <span id="classScoreText">
-                        ---
-                    </span>
+    <div class="class-score-info">
 
-                    <p>
-                        klasse gns.
-                    </p>
+        <div>
+            Aktive grupper:
+            <strong id="activeGroupsText">
+                ---
+            </strong>
+        </div>
 
-                </div>
+        <div>
+            Bedste gruppe:
+            <strong id="bestGroupText">
+                ---
+            </strong>
+        </div>
 
-                <p
-                    class="small-info"
-                    id="groupStatusText">
+        <div>
+            Status Live
+        </div>
 
-                    Aktive grupper: --- · Ledige: ---
+    </div>
 
-                </p>
-
-            </div>
-
+</div>
             <!-- Gruppe overblik-->
 <!-- Gruppe OVERBLIK -->
 <section class="card groups-overview-card">
@@ -267,36 +274,33 @@
 
         </thead>
 
-        <tbody>
+        <tbody id="groupOverviewBody">
 
             <tr>
                 <td>Gruppe 1</td>
-                <td>...</td>
-                <td>... km/t</td>
-                <td>... g</td>
-                <td class="score green">...</td>
-                <td class="trend green">↓ ...</td>
+                <td>55 km/t</td>
+                <td>12 g</td>
+                <td>87</td>
+                <td class="trend green">↓ God</td>
             </tr>
 
             <tr>
                 <td>Gruppe 2</td>
-                <td>..</td>
-                <td>.. km/t</td>
-                <td>.. g</td>
-                <td class="score orange">...</td>
-<td class="trend-positive">↓ ...</td>
+                <td>72 km/t</td>
+                <td>19 g</td>
+                <td>104</td>
+                <td class="trend orange">↑ Høj</td>
             </tr>
 
             <tr>
                 <td>Gruppe 3</td>
-                <td>....</td>
-                <td>.... km/t</td>
-                <td>.... g</td>
-                <td class="score red">...</td>
-                <td class="trend green">↓ ...</td>
+                <td>43 km/t</td>
+                <td>8 g</td>
+                <td>65</td>
+                <td class="trend green">↓ Lav</td>
             </tr>
 
-        </tbody>
+        </tbody>    
 
     </table>
 
