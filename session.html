@@ -6,9 +6,7 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
-    <title>
-        Elev måling
-    </title>
+    <title>Elev måling</title>
 
     <link rel="stylesheet"
           href="Style.css?v=11">
@@ -20,42 +18,42 @@
      class="layout"
      v-cloak>
 
-     <aside class="sidebar">
+    <aside class="sidebar">
 
-            <div class="sidebar-title">
-                <span class="sidebar-icon">📊</span>
-                <h2>Fartmåler</h2>
-            </div>
+        <div class="sidebar-title">
+            <span class="sidebar-icon">📊</span>
+            <h2>Fartmåler</h2>
+        </div>
 
-            <nav class="sidebar-menu">
+        <nav class="sidebar-menu">
 
-                <a href="index.html"
-                   class="menu-item">
-                    <span>🏠</span>
-                    Forside
-                </a>
+            <a href="index.html"
+               class="menu-item">
+                <span>🏠</span>
+                Forside
+            </a>
 
-                <a href="session.html"
-                   class="menu-item active">
-                    <span>⏰</span>
-                    Session
-                </a>
+            <a href="session.html"
+               class="menu-item active">
+                <span>⏰</span>
+                Session
+            </a>
 
-                <a href="opsummering.html"
-                   class="menu-item">
-                    <span>📏</span>
-                    Historik
-                </a>
+            <a href="opsummering.html"
+               class="menu-item">
+                <span>📏</span>
+                Historik
+            </a>
 
-                <a href="leaderboardElev.html"
-                   class="menu-item">
-                    <span>🏆</span>
-                    Leaderboard
-                </a>
+            <a href="leaderboardElev.html"
+               class="menu-item">
+                <span>🏆</span>
+                Leaderboard
+            </a>
 
-            </nav>
+        </nav>
 
-        </aside>
+    </aside>
 
     <main class="content session-page">
 
@@ -73,31 +71,22 @@
                 ⚠️ {{ roadType }}
             </div>
 
-            <button
-                type="button"
-                class="session-button"
-                v-on:click="endSession">
-
+            <button type="button"
+                    class="session-button"
+                    v-on:click="endSession">
                 📊 Afslut session
-
             </button>
 
         </section>
 
-
-        <section
-            v-if="errorMessage"
-            class="error-box">
-
+        <section v-if="errorMessage"
+                 class="error-box">
             {{ errorMessage }}
-
         </section>
-
 
         <section class="locked-box">
             🔒 Gruppen er låst mens session er aktiv
         </section>
-
 
         <section class="content-grid">
 
@@ -105,34 +94,49 @@
 
                 <article class="card latest-card">
 
-                    <h2>
-                        Din seneste måling
-                    </h2>
+                    <h2>Din seneste måling</h2>
 
                     <div class="speed-circle">
 
                         <div class="speed-number">
-                            {{ latestSpeed }}
+
+                            <span v-if="latestSpeed !== null">
+                                {{ latestSpeed }}
+                            </span>
+
+                            <span v-else>
+                                --
+                            </span>
+
                         </div>
 
                         <div class="speed-unit">
-                            km/t
+
+                            <span v-if="latestSpeed !== null">
+                                km/t
+                            </span>
+
                         </div>
 
                     </div>
 
                     <p class="speed-text">
-                        Simuleret hastighed
+
+                        <span v-if="latestSpeed !== null">
+                            Målt hastighed
+                        </span>
+
+                        <span v-else>
+                            Ingen måling endnu
+                        </span>
+
                     </p>
 
                 </article>
 
-
                 <article class="card session-card">
 
-                    <h2>
-                        Din session
-                    </h2>
+                    <h2>Din session</h2>
 
                     <div class="stats-grid">
 
@@ -153,7 +157,13 @@
                         <div class="stat-box">
                             📝 Seneste måling
                             <strong>
-                                {{ latestSpeed }}
+                                <span v-if="latestSpeed !== null">
+                                    {{ latestSpeed }} km/t
+                                </span>
+
+                                <span v-else>
+                                    Ingen måling endnu
+                                </span>
                             </strong>
                         </div>
 
@@ -163,45 +173,27 @@
 
             </section>
 
-
             <section class="middle-column">
 
                 <article class="card">
 
-                    <h2>
-                        Sådan beregnes hastigheden
-                    </h2>
+                    <h2>Sådan beregnes hastigheden</h2>
 
                     <div class="formula-grid">
 
                         <div>
-                            <small>
-                                Distance
-                            </small>
-
-                            <strong>
-                                {{ distance }}
-                            </strong>
+                            <small>Distance</small>
+                            <strong>{{ distance }}</strong>
                         </div>
 
                         <div>
-                            <small>
-                                Tid
-                            </small>
-
-                            <strong>
-                                {{ time }}
-                            </strong>
+                            <small>Tid</small>
+                            <strong>{{ time }}</strong>
                         </div>
 
                         <div>
-                            <small>
-                                Fartgrænse
-                            </small>
-
-                            <strong>
-                                {{ speedLimit }} km/t
-                            </strong>
+                            <small>Fartgrænse</small>
+                            <strong>{{ speedLimit }} km/t</strong>
                         </div>
 
                     </div>
@@ -212,12 +204,9 @@
 
                 </article>
 
-
                 <article class="card">
 
-                    <h2>
-                        Sammenlign med grænse
-                    </h2>
+                    <h2>Sammenlign med grænse</h2>
 
                     <div class="compare-row">
 
@@ -226,23 +215,22 @@
                         </div>
 
                         <div>
-                            <small>
-                                Din hastighed
-                            </small>
+                            <small>Din hastighed</small>
 
                             <strong>
-                                {{ latestSpeed }}
+                                <span v-if="latestSpeed !== null">
+                                    {{ latestSpeed }} km/t
+                                </span>
+
+                                <span v-else>
+                                    Ingen måling endnu
+                                </span>
                             </strong>
                         </div>
 
                         <div>
-                            <small>
-                                Afvigelse
-                            </small>
-
-                            <strong>
-                                {{ difference }}
-                            </strong>
+                            <small>Afvigelse</small>
+                            <strong>{{ difference }}</strong>
                         </div>
 
                     </div>
@@ -250,26 +238,21 @@
                 </article>
 
                 <section class="road-image-section">
-                    
-                    <img
-                     src="car-road.png"
-                       alt="Bil måling"
-                        class="road-image">
-                    
-                    </section>
+
+                    <img src="car-road.png"
+                         alt="Bil måling"
+                         class="road-image">
+
+                </section>
 
             </section>
 
-
             <aside class="right-column">
 
-                <article
-                    class="card"
-                    v-if="settings.showFeedback">
+                <article class="card"
+                         v-if="settings.showFeedback">
 
-                    <h2>
-                        Feedback
-                    </h2>
+                    <h2>Feedback</h2>
 
                     <div class="feedback-buttons">
 
@@ -286,6 +269,7 @@
                         </div>
 
                     </div>
+
                     <br>
 
                     <div class="feedback-box">
@@ -294,23 +278,19 @@
 
                 </article>
 
-
                 <article class="card settings-card">
 
-                    <h2>
-                        Indstillinger
-                    </h2>
+                    <h2>Indstillinger</h2>
 
                     <div class="setting-row">
 
-                        <span>
-                            🔔 Lyd
-                        </span>
+                        <span>🔔 Lyd</span>
 
                         <label class="switch">
 
-                            <input
-                                 type="checkbox" v-model="soundEnabled" :disabled="globalSoundLocked">
+                            <input type="checkbox"
+                                   v-model="soundEnabled"
+                                   :disabled="globalSoundLocked">
 
                             <span></span>
 
@@ -320,39 +300,13 @@
 
                     <div class="setting-row">
 
-                        <span>
-                            🗣️ TTS
-                        </span>
+                        <span>🗣️ TTS</span>
 
                         <label class="switch">
 
-                            <input 
-                            type="checkbox"
-                            v-model="ttsEnabled" :disabled="globalTtsLocked">
-
-                            <span></span>
-
-                        </label>
-
-                    </div>
-                    <div class="setting-row language-setting-row" v-if="ttsEnabled">
-                        <span> 🌍 </span>
-                        <p> Sprog </p>
-                        <select id="ttsLanguageSelect" v-model="selectedTtsLanguage">
-                            <option value="da-DK"> Dansk </option>
-                            <option value="en-US"> Engelsk </option>
-                         </select>
-                    </div>
-
-                    <div class="setting-row">
-
-                        <span>
-                            👁️ Visuel feedback
-                        </span>
-
-                        <label class="switch">
-
-                            <input type="checkbox" v-model="visualEnabled" :disabled="globalVisualLocked">
+                            <input type="checkbox"
+                                   v-model="ttsEnabled"
+                                   :disabled="globalTtsLocked">
 
                             <span></span>
 
@@ -360,16 +314,45 @@
 
                     </div>
 
+                    <div class="setting-row language-setting-row"
+                         v-if="ttsEnabled">
+
+                        <span>🌍</span>
+                        <p>Sprog</p>
+
+                        <select id="ttsLanguageSelect"
+                                v-model="selectedTtsLanguage">
+                            <option value="da-DK">Dansk</option>
+                            <option value="en-US">Engelsk</option>
+                        </select>
+
+                    </div>
+
                     <div class="setting-row">
 
-                        <span>
-                            💡 Fun facts
-                        </span>
+                        <span>👁️ Visuel feedback</span>
 
                         <label class="switch">
 
-                            <input
-                                type="checkbox" v-model="settings.showFunFact" :disabled="globalFunFactsLocked">
+                            <input type="checkbox"
+                                   v-model="visualEnabled"
+                                   :disabled="globalVisualLocked">
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+                    <div class="setting-row">
+
+                        <span>💡 Fun facts</span>
+
+                        <label class="switch">
+
+                            <input type="checkbox"
+                                   v-model="settings.showFunFact"
+                                   :disabled="globalFunFactsLocked">
 
                             <span></span>
 
@@ -383,62 +366,56 @@
 
         </section>
 
-
         <div class="session-bottom-area">
-            <section class="funfact-box" v-if="settings.showFunFact && funFactsEnabled">
+
+            <section class="funfact-box"
+                     v-if="settings.showFunFact && funFactsEnabled">
                 💡 {{ funFact }}
             </section>
-            <button type="button" class="next-button" v-on:click="nextMeasurement">
-                <h3> ▶ Næste måling </h3>
+
+            <button type="button"
+                    class="next-button"
+                    v-on:click="nextMeasurement">
+                <h3>▶ Næste måling</h3>
             </button>
 
-</div>
+        </div>
 
+        <div v-if="showSummaryPopup"
+             class="summary-popup-overlay">
 
-        <div
-    v-if="showSummaryPopup"
-    class="summary-popup-overlay">
+            <div class="summary-popup-card">
 
-    <div class="summary-popup-card">
+                <h2>🎉 Session afsluttet</h2>
 
-        <h2>
-            🎉 Session afsluttet
-        </h2>
+                <p>Her er jeres resultat</p>
 
-        <p>
-            Her er jeres resultat
-        </p>
+                <div class="summary-popup-stats">
 
-        <div class="summary-popup-stats">
+                    <div>
+                        📊 Målinger:
+                        {{ measurementCount }}
+                    </div>
 
-            <div>
-                📊 Målinger:
-                {{ measurementCount }}
-            </div>
+                    <div>
+                        ⚡ Gns. hastighed:
+                        {{ averageSpeed }}
+                    </div>
 
-            <div>
-                ⚡ Gns. hastighed:
-                {{ averageSpeed }}
+                </div>
+
+                <button class="summary-popup-button"
+                        onclick="window.location.href='opsummering.html'">
+                    Gå til opsummering
+                </button>
+
             </div>
 
         </div>
 
-        <button
-            class="summary-popup-button"
-            onclick="window.location.href='opsummering.html'">
-
-            Gå til opsummering
-
-        </button>
-
-    </div>
-
-</div>
-
     </main>
 
 </div>
-
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
