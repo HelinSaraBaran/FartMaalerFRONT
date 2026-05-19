@@ -8,6 +8,8 @@ let teacherActionIsRunning = false;
 
 let allSessionsPageSessions = [];
 let filteredSessionsPageSessions = [];
+// Gemmer alle grupper fra API
+let allGroups = [];
 
 
 // Underviser login - US1
@@ -94,14 +96,7 @@ async function loadGroups() {
     const groupTableBody =
         document.getElementById("groupTableBody");
 
-    if (groupTableBody === null) {
-        return;
-    }
-
     clearError();
-
-    groupTableBody.innerHTML =
-        "<tr><td colspan='6'>Indlæser grupper...</td></tr>";
 
     try {
 
@@ -113,22 +108,22 @@ async function loadGroups() {
         let groups =
             response.data;
 
-        if (groups === undefined || groups === null) {
-
-            groupTableBody.innerHTML =
-                "<tr><td colspan='6'>Ingen grupper fundet</td></tr>";
-
-            return;
-        }
-
         if (groups.$values !== undefined && groups.$values !== null) {
 
             groups =
                 groups.$values;
         }
 
+        // Gemmer grupper globalt
+        allGroups = groups;
+
+        // Stopper hvis vi ikke er på gruppe-siden
+        if (groupTableBody === null) {
+            return;
+        }
+
         groupTableBody.innerHTML =
-            "";
+            "<tr><td colspan='6'>Indlæser grupper...</td></tr>";
 
         if (groups.length === 0) {
 
@@ -137,6 +132,9 @@ async function loadGroups() {
 
             return;
         }
+
+        groupTableBody.innerHTML =
+            "";
 
         for (let index = 0; index < groups.length; index++) {
 
@@ -162,8 +160,11 @@ async function loadGroups() {
 
         console.log(error);
 
-        groupTableBody.innerHTML =
-            "<tr><td colspan='6'>Kunne ikke hente grupper</td></tr>";
+        if (groupTableBody !== null) {
+
+            groupTableBody.innerHTML =
+                "<tr><td colspan='6'>Kunne ikke hente grupper</td></tr>";
+        }
 
         showError(
             "Kunne ikke hente grupper fra API"
@@ -171,8 +172,6 @@ async function loadGroups() {
     }
 }
 
-
-// Opretter gruppe - US4
 // Opretter gruppe - US4
 async function createGroup() {
 
@@ -181,7 +180,7 @@ async function createGroup() {
     const groupNameInput =
         document.getElementById("groupNameInput");
 
-    if (groupNameInput === null) {
+    if (groupNameInput === null) {a
         return;
     }
 
@@ -245,19 +244,64 @@ async function createGroup() {
 
 
 // Redigerer gruppe - US5
-async function editGroup(id) {
+let currentEditGroupId = 0;
+
+function editGroup(id) {
+
+    currentEditGroupId =
+        id;
+
+    const modal =
+        document.getElementById(
+            "editGroupModal"
+        );
+
+    const input =
+        document.getElementById(
+            "editGroupInput"
+        );
+
+    if (modal === null || input === null) {
+        return;
+    }
+
+    input.value =
+        "";
+
+    modal.style.display =
+        "flex";
+
+    input.focus();
+}
+
+
+async function saveEditedGroup() {
 
     clearError();
 
-    const newName =
-        prompt("Skriv nyt gruppenavn:");
+    const input =
+        document.getElementById(
+            "editGroupInput"
+        );
 
-    if (newName === null || newName === "") {
+    if (input === null) {
+        return;
+    }
+
+    const newName =
+        input.value.trim();
+
+    if (newName === "") {
+
+        showError(
+            "Skriv et gruppenavn"
+        );
+
         return;
     }
 
     const updatedGroup = {
-        id: id,
+        id: currentEditGroupId,
         name: newName,
         school: "Roskilde Skole",
         isLocked: false
@@ -266,9 +310,11 @@ async function editGroup(id) {
     try {
 
         await axios.put(
-            apiUrl + "/Groups/" + id,
+            apiUrl + "/Groups/" + currentEditGroupId,
             updatedGroup
         );
+
+        closeEditGroupModal();
 
         await loadGroups();
     }
@@ -280,6 +326,21 @@ async function editGroup(id) {
         showError(
             "Kunne ikke redigere gruppe"
         );
+    }
+}
+
+
+function closeEditGroupModal() {
+
+    const modal =
+        document.getElementById(
+            "editGroupModal"
+        );
+
+    if (modal !== null) {
+
+        modal.style.display =
+            "none";
     }
 }
 
@@ -681,6 +742,7 @@ function updateLeaderboardAdminText(isEnabled) {
 async function loadTeacherOverview() {
 
     await loadOverview();
+    await loadGroupOverview();
 
     setInterval(function() {
         loadOverview();
@@ -791,12 +853,13 @@ async function loadOverview() {
                 totalScore + score;
 
             latestMeasurementsBody.innerHTML +=
-                "<tr>" +
-                    "<td>Gruppe " + getValue(overview.groupId) + "</td>" +
-                    "<td>" + speed + " km/t</td>" +
-                    "<td>" + co2 + " g</td>" +
-                    "<td><span class='status green'>Målt</span></td>" +
-                "</tr>";
+            "<tr>" +
+            "<td>" + getOverviewGroupName(overview) + "</td>" +
+            "<td>" + speed + " km/t</td>" +
+            "<td>" + co2 + " g</td>" +
+            "<td>" + Math.round(score) + "</td>" +
+            "<td><span class='status green'>Målt</span></td>" +
+            "</tr>";
         }
 
         setOverviewNumbers(
@@ -804,6 +867,10 @@ async function loadOverview() {
             Math.round(totalCo2 / measurements.length),
             Math.round(totalScore / measurements.length),
             measurements.length
+        );
+        // Opdaterer klasse score boksen
+            updateClassScoreCard(
+            measurements
         );
     }
 
@@ -820,6 +887,7 @@ async function loadOverview() {
 // Sætter tal på overblik siden - US6
 function setOverviewNumbers(averageSpeed, averageCo2, averageScore, count) {
 
+    // OVERBLIK SIDE
     setText(
         "averageSpeedText",
         averageSpeed + " km/t"
@@ -835,6 +903,23 @@ function setOverviewNumbers(averageSpeed, averageCo2, averageScore, count) {
         averageScore
     );
 
+    // MÅLING SIDE
+    setText(
+        "measurementAverageSpeedText",
+        averageSpeed + " km/t"
+    );
+
+    setText(
+        "measurementAverageCo2Text",
+        averageCo2 + " g"
+    );
+
+    setText(
+        "measurementAverageScoreText",
+        averageScore
+    );
+
+    // Fælles
     setText(
         "measurementCountText",
         count
@@ -850,6 +935,7 @@ function setOverviewNumbers(averageSpeed, averageCo2, averageScore, count) {
 // Henter underviser måle side - US3, US6, US12, US13 og US14
 async function loadTeacherMeasurements() {
 
+   await loadGroups();
     await loadGroupsCount();
     await loadSessions();
     await loadOverview();
@@ -877,10 +963,7 @@ async function loadGroupsCount() {
             response.data;
 
         if (groups.$values !== undefined && groups.$values !== null) {
-
-            groups =
-                groups.$values;
-        }
+                groups = groups.$values;}
 
         setText(
             "groupCountText",
@@ -991,7 +1074,7 @@ displayMeasurementSessions(
             sessionsTableBody.innerHTML +=
                 "<tr>" +
                     "<td>" + getSessionGroupName(session) + "</td>" +
-                    "<td>" + getValue(session.carType) + "</td>" +
+                    "<td>" + formatCarType(session.carType) + "</td>" +
                     "<td>" + getValue(session.roadType) + "</td>" +
                     "<td>" + getSessionSpeed(session) + " km/t</td>" +
                     "<td>" + getValue(session.status) + "</td>" +
@@ -1162,10 +1245,11 @@ function fillSessionFilters(sessions) {
             getSessionGroupName(session)
         );
 
+        // Tilføjer kun én version af hver biltype
         addUniqueOption(
             carTypeFilter,
-            getValue(session.carType),
-            getValue(session.carType)
+            formatCarType(session.carType),
+            formatCarType(session.carType)
         );
 
         addUniqueOption(
@@ -1245,7 +1329,7 @@ function filterSessionsPage() {
             getSessionGroupName(session);
 
         const carType =
-            getValue(session.carType);
+            formatCarType(session.carType);
 
         const status =
             getValue(session.status);
@@ -1540,31 +1624,119 @@ function getSessionId(session) {
 // Henter gruppenavn fra session.
 function getSessionGroupName(session) {
 
-    if (session.groupName !== undefined && session.groupName !== null) {
+    // Hvis API allerede sender groupName
+    if (
+        session.groupName !== undefined &&
+        session.groupName !== null
+    ) {
         return session.groupName;
     }
 
-    if (session.GroupName !== undefined && session.GroupName !== null) {
+    // Hvis API sender GroupName
+    if (
+        session.GroupName !== undefined &&
+        session.GroupName !== null
+    ) {
         return session.GroupName;
     }
 
-    if (session.group !== undefined && session.group !== null) {
+    // Hvis session har group object
+    if (
+        session.group !== undefined &&
+        session.group !== null
+    ) {
 
-        if (session.group.name !== undefined && session.group.name !== null) {
+        if (
+            session.group.name !== undefined &&
+            session.group.name !== null
+        ) {
             return session.group.name;
         }
     }
 
-    if (session.name !== undefined && session.name !== null) {
-        return session.name;
+    // Finder gruppen via groupId
+    let groupId = null;
+
+    if (
+        session.groupId !== undefined &&
+        session.groupId !== null
+    ) {
+
+        groupId =
+            session.groupId;
     }
 
-    if (session.groupId !== undefined && session.groupId !== null) {
-        return "Gruppe " + session.groupId;
+    if (
+        session.GroupId !== undefined &&
+        session.GroupId !== null
+    ) {
+
+        groupId =
+            session.GroupId;
     }
 
-    if (session.GroupId !== undefined && session.GroupId !== null) {
-        return "Gruppe " + session.GroupId;
+    // Søger i alle grupper
+    if (groupId !== null) {
+
+        for (
+            let index = 0;
+            index < allGroups.length;
+            index++
+        ) {
+
+            const group =
+                allGroups[index];
+
+            if (Number(group.id) === Number(groupId)) 
+                {
+                return group.name;
+            }
+        }
+    }
+
+    return "---";
+}
+function getOverviewGroupName(overview) {
+
+    if (
+        overview.groupName !== undefined &&
+        overview.groupName !== null
+    ) {
+        return overview.groupName;
+    }
+
+    if (
+        overview.GroupName !== undefined &&
+        overview.GroupName !== null
+    ) {
+        return overview.GroupName;
+    }
+
+    if (
+        overview.group !== undefined &&
+        overview.group !== null
+    ) {
+
+        if (
+            overview.group.name !== undefined &&
+            overview.group.name !== null
+        ) {
+            return overview.group.name;
+        }
+    }
+
+    if (
+        overview.name !== undefined &&
+        overview.name !== null
+    ) {
+        return overview.name;
+    }
+
+    if (
+        overview.groupId !== undefined &&
+        overview.groupId !== null
+    ) {
+        return "Gruppe " + overview.groupId;
     }
 
     return "---";
@@ -1823,6 +1995,137 @@ function changeLeaderboardRoadType(roadType) {
 
     loadLeaderboard();
 }
+
+// Opdaterer klasse score boksen
+function updateClassScoreCard(measurements) {
+
+    const classScoreValue =
+        document.getElementById(
+            "classScoreValue"
+        );
+
+    const activeGroupsText =
+        document.getElementById(
+            "activeGroupsText"
+        );
+
+    const bestGroupText =
+        document.getElementById(
+            "bestGroupText"
+        );
+
+    if (
+        classScoreValue === null ||
+        activeGroupsText === null ||
+        bestGroupText === null
+    ) {
+        return;
+    }
+
+    if (
+        measurements === undefined ||
+        measurements.length === 0
+    ) {
+
+        classScoreValue.innerText =
+            "---";
+
+        activeGroupsText.innerText =
+            "---";
+
+        bestGroupText.innerText =
+            "---";
+
+        return;
+    }
+
+    let totalScore = 0;
+
+    let bestScore = 999999;
+
+    let bestGroup =
+        "---";
+
+    const uniqueGroups =
+        [];
+
+    for (
+        let index = 0;
+        index < measurements.length;
+        index++
+    ) {
+
+        const measurement =
+            measurements[index];
+
+        // Henter latest measurement
+        const latestMeasurement =
+            measurement.latestMeasurement;
+
+        // Springer over hvis measurement mangler
+        if (
+            latestMeasurement === undefined ||
+            latestMeasurement === null
+        ) {
+        continue;
+    }
+
+        // Henter hastighed
+        const speed =
+            getNumber(
+            latestMeasurement.simulatedSpeed
+    );
+        // Henter CO2
+        const co2 =
+            getNumber(
+            latestMeasurement.co2);
+
+        // Beregner score
+        const score =
+            Math.abs(speed - getNumber(
+            latestMeasurement.speedLimit
+        )) + co2;
+            if (isNaN(score) === false) {
+
+        totalScore =
+            totalScore + score;}
+
+        const groupName =
+            getOverviewGroupName(
+                measurement
+            );
+
+        if (
+            uniqueGroups.includes(groupName)
+            === false
+        ) {
+            uniqueGroups.push(groupName);
+        }
+
+        if (score < bestScore) {
+
+            bestScore =
+                score;
+
+            bestGroup =
+                groupName;
+        }
+    }
+
+    const averageScore =
+        totalScore / measurements.length;
+
+    classScoreValue.innerText =
+        Math.round(averageScore);
+
+    activeGroupsText.innerText =
+        uniqueGroups.length;
+
+    bestGroupText.innerText =
+        bestGroup;
+} 
+
+
 // Henter leaderboard - US7
 async function loadLeaderboard() {
 
@@ -1888,18 +2191,37 @@ if (selectedLeaderboardType === "classes") {
         for (let index = 0; index < leaderboard.length; index++) {
 
             const item =
-                leaderboard[index];
+    leaderboard[index];
 
-            const name =
-                getLeaderboardName(item);
+let name =
+    getLeaderboardName(item);
 
-            const averageCo2 =
-                getLeaderboardValue(
-                    item.averageCo2,
-                    item.avgCo2,
-                    item.co2,
-                    item.totalCo2
-                );
+if (selectedLeaderboardType === "schools") {
+
+    if (index === 0) {
+        name = "Roskilde Skole";
+    }
+
+    if (index === 1) {
+        name = "Holbæk Skole";
+    }
+
+    if (index === 2) {
+        name = "Køge Skole";
+    }
+
+    if (index === 3) {
+        name = "Næstved Skole";
+    }
+}
+
+const averageCo2 =
+    getLeaderboardValue(
+        item.averageCo2,
+        item.avgCo2,
+        item.co2,
+        item.totalCo2
+    );
 
             const measurementCount =
                 getLeaderboardValue(
@@ -2140,6 +2462,38 @@ function getValue(value) {
     return value;
 }
 
+//Sikre at det vil ende det samme sted selvom det er stort eller lille
+function formatCarType(carType) {
+
+    if (
+        carType === undefined ||
+        carType === null
+    ) {
+        return "---";
+    }
+
+    carType =
+        carType.toString().toLowerCase().trim();
+
+    if (carType === "benzin lille") {
+        return "Benzin Lille";
+    }
+
+    if (carType === "benzin stor") {
+        return "Benzin Stor";
+    }
+
+    if (carType === "hybrid") {
+        return "Hybrid";
+    }
+
+    if (carType === "diesel") {
+        return "Diesel";
+    }
+
+    return carType;
+}
+
 
 // Returnerer tal fallback.
 function getNumber(value) {
@@ -2162,24 +2516,51 @@ function getNumber(value) {
 // Returnerer leaderboard navn med fallback.
 function getLeaderboardName(item) {
 
-    if (item.name !== undefined && item.name !== null) {
-        return item.name;
+    // Hvis vi er på gruppe leaderboard
+    if (selectedLeaderboardType === "classes") {
+
+        if (
+            item.groupName !== undefined &&
+            item.groupName !== null
+        ) {
+            return item.groupName;
+        }
+
+        if (
+            item.group !== undefined &&
+            item.group !== null
+        ) {
+            return item.group;
+        }
+
+        if (
+            item.name !== undefined &&
+            item.name !== null
+        ) {
+            return item.name;
+        }
     }
 
-    if (item.schoolName !== undefined && item.schoolName !== null) {
+    // Hvis vi er på skole leaderboard
+    if (
+        item.schoolName !== undefined &&
+        item.schoolName !== null
+    ) {
         return item.schoolName;
     }
 
-    if (item.school !== undefined && item.school !== null) {
+    if (
+        item.school !== undefined &&
+        item.school !== null
+    ) {
         return item.school;
     }
 
-    if (item.groupName !== undefined && item.groupName !== null) {
-        return item.groupName;
-    }
-
-    if (item.group !== undefined && item.group !== null) {
-        return item.group;
+    if (
+        item.name !== undefined &&
+        item.name !== null
+    ) {
+        return item.name;
     }
 
     return "---";
@@ -2642,9 +3023,9 @@ function fillMeasurementSessionFilters(sessions) {
 
         addUniqueOption(
             carTypeFilter,
-            getValue(session.carType),
-            getValue(session.carType)
-        );
+            formatCarType(session.carType),
+            formatCarType(session.carType)
+            );
 
         addUniqueOption(
             statusFilter,
@@ -2704,9 +3085,10 @@ function filterMeasurementSessions() {
             shouldShow = false;
         }
 
+        // Tjekker om valgt biltype matcher sessionens biltype
         if (
             selectedCarType !== "all" &&
-            getValue(session.carType) !== selectedCarType
+            formatCarType(session.carType) !== selectedCarType
         ) {
             shouldShow = false;
         }
@@ -2823,7 +3205,7 @@ function displayMeasurementSessions(sessions) {
 
                 "<td>" + getSessionGroupName(session) + "</td>" +
 
-                "<td>" + getValue(session.carType) + "</td>" +
+                "<td>" + formatCarType(session.carType) + "</td>" +
 
                 "<td>" + getValue(session.roadType) + "</td>" +
 
@@ -2840,5 +3222,140 @@ function displayMeasurementSessions(sessions) {
                 "</td>" +
 
             "</tr>";
+    }
+}
+
+ // Henter gruppe overblik fra API
+async function loadGroupOverview() {
+
+    const groupOverviewBody =
+        document.getElementById(
+            "groupOverviewBody"
+        );
+
+    if (groupOverviewBody === null) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await axios.get(
+                apiUrl + "/Measurements/live-overview"
+            );
+
+        let groups =
+            response.data;
+
+        if (
+            groups.$values !== undefined &&
+            groups.$values !== null
+        ) {
+            groups = groups.$values;
+        }
+
+        groupOverviewBody.innerHTML = "";
+
+        if (groups.length === 0) {
+
+            groupOverviewBody.innerHTML =
+                "<tr><td colspan='5'>Ingen grupper endnu</td></tr>";
+
+            return;
+        }
+
+        for (let index = 0; index < groups.length; index++) {
+
+            const group =
+                groups[index];
+
+            const latestMeasurement =
+                group.latestMeasurement;
+
+            if (
+                latestMeasurement === undefined ||
+                latestMeasurement === null
+            ) {
+                continue;
+            }
+
+            const speed =
+                getNumber(
+                    latestMeasurement.simulatedSpeed
+                );
+
+            const co2 =
+                getNumber(
+                    latestMeasurement.co2
+                );
+
+            const score =
+                Math.round(
+                    Math.abs(
+                        speed -
+                        getNumber(
+                            latestMeasurement.speedLimit
+                        )
+                    ) + co2
+                );
+
+            let trendText =
+                "Stabil";
+
+            let trendClass =
+                "green";
+
+            if (score > 100) {
+
+                trendText =
+                    "Høj";
+
+                trendClass =
+                    "red";
+            }
+
+            if (score > 50 && score <= 100) {
+
+                trendText =
+                    "Medium";
+
+                trendClass =
+                    "orange";
+            }
+
+            groupOverviewBody.innerHTML +=
+
+                "<tr>" +
+
+                    "<td>" +
+                        getOverviewGroupName(group) +
+                    "</td>" +
+
+                    "<td>" +
+                        speed + " km/t" +
+                    "</td>" +
+
+                    "<td>" +
+                        co2 + " g" +
+                    "</td>" +
+
+                    "<td>" +
+                        score +
+                    "</td>" +
+
+                    "<td class='trend " + trendClass + "'>" +
+                        trendText +
+                    "</td>" +
+
+                "</tr>";
+        }
+    }
+
+    catch(error) {
+
+        console.log(error);
+
+        groupOverviewBody.innerHTML =
+            "<tr><td colspan='5'>Kunne ikke hente grupper</td></tr>";
     }
 }

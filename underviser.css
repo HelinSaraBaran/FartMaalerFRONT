@@ -488,25 +488,31 @@ table {
 }
 
 .score-circle {
-    width: 150px;
-    height: 150px;
+    width: 320px;
+    height: 320px;
+
     border-radius: 50%;
-    border: 10px solid #48a653;
+    border: 14px solid #48a653;
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 20px auto;
+
+    margin: 30px auto;
+
+    background: #ffffff;
 }
 
 .score-circle span {
-    font-size: 32px;
-    font-weight: bold;
-    color: #333;
+    font-size: 72px;
+    font-weight: 800;
+    color: #222;
 }
 
 .score-circle p {
-    font-size: 14px;
+    font-size: 36px;
+    color: #666;
 }
 
 .small-info {
@@ -1720,4 +1726,60 @@ a:hover {
     padding: 14px;
     text-align: left;
     border-bottom: 1px solid #e5e7eb;
+}
+
+/* =========================================================
+   POP up redigere gruppenavn
+   ========================================================= */
+   .modal-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #dcdcdc;
+    font-size: 15px;
+    margin-top: 14px;
+    margin-bottom: 18px;
+    outline: none;
+}
+
+.modal-input:focus {
+    border-color: #2f6f3e;
+}
+
+/* =========================================================
+   KLASSE SCORE CARD
+   ========================================================= */
+
+.class-score-card {
+    background: #ffffff;
+    border: 1px solid var(--border-green);
+    border-radius: 18px;
+    padding: 24px;
+
+    box-shadow: var(--card-shadow);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 650px;
+
+    text-align: center;
+}
+
+.class-score-card h1 {
+    margin-bottom: 10px;
+    font-size: 50px;
+}
+
+.class-score-info {
+    margin-top: 20px;
+    font-size: 16px;
+    line-height: 1.7;
+    color: #444;
+}
+
+.class-score-info strong {
+    color: #222;
 }

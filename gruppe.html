@@ -117,7 +117,7 @@
 
         </section>
 
-
+<br> 
         <!-- REGISTREREDE GRUPPER -->
         <section class="card">
 
@@ -135,7 +135,7 @@
                         <th>Skole</th>
                         <th>Status</th>
                         <th>Sessions</th>
-                        <th>Handlinger</th>
+                        <th style="text-align:right;"> Handlinger</th>
                     </tr>
 
                 </thead>
@@ -235,6 +235,53 @@
 
 </div>
 
+<!-- REDIGER GRUPPE POPUP -->
+<div
+    id="editGroupModal"
+    class="custom-modal"
+    style="display: none;">
+
+    <div class="custom-modal-content">
+
+        <h3>
+            Rediger gruppe
+        </h3>
+
+        <p>
+            Skriv nyt gruppenavn
+        </p>
+
+        <input
+            type="text"
+            id="editGroupInput"
+            class="modal-input"
+            placeholder="Nyt gruppenavn">
+
+        <div class="custom-modal-actions">
+
+            <button
+                type="button"
+                class="modal-cancel-btn"
+                onclick="closeEditGroupModal()">
+
+                Annuller
+
+            </button>
+
+            <button
+                type="button"
+                class="save-btn"
+                onclick="saveEditedGroup()">
+
+                Gem
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
 
 <!-- ACTIVE MENU -->
 <script>
