@@ -1474,38 +1474,56 @@ filteredMeasurements() {
     }
 },
 
-    mounted() {
+ mounted() {
 
-        console.log("Vue mounted");
+    console.log("Vue mounted");
 
-        if (document.querySelector("#groupSelect")) {
-            this.loadGroups();
-        }
+    if (document.querySelector("#groupSelect")) {
+        this.loadGroups();
+    }
 
-        if (document.querySelector(".session-page")) {
-            this.loadStudentSessionPage();
-        }
+    if (document.querySelector(".session-page")) {
+        this.loadStudentSessionPage();
+    }
 
-        if (document.querySelector(".student-history-page")) {
-            this.loadHistory();
-        }
+    if (document.querySelector(".student-history-page")) {
+        this.loadHistory();
+    }
 
-       if (document.querySelector(".leaderboard-header")) {
+    if (document.querySelector(".leaderboard-header")) {
         this.loadLeaderboard();
-        const currentApp =
-        this;
-        const activeSessionId =
-        localStorage.getItem("sessionId");
-        if ( activeSessionId === null || activeSessionId === "")
-             {
+
+        const currentApp = this;
+        const activeSessionId = localStorage.getItem("sessionId");
+
+        if (activeSessionId === null || activeSessionId === "") {
             setInterval(function () {
-            currentApp.loadLeaderboard();
-        }, 5000);
+                currentApp.loadLeaderboard();
+            }, 5000);
+        }
     }
+
+    window.addEventListener("beforeunload", () => {
+
+        const sessionId = localStorage.getItem("sessionId");
+        const isNavigating = localStorage.getItem("isNavigating");
+
+        if (!sessionId || isNavigating === "true") {
+            return;
+        }
+
+        fetch(
+            apiUrl + "/Sessions/" + sessionId + "/end",
+            {
+                method: "PUT",
+                keepalive: true
+            }
+        );
+
+        localStorage.removeItem("sessionId");
+    });
 }
-    }
 });
 
 
 app.mount("#app");
-
