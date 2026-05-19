@@ -12,7 +12,7 @@ const app = Vue.createApp({
             speedLimit: Number(localStorage.getItem("speedLimit")) || 0,
             scalingFactor: Number(localStorage.getItem("scalingFactor")) || 0,
 
-            latestSpeed: "---",
+            latestSpeed: null,
             distance: "---",
             time: "---",
             difference: "---",
@@ -560,71 +560,27 @@ window.location.href =
 
 
         async createMeasurement() {
-            console.log("createMeasurement kører");
-            this.errorMessage = "";
 
-            this.sessionId =
-                Number(localStorage.getItem("sessionId")) || 0;
+    console.log("createMeasurement kører");
 
-            if (this.sessionId === 0) {
-                this.errorMessage = "Ingen aktiv session";
-                return;
-            }
+    this.errorMessage = "";
 
-            const measuredTime =
-                Math.random() * 0.5 + 0.2;
+    this.sessionId =
+        Number(localStorage.getItem("sessionId")) || 0;
 
-            const measurement = {
-                sessionId: this.sessionId,
-                time: Math.round(measuredTime * 100) / 100
-            };
+    if (this.sessionId === 0) {
 
-            try {
+        this.errorMessage =
+            "Ingen aktiv session";
 
-                const response =
-    await axios.post(
-        apiUrl + "/Measurements",
-        measurement
-    );
+        return;
+    }
 
-console.log(response.data);
+    this.errorMessage =
+        "Venter på hardware-måling. Start målingen fra Raspberry Pi.";
 
-const savedMeasurement =
-    response.data;
-
-                await this.showMeasurementResult(savedMeasurement);
-            }
-
-            catch(error) {
-
-                console.log("Måling fejl:", error);
-
-                if (
-                    error.response !== undefined &&
-                    error.response.data !== undefined &&
-                    error.response.data.message !== undefined
-                ) {
-                    this.errorMessage =
-                        error.response.data.message;
-
-                    return;
-                }
-
-                if (
-                    error.response !== undefined &&
-                    error.response.data !== undefined
-                ) {
-                    this.errorMessage =
-                        JSON.stringify(error.response.data);
-
-                    return;
-                }
-
-                this.errorMessage =
-                    "Kunne ikke gemme måling";
-            }
-        },
-
+    return;
+},
 
        async showMeasurementResult(savedMeasurement) {
 
