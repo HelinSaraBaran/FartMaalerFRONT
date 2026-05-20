@@ -738,6 +738,16 @@ async endSession() {
 
     this.errorMessage = "";
 
+    if (this.measurementCount === 0) {
+
+    this.errorMessage =
+        "Sessionen kan ikke afsluttes fordi den er tom";
+
+        this.showSummaryPopup = false;
+
+    return;
+}
+
     try {
 
         this.sessionId =
