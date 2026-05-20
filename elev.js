@@ -12,7 +12,7 @@ const app = Vue.createApp({
             speedLimit: Number(localStorage.getItem("speedLimit")) || 0,
             scalingFactor: Number(localStorage.getItem("scalingFactor")) || 0,
 
-            latestSpeed: "---",
+            latestSpeed: null,
             distance: "---",
             time: "---",
             difference: "---",
@@ -59,7 +59,12 @@ const app = Vue.createApp({
             selectedRoadType: "",
 
             sessions: [],
-            measurementsHistory: [],
+measurementsHistory: [],
+measurements: [],
+latestMeasurementId: 0,
+co2: "---",
+status: "---",
+measurementPollingId: null,
 
             selectedCarTypeFilter: "",
             selectedRoadTypeFilter: "",
@@ -553,86 +558,125 @@ window.location.href =
                 Number(localStorage.getItem("speedLimit")) || 0;
 
             this.scalingFactor =
-                Number(localStorage.getItem("scalingFactor")) || 0;
+    Number(localStorage.getItem("scalingFactor")) || 0;
 
-            this.loadGlobalSettings();
-        },
+this.loadGlobalSettings();
 
+this.loadMeasurements();
 
+this.startMeasurementPolling();
+},
+        
+async loadMeasurements() {
+
+    this.sessionId =
+        Number(localStorage.getItem("sessionId")) || 0;
+
+    if (this.sessionId === 0) {
+        return;
+    }
+
+    try {
+
+        const response =
+            await axios.get(
+                apiUrl +
+                "/Measurements/session/" +
+                this.sessionId
+            );
+
+        let measurements =
+            this.normalizeArray(response.data);
+
+        measurements.sort(function(firstMeasurement, secondMeasurement) {
+
+            return Number(secondMeasurement.id) -
+                Number(firstMeasurement.id);
+        });
+
+        this.measurements =
+            measurements;
+
+        if (measurements.length === 0) {
+            return;
+        }
+
+        const latest =
+            measurements[0];
+
+        if (
+            this.latestMeasurementId ===
+            Number(latest.id)
+        ) {
+            return;
+        }
+
+        this.latestMeasurementId =
+            Number(latest.id);
+
+        await this.showMeasurementResult(latest);
+
+        this.measurementCount =
+            measurements.length;
+    }
+
+    catch(error) {
+
+        console.log(
+            "Kunne ikke hente live measurements:",
+            error
+        );
+    }
+},
+startMeasurementPolling() {
+
+    const currentApp =
+        this;
+
+    if (
+        this.measurementPollingId !== null
+    ) {
+        clearInterval(
+            this.measurementPollingId
+        );
+    }
+
+    this.measurementPollingId =
+        setInterval(async function() {
+
+            await currentApp.loadMeasurements();
+
+        }, 2000);
+},
         async createMeasurement() {
-            console.log("createMeasurement kører");
-            this.errorMessage = "";
 
-            this.sessionId =
-                Number(localStorage.getItem("sessionId")) || 0;
+    console.log("createMeasurement kører");
 
-            if (this.sessionId === 0) {
-                this.errorMessage = "Ingen aktiv session";
-                return;
-            }
+    this.errorMessage = "";
 
-            const measuredTime =
-                Math.random() * 0.5 + 0.2;
+    this.sessionId =
+        Number(localStorage.getItem("sessionId")) || 0;
 
-            const measurement = {
-                sessionId: this.sessionId,
-                time: Math.round(measuredTime * 100) / 100
-            };
+    if (this.sessionId === 0) {
 
-            try {
+        this.errorMessage =
+            "Ingen aktiv session";
 
-                const response =
-    await axios.post(
-        apiUrl + "/Measurements",
-        measurement
-    );
+        return;
+    }
 
-console.log(response.data);
+    this.errorMessage =
+        "Venter på hardware-måling. Start målingen fra Raspberry Pi.";
 
-const savedMeasurement =
-    response.data;
-
-                await this.showMeasurementResult(savedMeasurement);
-            }
-
-            catch(error) {
-
-                console.log("Måling fejl:", error);
-
-                if (
-                    error.response !== undefined &&
-                    error.response.data !== undefined &&
-                    error.response.data.message !== undefined
-                ) {
-                    this.errorMessage =
-                        error.response.data.message;
-
-                    return;
-                }
-
-                if (
-                    error.response !== undefined &&
-                    error.response.data !== undefined
-                ) {
-                    this.errorMessage =
-                        JSON.stringify(error.response.data);
-
-                    return;
-                }
-
-                this.errorMessage =
-                    "Kunne ikke gemme måling";
-            }
-        },
-
+    return;
+},
 
        async showMeasurementResult(savedMeasurement) {
 
             this.latestSpeed =
                 Math.round(savedMeasurement.simulatedSpeed);
 
-            this.distance =
-                Math.round(savedMeasurement.distance) + " m";
+            this.distance = "0.3 m";
 
             this.time =
                 Math.round(savedMeasurement.time * 100) / 100 + " sek.";
@@ -1005,7 +1049,10 @@ async openStudentSessionDetails(session) {
     this.errorMessage = "";
     this.loading = true;
 
-    await this.loadGlobalSettings();
+    
+    this.loadGlobalSettings();
+
+
 
     if (this.leaderboardEnabled === false) {
         this.leaderboard = [];
@@ -1437,39 +1484,57 @@ filteredMeasurements() {
     }
 },
 
-    mounted() {
+ mounted() {
 
-        console.log("Vue mounted");
+    console.log("Vue mounted");
 
-        if (document.querySelector("#groupSelect")) {
-            this.loadGroups();
-        }
+    if (document.querySelector("#groupSelect")) {
+        this.loadGroups();
+    }
 
-        if (document.querySelector(".session-page")) {
-            this.loadStudentSessionPage();
-        }
+    if (document.querySelector(".session-page")) {
+        this.loadStudentSessionPage();
+    }
 
 
         if (document.querySelector(".student-history-page")) {
             this.loadHistory();
         }
 
-       if (document.querySelector(".leaderboard-header")) {
+    if (document.querySelector(".leaderboard-header")) {
         this.loadLeaderboard();
-        const currentApp =
-        this;
-        const activeSessionId =
-        localStorage.getItem("sessionId");
-        if ( activeSessionId === null || activeSessionId === "")
-             {
+
+        const currentApp = this;
+        const activeSessionId = localStorage.getItem("sessionId");
+
+        if (activeSessionId === null || activeSessionId === "") {
             setInterval(function () {
-            currentApp.loadLeaderboard();
-        }, 5000);
+                currentApp.loadLeaderboard();
+            }, 5000);
+        }
     }
+
+    window.addEventListener("beforeunload", () => {
+
+        const sessionId = localStorage.getItem("sessionId");
+        const isNavigating = localStorage.getItem("isNavigating");
+
+        if (!sessionId || isNavigating === "true") {
+            return;
+        }
+
+        fetch(
+            apiUrl + "/Sessions/" + sessionId + "/end",
+            {
+                method: "PUT",
+                keepalive: true
+            }
+        );
+
+        localStorage.removeItem("sessionId");
+    });
 }
-    }
 });
 
 
 app.mount("#app");
-
