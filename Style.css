@@ -845,7 +845,7 @@ body.elev-green-page .info-text {
     padding: 14px 24px;
     border: none;
     border-radius: 14px;
-    background: var(--purple);
+    background: linear-gradient(135deg, #3f6f46, #2f5435);
     color: white;
     font-size: 16px;
     font-weight: 800;
@@ -963,7 +963,7 @@ body.elev-green-page .info-text {
 
 .formula-box {
     padding: 20px;
-    border-left: 4px solid var(--purple);
+    border-left: 4px solid #3f6f46;
     border-radius: 12px;
     background: #f4f4f4;
     text-align: center;
@@ -1074,11 +1074,11 @@ body.elev-green-page .info-text {
 }
 
 .switch input:checked + span {
-    background: var(--purple);
+    background: #2f6132;
 }
 
 .switch input:checked + span::before {
-    transform: translateX(26px);
+    transform: translateX(30px);
 }
 
 .switch input:disabled + span {
@@ -2591,3 +2591,77 @@ a:hover {
     font-weight: 600;
 }
 
+/* =================================
+   GREEN TOGGLE SWITCH
+================================= */
+
+.switch {
+    position: relative;
+    width: 68px;
+    height: 38px;
+    display: inline-block;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch span {
+    position: absolute;
+    inset: 0;
+
+    background: #d9d9d9;
+
+    border-radius: 999px;
+
+    transition: 0.25s ease;
+
+    cursor: pointer;
+}
+
+.switch span::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 30px;
+    height: 30px;
+
+    left: 4px;
+    top: 4px;
+
+    background: white;
+
+    border-radius: 50%;
+
+    transition: 0.25s ease;
+
+    box-shadow:
+        0 2px 6px rgba(0,0,0,0.15);
+}
+
+/* ACTIVE */
+
+.switch input:checked + span {
+
+    background: #2f6132;
+}
+
+/* KNAP FLYTTER SIG */
+
+.switch input:checked + span::before {
+
+    transform: translateX(30px);
+}
+
+/* DISABLED */
+
+.switch input:disabled + span {
+
+    opacity: 0.45;
+
+    cursor: not-allowed;
+}
