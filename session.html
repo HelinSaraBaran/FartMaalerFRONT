@@ -320,7 +320,7 @@
                         <span>🌍</span>
                         <p>Sprog</p>
 
-                        <select id="ttsLanguageSelect"
+                        <select id="ttsLanguageSelect" @change="changeLanguage()">
                                 v-model="selectedTtsLanguage">
                             <option value="da-DK">Dansk</option>
                             <option value="en-US">Engelsk</option>

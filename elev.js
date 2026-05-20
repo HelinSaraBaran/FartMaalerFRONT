@@ -319,6 +319,23 @@ safeText(text) {
 },
 
 
+async changeLanguage() {
+    const select = document.getElementById("ttsLanguageSelect");
+    if (select === null) return;
+    
+    const isDanish = (select.value === "da-DK");
+    
+    try {
+        await axios.put(
+            apiUrl + "/Settings/language",
+            { key: "TTSLanguage", value: isDanish }
+        );
+    } catch(error) {
+        console.log(error);
+    }
+},
+
+
         async loadGroups() {
 
             this.clearError();
@@ -508,6 +525,7 @@ safeText(text) {
     "true"
 );
 
+await axios.put(apiUrl + "/Settings/language", { key: "TTSLanguage", value: true });
 window.location.href =
     "session.html";
             }
