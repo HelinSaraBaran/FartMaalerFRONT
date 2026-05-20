@@ -1546,6 +1546,11 @@ body.elev-green-page .info-text {
 
     box-shadow: 0 4px 10px rgba(47, 84, 53, 0.08);
     transition: 0.2s ease;
+
+    position: fixed;
+    top: 16px;
+    right: 24px;
+    z-index: 999999;
 }
 
 .logout-btn:hover,
@@ -2585,3 +2590,4 @@ a:hover {
 
     font-weight: 600;
 }
+
