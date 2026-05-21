@@ -100,30 +100,41 @@ async function loadGroups() {
 
     try {
 
-        const response =
-            await axios.get(
-                apiUrl + "/Groups"
-            );
+        const groupResponse =
+            await axios.get(apiUrl + "/Groups");
 
         let groups =
-            response.data;
+            groupResponse.data;
 
         if (groups.$values !== undefined && groups.$values !== null) {
-
-            groups =
-                groups.$values;
+            groups = groups.$values;
         }
 
-        // Gemmer grupper globalt
         allGroups = groups;
 
-        // Stopper hvis vi ikke er på gruppe-siden
         if (groupTableBody === null) {
             return;
         }
 
-        groupTableBody.innerHTML =
-            "<tr><td colspan='6'>Indlæser grupper...</td></tr>";
+        const sessionResponse =
+            await axios.get(apiUrl + "/Sessions/admin");
+
+        let sessions =
+            sessionResponse.data.sessions;
+
+        if (sessions === undefined || sessions === null) {
+            sessions = sessionResponse.data.Sessions;
+        }
+
+        if (sessions === undefined || sessions === null) {
+            sessions = [];
+        }
+
+        if (sessions.$values !== undefined && sessions.$values !== null) {
+            sessions = sessions.$values;
+        }
+
+        groupTableBody.innerHTML = "";
 
         if (groups.length === 0) {
 
@@ -133,13 +144,32 @@ async function loadGroups() {
             return;
         }
 
-        groupTableBody.innerHTML =
-            "";
-
         for (let index = 0; index < groups.length; index++) {
 
             const group =
                 groups[index];
+
+            let sessionCount = 0;
+            let measurementCount = 0;
+
+            for (let sessionIndex = 0; sessionIndex < sessions.length; sessionIndex++) {
+
+                const session =
+                    sessions[sessionIndex];
+
+                if (getValue(session.groupName) === getValue(group.name)) {
+
+                    sessionCount =
+                        sessionCount + 1;
+
+                    measurementCount =
+                        measurementCount +
+                        getNumber(session.measurementCount);
+                }
+            }
+
+            let sessionText =
+                sessionCount + " sessions / " + measurementCount + " målinger";
 
             groupTableBody.innerHTML +=
                 "<tr>" +
@@ -147,7 +177,7 @@ async function loadGroups() {
                     "<td>" + getValue(group.name) + "</td>" +
                     "<td>" + getValue(group.school) + "</td>" +
                     "<td>Aktiv</td>" +
-                    "<td>---</td>" +
+                    "<td>" + sessionText + "</td>" +
                     "<td class='actions' style='text-align:right;'>" +
                         "<button type='button' class='edit-btn' onclick='editGroup(" + group.id + ")'>Rediger</button>" +
                         "<button type='button' class='delete-btn-sm' onclick='deleteGroup(" + group.id + ")'>Slet</button>" +
@@ -166,12 +196,9 @@ async function loadGroups() {
                 "<tr><td colspan='6'>Kunne ikke hente grupper</td></tr>";
         }
 
-        showError(
-            "Kunne ikke hente grupper fra API"
-        );
+        showError("Kunne ikke hente grupper fra API");
     }
 }
-
 // Opretter gruppe - US4
 async function createGroup() {
 
@@ -1455,7 +1482,7 @@ function displaySessionsPage(sessions) {
         }
 
         sessionsPageTableBody.innerHTML +=
-            "<tr class='click-row' onclick='openSessionDetails(" + getSessionId(session) + ")'>" +
+            "<tr class='click-row' onclick='openSessionDetails(" + getSessionId(session) + ", " + index + ")'>" +
                 "<td>" + getSessionGroupName(session) + "</td>" +
                 "<td>" + formatSessionDate(session) + "</td>" +
                 "<td>" + getValue(session.carType) + "</td>" +
@@ -2781,7 +2808,7 @@ function closeInfoModal() {
 }
 
 // Åbner popup med session detaljer og målinger.
-async function openSessionDetails(sessionId) {
+async function openSessionDetails(sessionId, sessionIndex) {
 
     const modal =
         document.getElementById("sessionDetailsModal");
@@ -2812,8 +2839,15 @@ async function openSessionDetails(sessionId) {
         const measurementResponse =
             await axios.get(apiUrl + "/Measurements/session/" + sessionId);
 
-        const session =
-            sessionResponse.data;
+        let session =
+    sessionResponse.data;
+
+if (
+    sessionIndex !== undefined &&
+    filteredSessionsPageSessions[sessionIndex] !== undefined
+) {
+    session = filteredSessionsPageSessions[sessionIndex];
+}
 
         let measurements =
             measurementResponse.data;
