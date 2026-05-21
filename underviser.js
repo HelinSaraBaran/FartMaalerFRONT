@@ -879,14 +879,13 @@ async function loadOverview() {
             totalScore =
                 totalScore + score;
 
-            latestMeasurementsBody.innerHTML +=
-            "<tr>" +
-            "<td>" + getOverviewGroupName(overview) + "</td>" +
-            "<td>" + speed + " km/t</td>" +
-            "<td>" + co2 + " g</td>" +
-            "<td>" + Math.round(score) + "</td>" +
-            "<td><span class='status green'>Målt</span></td>" +
-            "</tr>";
+           latestMeasurementsBody.innerHTML +=
+"<tr>" +
+"<td>" + getOverviewGroupName(overview) + "</td>" +
+"<td>" + speed + " km/t</td>" +
+"<td>" + co2 + " g</td>" +
+"<td><span class='status green'>Målt</span></td>" +
+"</tr>";
         }
 
         setOverviewNumbers(
