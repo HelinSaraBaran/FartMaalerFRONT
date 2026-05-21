@@ -319,23 +319,6 @@ safeText(text) {
 },
 
 
-async changeLanguage() {
-    const select = document.getElementById("ttsLanguageSelect");
-    if (select === null) return;
-    
-    const isDanish = (select.value === "da-DK");
-    
-    try {
-        await axios.put(
-            apiUrl + "/Settings/language",
-            { key: "TTSLanguage", value: isDanish }
-        );
-    } catch(error) {
-        console.log(error);
-    }
-},
-
-
         async loadGroups() {
 
             this.clearError();
@@ -525,7 +508,6 @@ async changeLanguage() {
     "true"
 );
 
-await axios.put(apiUrl + "/Settings/language", { key: "TTSLanguage", value: true });
 window.location.href =
     "session.html";
             }
@@ -694,7 +676,7 @@ startMeasurementPolling() {
             this.latestSpeed =
                 Math.round(savedMeasurement.simulatedSpeed);
 
-            this.distance = "0.92 m";
+            this.distance = "0.3 m
 
             this.time =
                 Math.round(savedMeasurement.time * 100) / 100 + " sek.";
@@ -755,16 +737,6 @@ async nextMeasurement() {
 async endSession() {
 
     this.errorMessage = "";
-
-    if (this.measurementCount === 0) {
-
-    this.errorMessage =
-        "Sessionen kan ikke afsluttes fordi den er tom";
-
-        this.showSummaryPopup = false;
-
-    return;
-}
 
     try {
 
