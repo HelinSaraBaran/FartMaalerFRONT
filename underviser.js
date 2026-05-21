@@ -2368,7 +2368,25 @@ function updateOwnSchool(leaderboard) {
     const ownSchoolScore =
         document.getElementById("ownSchoolScore");
 
+    const ownSchoolName =
+        document.getElementById("ownSchoolName");
+
     if (ownSchoolRank === null || ownSchoolScore === null) {
+        return;
+    }
+
+    if (selectedLeaderboardType === "classes") {
+
+        if (ownSchoolName !== null) {
+            ownSchoolName.innerHTML = "Roskilde Skole";
+        }
+
+        ownSchoolRank.innerHTML =
+            "Gruppevisning";
+
+        ownSchoolScore.innerHTML =
+            "Du ser placering for grupper på Roskilde Skole";
+
         return;
     }
 
@@ -2386,7 +2404,13 @@ function updateOwnSchool(leaderboard) {
                 "#" + (index + 1);
 
             ownSchoolScore.innerHTML =
-                "Score: " + getLeaderboardValue(item.score, item.averageScore, item.bestScore, item.totalScore);
+                "Score: " +
+                getLeaderboardValue(
+                    item.score,
+                    item.averageScore,
+                    item.bestScore,
+                    item.totalScore
+                );
 
             return;
         }
