@@ -180,7 +180,7 @@ async function createGroup() {
     const groupNameInput =
         document.getElementById("groupNameInput");
 
-    if (groupNameInput === null) {a
+    if (groupNameInput === null) {
         return;
     }
 
@@ -2795,61 +2795,40 @@ async function openSessionDetails(sessionId) {
     const body =
         document.getElementById("sessionPopupMeasurementsBody");
 
-    if (
-        modal === null ||
-        title === null ||
-        info === null ||
-        body === null
-    ) {
+    if (modal === null || title === null || info === null || body === null) {
         return;
     }
 
-    modal.style.display =
-        "flex";
-
-    title.innerHTML =
-        "Session #" + sessionId;
-
-    info.innerHTML =
-        "Indlæser session...";
-
-    body.innerHTML =
-        "<tr><td colspan='5'>Indlæser målinger...</td></tr>";
+    modal.style.display = "flex";
+    title.innerHTML = "Session #" + sessionId;
+    info.innerHTML = "Indlæser session.";
+    body.innerHTML = "<tr><td colspan='5'>Indlæser målinger.</td></tr>";
 
     try {
 
-        const response =
-            await axios.get(
-                apiUrl + "/Sessions/" + sessionId
-            );
+        const sessionResponse =
+            await axios.get(apiUrl + "/Sessions/" + sessionId);
+
+        const measurementResponse =
+            await axios.get(apiUrl + "/Measurements/session/" + sessionId);
 
         const session =
-            response.data;
+            sessionResponse.data;
 
         let measurements =
-            session.measurements;
+            measurementResponse.data;
 
-        if (
-            measurements !== undefined &&
-            measurements !== null &&
-            measurements.$values !== undefined
-        ) {
-
-            measurements =
-                measurements.$values;
+        if (measurements.$values !== undefined && measurements.$values !== null) {
+            measurements = measurements.$values;
         }
 
-        if (
-            measurements === undefined ||
-            measurements === null ||
-            measurements.length === 0
-        ) {
+        info.innerHTML =
+            "<strong>Gruppe:</strong> " +
+            getSessionGroupName(session) +
+            " | <strong>Status:</strong> " +
+            getValue(session.status);
 
-            info.innerHTML =
-                "<strong>Gruppe:</strong> " +
-                getSessionGroupName(session) +
-                " | <strong>Status:</strong> " +
-                getValue(session.status);
+        if (measurements.length === 0) {
 
             body.innerHTML =
                 "<tr><td colspan='5'>Ingen målinger endnu</td></tr>";
@@ -2857,71 +2836,7 @@ async function openSessionDetails(sessionId) {
             return;
         }
 
-        let totalSpeed =
-            0;
-
-        let totalCo2 =
-            0;
-
-        let bestSpeed =
-            0;
-
-        for (let index = 0; index < measurements.length; index++) {
-
-            const measurement =
-                measurements[index];
-
-            const speed =
-                getNumber(
-                    measurement.simulatedSpeed
-                );
-
-            const co2 =
-                getNumber(
-                    measurement.co2
-                );
-
-            totalSpeed =
-                totalSpeed + speed;
-
-            totalCo2 =
-                totalCo2 + co2;
-
-            if (speed > bestSpeed) {
-
-                bestSpeed =
-                    speed;
-            }
-        }
-
-        const averageSpeed =
-            Math.round(
-                totalSpeed / measurements.length
-            );
-
-        info.innerHTML =
-            "<strong>Gruppe:</strong> " +
-            getSessionGroupName(session) +
-
-            " | <strong>Status:</strong> " +
-            getValue(session.status) +
-
-            "<br><br>" +
-
-            "<strong>Antal målinger:</strong> " +
-            measurements.length +
-
-            " | <strong>Gns. hastighed:</strong> " +
-            averageSpeed + " km/t" +
-
-            " | <strong>Samlet CO₂:</strong> " +
-            totalCo2 + " g" +
-
-            " | <strong>Bedste hastighed:</strong> " +
-            bestSpeed + " km/t";
-
-        body.innerHTML =
-            "";
+        body.innerHTML = "";
 
         for (let index = 0; index < measurements.length; index++) {
 
@@ -2930,31 +2845,11 @@ async function openSessionDetails(sessionId) {
 
             body.innerHTML +=
                 "<tr>" +
-
-                    "<td>" +
-                        (index + 1) +
-                    "</td>" +
-
-                    "<td>" +
-                        getNumber(measurement.simulatedSpeed) +
-                        " km/t" +
-                    "</td>" +
-
-                    "<td>" +
-                        getNumber(measurement.co2) +
-                        " g" +
-                    "</td>" +
-
-                    "<td>" +
-                        getNumber(measurement.time) +
-                        " sek" +
-                    "</td>" +
-
-                    "<td>" +
-                        getNumber(measurement.distance) +
-                        " m" +
-                    "</td>" +
-
+                    "<td>" + (index + 1) + "</td>" +
+                    "<td>" + getNumber(measurement.simulatedSpeed) + " km/t</td>" +
+                    "<td>" + getNumber(measurement.co2) + " g</td>" +
+                    "<td>" + getNumber(measurement.time) + " sek</td>" +
+                    "<td>" + getNumber(measurement.distance) + " m</td>" +
                 "</tr>";
         }
     }
