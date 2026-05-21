@@ -47,7 +47,7 @@ h1,
 h2,
 h3 {
     color: var(--text-dark);
-    font-weight: 800;
+    font-weight: 700;
 }
 
 p {
@@ -132,7 +132,7 @@ table {
     border: 1px solid transparent;
 
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 500;
     text-decoration: none;
 
     transition: 0.2s ease;
@@ -179,7 +179,7 @@ table {
 }
 
 .topbar h1 {
-    font-size: 34px;
+    font-size: 28px;
     margin-bottom: 6px;
 }
 
@@ -188,7 +188,7 @@ table {
 }
 
 .welcome-text h1 {
-    font-size: 32px;
+    font-size: 26px;
     margin-bottom: 6px;
 }
 
@@ -434,7 +434,7 @@ table {
 }
 
 .kpi-card h2 {
-    font-size: 26px;
+    font-size: 22px;
     margin-bottom: 8px;
 }
 
@@ -505,7 +505,7 @@ table {
 }
 
 .score-circle span {
-    font-size: 72px;
+    font-size: 56px;
     font-weight: 800;
     color: #222;
 }
@@ -693,7 +693,7 @@ table {
 
 .leaderboard-card-header h2 {
     margin-bottom: 4px;
-    font-size: 28px;
+    font-size: 24px;
 }
 
 .leaderboard-card-header p {
@@ -1770,7 +1770,7 @@ a:hover {
 
 .class-score-card h1 {
     margin-bottom: 10px;
-    font-size: 50px;
+    font-size: 38px;
 }
 
 .class-score-info {
@@ -1782,4 +1782,54 @@ a:hover {
 
 .class-score-info strong {
     color: #222;
+}
+
+/* Pænere leaderboard-sideboks */
+
+.leader-side {
+    padding: 26px;
+}
+
+.school-box {
+    background: #f4faf3;
+    border: 1px solid #dbeadb;
+    border-radius: 18px;
+    padding: 16px;
+    align-items: center;
+}
+
+.school-box strong {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.school-box p {
+    font-size: 14px;
+    margin-top: 2px;
+}
+
+.school-box h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+#ownSchoolScore {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.top-three li {
+    background: #f8fbf8;
+    border: 1px solid #edf3ed;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+}
+
+.score-expl {
+    background: #f8fbf8;
+    border: 1px solid #edf3ed;
+    border-radius: 14px;
+    padding: 14px 16px;
 }

@@ -114,6 +114,18 @@
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="api.js"></script>
 <script src="underviser.js"></script>
+<script>
+    document.addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            loginTeacher();
+        }
+    });
+</script>
+
 
 </body>
 

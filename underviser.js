@@ -71,17 +71,36 @@ async function loginTeacher() {
         window.location.href =
             "overblik.html";
     }
+ 
+catch(error) {
 
-    catch(error) {
+    console.log(error);
 
-        console.log(error);
+    const errorBox =
+        document.getElementById("errorBox");
 
-        showError(
-            "Forkert login eller API fejl"
-        );
+    if (errorBox !== null) {
+
+        errorBox.style.display =
+            "block";
+
+        if (
+            error.response !== undefined &&
+            error.response.status === 401
+        ) {
+
+            errorBox.innerHTML =
+                "Forkert brugernavn eller adgangskode.";
+        }
+        else {
+
+            errorBox.innerHTML =
+                "Kunne ikke logge ind. Prøv igen.";
+        }
     }
 }
 
+}
 
 // Logger underviser ud - US1
 function logoutTeacher() {
@@ -2381,12 +2400,11 @@ function updateOwnSchool(leaderboard) {
             ownSchoolName.innerHTML = "Roskilde Skole";
         }
 
-        ownSchoolRank.innerHTML =
-            "Gruppevisning";
+       ownSchoolRank.innerHTML =
+            "Topgrupper";
 
         ownSchoolScore.innerHTML =
-            "Du ser placering for grupper på Roskilde Skole";
-
+            "Listen viser de bedste grupper på Roskilde Skole";
         return;
     }
 
@@ -3310,4 +3328,39 @@ async function loadGroupOverview() {
         groupOverviewBody.innerHTML =
             "<tr><td colspan='5'>Kunne ikke hente grupper</td></tr>";
     }
+}
+
+// Viser fejlbesked på login og admin sider.
+function showError(message) {
+
+    const errorBox =
+        document.getElementById("errorBox");
+
+    if (errorBox === null) {
+        return;
+    }
+
+    errorBox.style.display =
+        "block";
+
+    errorBox.innerHTML =
+        message;
+}
+
+
+// Fjerner fejlbesked.
+function clearError() {
+
+    const errorBox =
+        document.getElementById("errorBox");
+
+    if (errorBox === null) {
+        return;
+    }
+
+    errorBox.style.display =
+        "none";
+
+    errorBox.innerHTML =
+        "";
 }

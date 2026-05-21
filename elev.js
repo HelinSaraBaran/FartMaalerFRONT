@@ -1058,37 +1058,52 @@ async openStudentSessionDetails(session) {
         let measurements =
             this.normalizeArray(response.data);
 
+        let totalCo2 = 0;
+        let totalScore = 0;
+        let totalTime = 0;
+
+        for (
+            let index = 0;
+            index < measurements.length;
+            index++
+        ) {
+
+            const measurement =
+                measurements[index];
+
+            totalCo2 =
+                totalCo2 +
+                Number(measurement.co2 || 0);
+
+            totalTime =
+                totalTime +
+                Number(measurement.time || 0);
+
+            const score =
+                Math.abs(
+                    Number(measurement.simulatedSpeed || 0) -
+                    Number(measurement.speedLimit || 0)
+                ) +
+                Number(measurement.co2 || 0);
+
+            measurement.score =
+                Math.round(score);
+
+            totalScore =
+                totalScore + score;
+        }
+
         this.selectedHistoryMeasurements =
             measurements;
 
-        if (measurements.length > 0) {
+        this.selectedHistorySession.co2 =
+            Math.round(totalCo2) + " g";
 
-            let totalCo2 = 0;
-            let totalScore = 0;
+        this.selectedHistorySession.score =
+            Math.round(totalScore);
 
-            for (
-                let index = 0;
-                index < measurements.length;
-                index++
-            ) {
-
-                const score =
-    Math.abs(
-        Number(measurement.simulatedSpeed || 0) -
-        Number(measurement.speedLimit || 0)
-    ) +
-    Number(measurement.co2 || 0);
-
-totalScore =
-    totalScore + score;
-            }
-
-            this.selectedHistorySession.co2 =
-                Math.round(totalCo2) + " g";
-
-            this.selectedHistorySession.score =
-                Math.round(totalScore);
-        }
+        this.selectedHistorySession.time =
+            Math.round(totalTime * 100) / 100;
 
         this.showStudentSessionPopup =
             true;
@@ -1108,7 +1123,6 @@ totalScore =
             true;
     }
 },
-
     async loadLeaderboard() {
 
     this.errorMessage = "";

@@ -495,7 +495,7 @@
                         <div> 🚗 {{ safeText(selectedHistorySession.carType) }} </div>
                         <div> 🛣 {{ safeText(selectedHistorySession.roadType) }} </div>
                         <div> 🌱 CO₂: {{ safeText(selectedHistorySession.co2) }} </div>
-                        <div> ⏱ Tid: {{ selectedHistoryMeasurements.length > 0 ? safeText(selectedHistoryMeasurements[0].time): '---'}} sek. </div>
+                        <div> ⏱ Tid: {{ safeText(selectedHistorySession.time) }} sek. </div>
                     </div>
 
                     <div

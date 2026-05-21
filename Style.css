@@ -160,6 +160,26 @@ button:hover {
     box-shadow: 0 12px 24px rgba(47, 84, 53, 0.18);
 }
 
+.error-box {
+
+    background: #ffeaea;
+    color: #b00020;
+
+    border: 1px solid #ffb3b3;
+
+    padding: 14px;
+
+    border-radius: 12px;
+
+    margin-bottom: 18px;
+
+    font-weight: 600;
+
+    font-size: 15px;
+
+    text-align: center;
+}
+
 .frontpage-start-btn,
 .start-btn {
     background: linear-gradient(135deg, #2f8a35, #4caf50);

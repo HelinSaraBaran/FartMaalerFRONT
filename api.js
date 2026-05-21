@@ -97,19 +97,33 @@ axios.interceptors.response.use(
                 "API'et svarer ikke. Tjek internetforbindelse eller server."
             );
         }
-        else if (error.response.status === 401) {
+       else if (error.response.status === 401) {
 
-            showError(
-                "Du er ikke logget ind eller din adgang er udløbet."
-            );
+    localStorage.removeItem(
+        "token"
+    );
 
-            localStorage.removeItem(
-                "token"
-            );
+    const currentPage =
+        window.location.pathname.split("/").pop();
 
-            window.location.href =
-                "teacher-login.html";
-        }
+    if (currentPage === "teacher-login.html") {
+
+        showError(
+            "Forkert brugernavn eller adgangskode."
+        );
+
+        return Promise.reject(
+            error
+        );
+    }
+
+    showError(
+        "Du er ikke logget ind eller din adgang er udløbet."
+    );
+
+    window.location.href =
+        "teacher-login.html";
+}
         else if (error.response.status === 403) {
 
             showError(
