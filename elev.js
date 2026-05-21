@@ -957,6 +957,41 @@ async loadHistory() {
 
             console.log("Målinger for session " + session.id + ":", measurements);
 
+            let totalCo2 = 0;
+let totalScore = 0;
+
+for (
+    let index = 0;
+    index < measurements.length;
+    index++
+) {
+
+    const measurement =
+        measurements[index];
+
+    totalCo2 =
+        totalCo2 +
+        Number(measurement.co2 || 0);
+
+    const score =
+        Math.abs(
+            Number(measurement.simulatedSpeed || 0) -
+            Number(measurement.speedLimit || 0)
+        ) +
+        Number(measurement.co2 || 0);
+
+    measurement.score =
+        Math.round(score);
+
+    totalScore =
+        totalScore + score;
+}
+session.co2 =
+    Math.round(totalCo2) + " g";
+
+session.score =
+    Math.round(totalScore);
+
             for ( let measurementIndex = 0; measurementIndex < measurements.length; measurementIndex++) {
                 measurements[measurementIndex].carType = session.carType;
                 measurements[measurementIndex].roadType = session.roadType;
@@ -1024,16 +1059,15 @@ async openStudentSessionDetails(session) {
                 index++
             ) {
 
-                const measurement =
-                    measurements[index];
+                const score =
+    Math.abs(
+        Number(measurement.simulatedSpeed || 0) -
+        Number(measurement.speedLimit || 0)
+    ) +
+    Number(measurement.co2 || 0);
 
-                totalCo2 =
-                    totalCo2 +
-                    Number(measurement.co2 || 0);
-
-                totalScore =
-                    totalScore +
-                    Number(measurement.score || 0);
+totalScore =
+    totalScore + score;
             }
 
             this.selectedHistorySession.co2 =

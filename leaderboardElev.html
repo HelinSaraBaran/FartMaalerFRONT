@@ -2,7 +2,9 @@
 <html lang="da">
 
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
@@ -11,63 +13,93 @@
     </title>
 
     <link rel="stylesheet"
-          href="Style.css?v=23">
+          href="Style.css?v=24">
 
-           <div class="topbar-actions">
-
-                <button
-                    type="button"
-                    class="logout-btn global-logout"
-                    onclick="logout()">
-
-                    Forside →
-
-                </button>
-
-            </div>
 </head>
 
 <body>
+
+<div class="topbar-actions">
+
+    <button
+        type="button"
+        class="logout-btn global-logout"
+        onclick="window.location.href='index.html'">
+
+        Forside →
+
+    </button>
+
+</div>
+
 
 <div id="app"
      class="layout">
 
     <!-- Sidebar -->
     <aside class="sidebar">
-            <div class="sidebar-title">
-                <span class="sidebar-icon">📊</span>
-                <h2>Fartmåler</h2>
-            </div>
 
-            <nav class="sidebar-menu">
+        <div class="sidebar-title">
 
-                <a href="index.html"
-                   class="menu-item">
-                    <span>🏠</span>
-                    Forside
-                </a>
+            <span class="sidebar-icon">
+                📊
+            </span>
 
-                <a href="session.html"
-                   class="menu-item">
-                    <span>⏰</span>
-                    Session
-                </a>
+            <h2>
+                Fartmåler
+            </h2>
 
-                <a href="opsummering.html"
-                   class="menu-item">
-                    <span>📏</span>
-                    Historik
-                </a>
+        </div>
 
-                <a href="leaderboardElev.html"
-                   class="menu-item active">
-                    <span>🏆</span>
-                    Leaderboard
-                </a>
+        <nav class="sidebar-menu">
 
-            </nav>
+            <a href="index.html"
+               class="menu-item">
 
-        </aside>
+                <span>
+                    🏠
+                </span>
+
+                Forside
+
+            </a>
+
+            <a href="session.html"
+               class="menu-item">
+
+                <span>
+                    ⏰
+                </span>
+
+                Session
+
+            </a>
+
+            <a href="opsummering.html"
+               class="menu-item">
+
+                <span>
+                    📏
+                </span>
+
+                Historik
+
+            </a>
+
+            <a href="leaderboardElev.html"
+               class="menu-item active">
+
+                <span>
+                    🏆
+                </span>
+
+                Leaderboard
+
+            </a>
+
+        </nav>
+
+    </aside>
 
 
     <!-- Content -->
@@ -83,12 +115,11 @@
                 </h1>
 
                 <p>
-                    Sammenlign grupper i klassen og se, hvem der kører mest bæredygtigt.
+                    Sammenlign grupper i klassen og se,
+                    hvem der kører mest bæredygtigt.
                 </p>
 
             </div>
-
-            
 
         </section>
 
@@ -117,7 +148,8 @@
             </h2>
 
             <p>
-                Din underviser har slået leaderboard fra. Når det bliver slået til igen,
+                Din underviser har slået leaderboard fra.
+                Når det bliver slået til igen,
                 kan grupperne sammenlignes her.
             </p>
 
@@ -183,7 +215,9 @@
                         </div>
 
                         <span class="leaderboard-card-badge">
+
                             {{ leaderboardRoadType }}
+
                         </span>
 
                     </div>
@@ -315,7 +349,8 @@
                     </h2>
 
                     <p>
-                        Leaderboardet viser gruppernes resultater ud fra den valgte vejtype.
+                        Leaderboardet viser gruppernes resultater
+                        ud fra den valgte vejtype.
                     </p>
 
                     <div class="leaderboard-info-box">
@@ -358,9 +393,12 @@
 
 
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script src="api.js"></script>
-<script src="elev.js?v=100"></script>
+
+<script src="elev.js?v=501"></script>
 
 </body>
 
