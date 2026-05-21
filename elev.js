@@ -141,6 +141,46 @@ measurementPollingId: null,
             "Vidste du at jævn fart kan give mindre CO₂?";
     }
 },
+
+async changeLanguage() {
+
+    const select =
+        document.getElementById(
+            "ttsLanguageSelect"
+        );
+
+    if (select === null) {
+        return;
+    }
+
+    this.selectedTtsLanguage =
+        select.value;
+
+    try {
+
+        await axios.put(
+            apiUrl + "/Settings/language",
+            {
+                key: "TTSLanguage",
+                value: select.value
+            }
+        );
+
+        console.log(
+            "Sprog ændret til:",
+            select.value
+        );
+    }
+
+    catch(error) {
+
+        console.log(
+            "Kunne ikke ændre sprog:",
+            error
+        );
+    }
+},
+
     async showFunFact() {
 
         if (
@@ -317,6 +357,7 @@ safeText(text) {
         );
     }
 },
+
 
 
         async loadGroups() {
@@ -676,7 +717,7 @@ startMeasurementPolling() {
             this.latestSpeed =
                 Math.round(savedMeasurement.simulatedSpeed);
 
-            this.distance = "0.3 m
+            this.distance = "0.3 m";
 
             this.time =
                 Math.round(savedMeasurement.time * 100) / 100 + " sek.";
