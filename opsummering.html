@@ -80,7 +80,86 @@
                 </p>
 
             </header>
+             <section class="student-bottom-row">
 
+                <article class="student-best-card">
+
+    <div v-if="bestSession">
+
+        <div class="best-session-header">
+
+            🏆 Bedste session
+
+        </div>
+
+        <div class="best-session-grid">
+
+            <div class="best-session-box">
+
+                ⭐ Score
+
+                <strong>
+                    {{ bestSession.score ?? 0 }}
+                </strong>
+
+            </div>
+
+            <div class="best-session-box">
+
+                🚗 Biltype
+
+                <strong>
+                    {{ safeText(bestSession.carType) }}
+                </strong>
+
+            </div>
+
+            <div class="best-session-box">
+
+                🛣️ Vejtype
+
+                <strong>
+                    {{ safeText(bestSession.roadType) }}
+                </strong>
+
+            </div>
+
+            <div class="best-session-box">
+
+                🌱 CO₂
+
+                <strong>
+                    {{ safeText(bestSession.co2) }} g
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div
+        v-else
+        class="best-session-empty">
+
+        Ingen bedste session fundet.
+
+    </div>
+
+</article>
+
+                <button
+                    type="button"
+                    class="start-new-session-button"
+                    onclick="window.location.href='elev.html'">
+
+                    Start en ny session
+
+                </button>
+
+            </section>
+            <br>
+            <br>
 
             <section
                 v-if="errorMessage"
@@ -393,86 +472,6 @@
                     </button>
 
                 </aside>
-
-            </section>
-
-
-            <section class="student-bottom-row">
-
-                <article class="student-best-card">
-
-    <div v-if="bestSession">
-
-        <div class="best-session-header">
-
-            🏆 Bedste session
-
-        </div>
-
-        <div class="best-session-grid">
-
-            <div class="best-session-box">
-
-                ⭐ Score
-
-                <strong>
-                    {{ bestSession.score ?? 0 }}
-                </strong>
-
-            </div>
-
-            <div class="best-session-box">
-
-                🚗 Biltype
-
-                <strong>
-                    {{ safeText(bestSession.carType) }}
-                </strong>
-
-            </div>
-
-            <div class="best-session-box">
-
-                🛣️ Vejtype
-
-                <strong>
-                    {{ safeText(bestSession.roadType) }}
-                </strong>
-
-            </div>
-
-            <div class="best-session-box">
-
-                🌱 CO₂
-
-                <strong>
-                    {{ safeText(bestSession.co2) }} g
-                </strong>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div
-        v-else
-        class="best-session-empty">
-
-        Ingen bedste session fundet.
-
-    </div>
-
-</article>
-
-                <button
-                    type="button"
-                    class="start-new-session-button"
-                    onclick="window.location.href='elev.html'">
-
-                    Start en ny session
-
-                </button>
 
             </section>
 

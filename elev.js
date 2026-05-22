@@ -1559,7 +1559,6 @@ filteredMeasurements() {
     },
 
     sortType() {
-        this.loadHistory();
     }
 },
 
