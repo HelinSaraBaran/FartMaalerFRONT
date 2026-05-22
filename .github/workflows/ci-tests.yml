@@ -1,0 +1,44 @@
+name: CI Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Hent kode
+        uses: actions/checkout@v4
+
+      - name: Installer .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Installer frontend packages
+        run: npm install
+
+      - name: Start frontend server
+        run: npx http-server . -p 5500 &
+
+      - name: Vent på frontend
+        run: sleep 10
+
+      - name: Restore .NET packages
+        run: dotnet restore
+
+      - name: Build solution
+        run: dotnet build --no-restore
+
+      - name: Run all tests
+        run: dotnet test --no-build --verbosity normal
