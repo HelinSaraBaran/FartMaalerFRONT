@@ -778,6 +778,16 @@ async nextMeasurement() {
 async endSession() {
 
     this.errorMessage = "";
+    
+    if (this.measurementCount === 0) {
+
+    this.errorMessage =
+        "Sessionen kan ikke afsluttes fordi den er tom";
+
+    this.showSummaryPopup = false;
+
+    return;
+}
 
     try {
 
@@ -1574,9 +1584,10 @@ filteredMeasurements() {
         this.loadStudentSessionPage();
     }
 
-    if (document.querySelector(".student-history-page")) {
-        this.loadHistory();
-    }
+
+        if (document.querySelector(".student-history-page")) {
+            this.loadHistory();
+        }
 
     if (document.querySelector(".leaderboard-header")) {
         this.loadLeaderboard();
